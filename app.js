@@ -71,14 +71,38 @@ function setupFilterListeners() {
   const stateSelect = document.getElementById("state-select");
   const clearFiltersButton = document.getElementById("clear-filters-button");
 
-  searchInput.addEventListener("input", debounce(renderAll, 250));
+  // OPTION A: search overrides category
+  searchInput.addEventListener(
+    "input",
+    debounce(() => {
+      const value = searchInput.value;
+
+      // When user is typing anything, reset category to All
+      if (value.trim() !== "") {
+        CURRENT_CATEGORY = "All";
+
+        const chips = document.querySelectorAll("#category-chips .chip");
+        chips.forEach((el) => el.classList.remove("chip-active"));
+
+        const firstChip = document.querySelector("#category-chips .chip");
+        if (firstChip) {
+          firstChip.classList.add("chip-active");
+        }
+      }
+
+      renderAll();
+    }, 250)
+  );
+
   speedSelect.addEventListener("change", renderAll);
   difficultySelect.addEventListener("change", renderAll);
   proofSelect.addEventListener("change", renderAll);
+
   stateSelect.addEventListener("change", () => {
     CURRENT_STATE = stateSelect.value;
     renderAll();
   });
+
   clearFiltersButton.addEventListener("click", () => {
     resetFilters();
     renderAll();
