@@ -633,9 +633,17 @@
   }
 
   function filterOpportunities() {
-    currentSearch = document.getElementById('searchInput').value;
-    renderOpportunities();
+  currentSearch = document.getElementById('searchInput').value || '';
+
+  // Search override: whenever there is text, reset to All Opportunities
+  if (currentSearch.trim() !== '') {
+    currentCategory = 'all';
   }
+
+  // Repaint the category cards so "All Opportunities" looks active
+  renderCategories();
+  renderOpportunities();
+}
 
   function openNewsletter() {
     const state = document.getElementById('stateSelector').value;
