@@ -499,6 +499,7 @@ const categories = [
     description: row.short_description,
     how_to_apply: row.how_to_apply,
     deadline: row.deadline,
+    daysLeft: calculateDaysLeft(row.deadline),
     proof_required: row.proof_required,
     // estimated_amount is the numeric-ish field from the CSV; use it for card display
     amount: row.estimated_amount || row.est_value || "",
@@ -511,7 +512,6 @@ const categories = [
 }
 
 
- <script>
 function loadOpportunities() {
   Papa.parse('data/opportunities_tagged_with_state.csv', {
     download: true,
@@ -526,10 +526,8 @@ function loadOpportunities() {
     }
   });
 }
-</script>
 
-
-  function renderCategories() {
+function renderCategories() {
     const grid = document.getElementById('categoriesGrid');
     const visible = categoriesExpanded ? categories : categories.slice(0, 6);
 
