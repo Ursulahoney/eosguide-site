@@ -6,6 +6,7 @@
     <title>eosguide - Your Money Clearinghouse</title>
     <meta name="description" content="eosguide is your money clearinghouse. We track class actions, refunds, unclaimed money, and benefit programs in one searchable place so you don’t have to hunt for them.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -76,7 +77,6 @@
 
 
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50 relative overflow-x-hidden">
     
@@ -469,92 +469,92 @@ const categories = [
   let savedOpportunities = JSON.parse(localStorage.getItem('eosguide-saved') || '[]');
 
   // Turn CSV row (now JSON) into the shape the UI expects
-  
-  function parseDeadlineInfo(deadlineStr) {
-    const raw = normStr(deadlineStr);
-    if (!raw) return { raw: "", date: null, display: "Rolling / Varies" };
+  function calculateDaysLeft(deadlineStr) {
+    if (!deadlineStr) return -1;
+    const lower = String(deadlineStr).toLowerCase();
+    if (lower === 'ongoing' || lower === 'none') return 999;
 
-    const lower = raw.toLowerCase();
-    if (lower.includes("rolling") || lower.includes("varies") || lower.includes("ongoing") || lower.includes("open")) {
-      return { raw, date: null, display: raw };
-    }
+    const parts = deadlineStr.split('/');
+    if (parts.length !== 3) return -1;
 
-    // Try ISO first, then common US formats
-    let d = new Date(raw);
-    if (isNaN(d.getTime())) {
-      // MM/DD/YYYY or M/D/YYYY
-      const m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (m) {
-        const mm = parseInt(m[1], 10) - 1;
-        const dd = parseInt(m[2], 10);
-        const yyyy = parseInt(m[3], 10);
-        d = new Date(yyyy, mm, dd);
-      }
-    }
+    const month = parseInt(parts[0], 10);
+    const day = parseInt(parts[1], 10);
+    const year = parseInt(parts[2], 10);
+    if (!month || !day || !year) return -1;
 
-    if (isNaN(d.getTime())) {
-      return { raw, date: null, display: raw };
-    }
-
-    const display = d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-    return { raw, date: d, display };
+    const deadlineDate = new Date(year, month - 1, day);
+    const today = new Date();
+    const diffMs = deadlineDate - today;
+    return Math.round(diffMs / (1000 * 60 * 60 * 24));
   }
 
-function calculateDaysLeft(deadlineStr) {
-    const info = parseDeadlineInfo(deadlineStr);
-    if (!info.date) return -1;
-
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const due = new Date(info.date.getFullYear(), info.date.getMonth(), info.date.getDate());
-
-    const ms = due.getTime() - today.getTime();
-    return Math.floor(ms / (1000 * 60 * 60 * 24));
-  }
-
- function mapRowToOpportunity(row) {
-  return {
-    id: row.id,
-    title: row.title,
-    url: row.url,
-    category: row.category,
-    program_type: row.program_type,
-    geography: row.geography,
-    who_qualifies: row.who_qualifies,
-    description: row.short_description,
-    how_to_apply: row.how_to_apply,
-    deadline: row.deadline,
-    proof_required: row.proof_required,
-    // estimated_amount is the numeric-ish field from the CSV; use it for card display
-    amount: row.estimated_amount || row.est_value || "",
-    source: row.source,
-    state: row.state,
-    is_unclaimed: row.is_unclaimed === "true" || row.is_unclaimed === "1",
-    is_csi: row.is_csi === "true" || row.is_csi === "1",
-    created_at: row.created_at
-  };
+ function normStr(v) {
+  return (v ?? "").toString().trim();
 }
 
+function pick(row, keys) {
+  for (const k of keys) {
+    const val = row?.[k];
+    if (val !== undefined && val !== null && normStr(val) !== "") return val;
+  }
+  return "";
+}
+
+function parseBool(v) {
+  const s = normStr(v).toLowerCase();
+  return s === "true" || s === "1" || s === "yes" || s === "y";
+}
+
+function mapRowToOpportunity(row) {
+  const deadline = normStr(pick(row, ["deadline", "due_date", "end_date", "close_date"]));
+
+  const opp = {
+    id: normStr(pick(row, ["id", "opportunity_id", "slug"])) || (normStr(pick(row, ["url", "link"])) || Math.random().toString(36).slice(2)),
+    title: normStr(pick(row, ["title", "opportunity_title", "name", "program_name"])) || "(Untitled opportunity)",
+    url: normStr(pick(row, ["url", "link", "source_url", "official_url", "application_url"])),
+    category: normStr(pick(row, ["category", "categories", "category_key"])) || "all",
+    program_type: normStr(pick(row, ["program_type", "type"])),
+    geography: normStr(pick(row, ["geography", "scope"])),
+
+    who_qualifies: normStr(pick(row, ["who_qualifies", "eligibility"])),
+    description: normStr(pick(row, ["short_description", "description", "summary", "short_desc"])),
+    how_to_apply: normStr(pick(row, ["how_to_apply", "apply", "application_instructions"])),
+    deadline: deadline,
+    proof_required: normStr(pick(row, ["proof_required", "proof", "documentation_required"])),
+
+    // display amount
+    amount: normStr(pick(row, ["estimated_amount", "est_value", "amount", "value"])),
+
+    source: normStr(pick(row, ["source", "publisher"])),
+    state: normStr(pick(row, ["state", "states", "state_code", "state_codes"])),
+
+    difficulty: normStr(pick(row, ["difficulty", "effort"])) || "Medium",
+
+    is_unclaimed: parseBool(pick(row, ["is_unclaimed", "unclaimed"])),
+    is_csi: parseBool(pick(row, ["is_csi", "csi"])),
+
+    created_at: normStr(pick(row, ["created_at", "date_added"]))
+  };
+
+  opp.daysLeft = calculateDaysLeft(opp.deadline);
+  return opp;
+}
 
   // Load JSON that came from your CSV
   function loadOpportunities() {
-    Papa.parse('data/opportunities_tagged_with_state.csv', {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function(results) {
-        opportunities = (results.data || []).map(mapRowToOpportunity);
-        renderOpportunities();
-      },
-      error: function(err) {
-        console.error('Error loading CSV', err);
-      }
-    });
-  })
-      .catch(error => {
-        console.error('Error loading opportunities', error);
-      });
-  }
+  Papa.parse('data/opportunities_tagged_with_state.csv', {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      opportunities = (results.data || []).map(mapRowToOpportunity);
+      renderOpportunities();
+    },
+    error: function(err) {
+      console.error('Error loading opportunities CSV', err);
+    }
+  });
+}
 
   function renderCategories() {
     const grid = document.getElementById('categoriesGrid');
@@ -595,7 +595,8 @@ function calculateDaysLeft(deadlineStr) {
     const selectedState = stateSelector ? stateSelector.value : 'MT';
 
     const filtered = opportunities.filter(opp => {
-      const matchesState = !selectedState || opp.state === selectedState;
+      const stateVal = (opp.state || '').toString().toUpperCase();
+      const matchesState = !selectedState || stateVal === selectedState || stateVal.split(/[,|\s]+/).includes(selectedState);
       const matchesCategory =
         currentCategory === 'all' ||
         (currentCategory === 'saved' ? savedOpportunities.includes(opp.id) : false) ||
@@ -689,7 +690,7 @@ function calculateDaysLeft(deadlineStr) {
             <div class="space-y-2 mb-4">
               <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600 font-normal">Deadline:</span>
-                <span class="font-bold text-gray-900">${opp.deadlineDisplay || opp.deadline || ''}</span>
+                <span class="font-bold text-gray-900">${opp.deadline}</span>
               </div>
               <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600 font-normal">Difficulty:</span>
