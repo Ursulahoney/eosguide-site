@@ -45,10 +45,10 @@ def extract_claim_url(soup: BeautifulSoup) -> Optional[str]:
     return None
 
 
-def scrape_settlement_page(url: str) -> Optional[Dict]:
+def scrape_settlement_page(url: str, headers: dict) -> Optional[Dict]:
     """Scrape individual settlement details"""
     try:
-        response = requests.get(url, timeout=15)
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, 'html.parser')
         
@@ -109,6 +109,17 @@ def scrape(max_settlements: int = 100) -> List[Dict]:
     print("\n🔄 TopClassActions Scraper")
     print("="*60)
     
+    # Add browser-like headers to avoid being blocked
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1'
+    }
+    
     opportunities = []
     settlement_urls = []
     
@@ -125,7 +136,7 @@ def scrape(max_settlements: int = 100) -> List[Dict]:
                 url = f"https://topclassactions.com/category/lawsuit-settlements/open-lawsuit-settlements/page/{page}/"
             
             print(f"  Page {page}...", end=" ")
-            response = requests.get(url, timeout=15)
+            response = requests.get(url, headers=headers, timeout=15)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, 'html.parser')
             
@@ -165,7 +176,7 @@ def scrape(max_settlements: int = 100) -> List[Dict]:
     for i, settlement_url in enumerate(settlement_urls, 1):
         print(f"  [{i}/{len(settlement_urls)}] Scraping settlement...", end=" ")
         
-        settlement = scrape_settlement_page(settlement_url)
+        settlement = scrape_settlement_page(settlement_url, headers)
         if settlement:
             opportunities.append(settlement)
             print(f"✓ {settlement['title'][:40]}...")
