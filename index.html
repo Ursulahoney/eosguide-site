@@ -675,20 +675,30 @@ const categories = [
     const selectedState = stateSelector ? stateSelector.value : 'MT';
 
     const filtered = opportunities.filter(opp => {
-      const matchesState = !selectedState || opp.state === selectedState || opp.state === 'Nationwide';
-      const matchesCategory =
-        currentCategory === 'all' ||
-        (currentCategory === 'saved' ? savedOpportunities.includes(opp.id) : false) ||
-        (currentCategory === 'ending' && opp.daysLeft < 30 && opp.daysLeft > 0) ||
-        (currentCategory === 'national' && opp.geography === 'national') ||
-        opp.category === currentCategory;
+  // STATE FILTERING - Updated for all 50 states
+  let matchesState = true;
+  
+  if (selectedState && selectedState !== '') {
+    // If user selected a specific state, show:
+    // 1. Nationwide opportunities (work for everyone)
+    // 2. Opportunities for their specific state
+    matchesState = opp.state === 'Nationwide' || opp.state === selectedState;
+  }
+  // If no state selected (empty string), show all opportunities
+  
+  const matchesCategory =
+    currentCategory === 'all' ||
+    (currentCategory === 'saved' ? savedOpportunities.includes(opp.id) : false) ||
+    (currentCategory === 'ending' && opp.daysLeft < 30 && opp.daysLeft > 0) ||
+    (currentCategory === 'national' && opp.geography === 'national') ||
+    opp.category === currentCategory;
 
-      const matchesSearch =
-        opp.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
-        (opp.description || '').toLowerCase().includes(currentSearch.toLowerCase());
+  const matchesSearch =
+    opp.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+    (opp.description || '').toLowerCase().includes(currentSearch.toLowerCase());
 
-      return matchesState && matchesCategory && matchesSearch;
-    });
+  return matchesState && matchesCategory && matchesSearch;
+});
 
     oppCount.textContent = `(${filtered.length})`;
 
