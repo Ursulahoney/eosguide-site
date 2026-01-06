@@ -665,7 +665,60 @@ const categories = [
     }
     return '';
   }
-
+// State mapping: converts abbreviations to full names
+const stateMapping = {
+  'AL': 'Alabama',
+  'AK': 'Alaska',
+  'AZ': 'Arizona',
+  'AR': 'Arkansas',
+  'CA': 'California',
+  'CO': 'Colorado',
+  'CT': 'Connecticut',
+  'DE': 'Delaware',
+  'FL': 'Florida',
+  'GA': 'Georgia',
+  'HI': 'Hawaii',
+  'ID': 'Idaho',
+  'IL': 'Illinois',
+  'IN': 'Indiana',
+  'IA': 'Iowa',
+  'KS': 'Kansas',
+  'KY': 'Kentucky',
+  'LA': 'Louisiana',
+  'ME': 'Maine',
+  'MD': 'Maryland',
+  'MA': 'Massachusetts',
+  'MI': 'Michigan',
+  'MN': 'Minnesota',
+  'MS': 'Mississippi',
+  'MO': 'Missouri',
+  'MT': 'Montana',
+  'NE': 'Nebraska',
+  'NV': 'Nevada',
+  'NH': 'New Hampshire',
+  'NJ': 'New Jersey',
+  'NM': 'New Mexico',
+  'NY': 'New York',
+  'NC': 'North Carolina',
+  'ND': 'North Dakota',
+  'OH': 'Ohio',
+  'OK': 'Oklahoma',
+  'OR': 'Oregon',
+  'PA': 'Pennsylvania',
+  'RI': 'Rhode Island',
+  'SC': 'South Carolina',
+  'SD': 'South Dakota',
+  'TN': 'Tennessee',
+  'TX': 'Texas',
+  'UT': 'Utah',
+  'VT': 'Vermont',
+  'VA': 'Virginia',
+  'WA': 'Washington',
+  'WV': 'West Virginia',
+  'WI': 'Wisconsin',
+  'WY': 'Wyoming',
+  'DC': 'District of Columbia'
+};
   function renderOpportunities() {
     const grid = document.getElementById('opportunitiesGrid');
     const noResults = document.getElementById('noResults');
@@ -675,14 +728,27 @@ const categories = [
     const selectedState = stateSelector ? stateSelector.value : 'MT';
 
     const filtered = opportunities.filter(opp => {
-  // STATE FILTERING - Updated for all 50 states
+  // STATE FILTERING - Now handles both abbreviations and full names
   let matchesState = true;
   
   if (selectedState && selectedState !== '') {
-    // If user selected a specific state, show:
-    // 1. Nationwide opportunities (work for everyone)
-    // 2. Opportunities for their specific state
-    matchesState = opp.state === 'Nationwide' || opp.state === selectedState;
+    if (selectedState === 'Nationwide') {
+      // User selected "Nationwide Only" - show only nationwide opportunities
+      matchesState = opp.state === 'Nationwide';
+    } else {
+      // User selected a specific state
+      // Get the full state name from the abbreviation
+      const fullStateName = stateMapping[selectedState];
+      
+      // Show opportunities that are either:
+      // 1. Nationwide
+      // 2. Match the selected state code (e.g., "CA")
+      // 3. Match the full state name (e.g., "California")
+      matchesState = 
+        opp.state === 'Nationwide' || 
+        opp.state === selectedState || 
+        opp.state === fullStateName;
+    }
   }
   // If no state selected (empty string), show all opportunities
   
