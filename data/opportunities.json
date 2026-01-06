@@ -13,58 +13,6 @@
     "featured": true
   },
   {
-    "id": "displate-deceptivediscount-OR",
-    "title": "Displate Settlement - Deceptive Discount Advertising",
-    "category": "Consumer Products",
-    "amount": 18,
-    "deadline": "2025-07-22T06:00:00.000Z",
-    "difficulty": "Easy",
-    "description": "Displate advertised deceptive discounts on products. Settlement provides $18 per class member, available as cash or store credit. Automatic store credit if no claim filed.",
-    "url": "https://displatesettlement.com/",
-    "state": "Oregon",
-    "value": "excellent",
-    "featured": true
-  },
-  {
-    "id": "displate-deceptivediscount-CA",
-    "title": "Displate Settlement - Deceptive Discount Advertising",
-    "category": "Consumer Products",
-    "amount": 18,
-    "deadline": "2025-07-22T06:00:00.000Z",
-    "difficulty": "Easy",
-    "description": "Displate advertised deceptive discounts on products. Settlement provides $18 per class member, available as cash or store credit. Automatic store credit if no claim filed.",
-    "url": "https://displatesettlement.com/",
-    "state": "California",
-    "value": "excellent",
-    "featured": true
-  },
-  {
-    "id": "displate-deceptivediscount-WA",
-    "title": "Displate Settlement - Deceptive Discount Advertising",
-    "category": "Consumer Products",
-    "amount": 18,
-    "deadline": "2025-07-22T06:00:00.000Z",
-    "difficulty": "Easy",
-    "description": "Displate advertised deceptive discounts on products. Settlement provides $18 per class member, available as cash or store credit. Automatic store credit if no claim filed.",
-    "url": "https://displatesettlement.com/",
-    "state": "Washington",
-    "value": "excellent",
-    "featured": true
-  },
-  {
-    "id": "cobell-salazar-heirclaims",
-    "title": "Cobell v. Salazar Indian Trust Settlement - Heir Claims",
-    "category": "Legal settlement & enforcement",
-    "amount": "$3.4 billion",
-    "deadline": "2025-06-30T06:00:00.000Z",
-    "difficulty": "Hard",
-    "description": "Historic settlement for mismanagement of Individual Indian Money trust accounts. Currently distributing unclaimed funds to heirs of deceased class members. Requires probate documentation and proof of heir status.",
-    "url": "https://www.cobellsettlement.com/",
-    "state": "Nationwide",
-    "value": "fair",
-    "featured": false
-  },
-  {
     "id": "multnomah-taxforeclosure-2017",
     "title": "Martin Lynch v. Multnomah County Tax Foreclosure Surplus Proceeds Settlement",
     "category": "Legal settlement & enforcement",
