@@ -469,8 +469,8 @@
         Have a question, suggestion, or request?
       </p>
       <p class="text-gray-200 text-sm font-light">
-        Email: <a href="mailto:info@eosguide.com" class="text-cyan-300 hover:text-cyan-400 underline">
-          info@eosguide.com
+        Email: <a href="/cdn-cgi/l/email-protection#274e4941486742485440524e43420944484a" class="text-cyan-300 hover:text-cyan-400 underline">
+          <span class="__cf_email__" data-cfemail="a3cacdc5cce3c6ccd0c4d6cac7c68dc0ccce">[email&#160;protected]</span>
         </a>
       </p>
     </div>
@@ -489,7 +489,7 @@
   ↑ Top
 </button>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Categories for the filter buttons
 const categories = [
   { 
@@ -719,6 +719,22 @@ function updateStateDropdownCounts() {
     }
     return '';
   }
+
+  function formatDeadline(deadline) {
+    if (!deadline) return 'No deadline';
+    
+    try {
+      // Parse the date
+      const date = new Date(deadline);
+      
+      // Format as "Jan 15, 2026"
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    } catch (error) {
+      return deadline; // If parsing fails, return original
+    }
+  }
+
 // State mapping: converts abbreviations to full names
 const stateMapping = {
   'AL': 'Alabama',
@@ -909,7 +925,7 @@ filtered.sort((a, b) => {
             <div class="space-y-2 mb-4">
               <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600 font-normal">Deadline:</span>
-                <span class="font-bold text-gray-900">${opp.deadline}</span>
+                <span class="font-bold text-gray-900">${formatDeadline(opp.deadline)}</span>
               </div>
               <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600 font-normal">Difficulty:</span>
@@ -935,7 +951,13 @@ filtered.sort((a, b) => {
   }
 
   function filterCategory(category) {
-    currentCategory = category;
+    // If clicking the already-active category, go back to "All Opportunities"
+    if (currentCategory === category && category !== 'all') {
+      currentCategory = 'all';
+    } else {
+      currentCategory = category;
+    }
+    
     renderCategories();
     renderOpportunities();
   }
@@ -1083,15 +1105,4 @@ filtered.sort((a, b) => {
     </button>
     <button type="button" onclick="mobileNavSaved()" class="flex flex-col items-center gap-1 px-3 py-1">
       <span aria-hidden="true">🔖</span>
-      <span>Saved</span>
-    </button>
-    <button type="button" onclick="mobileNavInfo()" class="flex flex-col items-center gap-1 px-3 py-1">
-      <span aria-hidden="true">❓</span>
-      <span>About</span>
-    </button>
-  </div>
-</nav>
-
-
-</body>
-</html>
+      <span>Saved</
