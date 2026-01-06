@@ -588,6 +588,7 @@ const categories = [
       
       console.log(`✅ Loaded ${opportunities.length} opportunities`);
       renderOpportunities();
+        updateStateDropdownCounts();
     } catch (error) {
       console.error('Error loading opportunities:', error);
       document.getElementById('opportunitiesGrid').innerHTML = `
@@ -597,7 +598,53 @@ const categories = [
       `;
     }
   }
-
+function updateStateDropdownCounts() {
+    const stateSelector = document.getElementById('stateSelector');
+    if (!stateSelector) return;
+    
+    // Count opportunities by state
+    const stateCounts = {};
+    let nationwideCount = 0;
+    
+    opportunities.forEach(opp => {
+      const state = opp.state;
+      if (state === 'Nationwide') {
+        nationwideCount++;
+      } else {
+        stateCounts[state] = (stateCounts[state] || 0) + 1;
+      }
+    });
+    
+    // Update each option with counts
+    Array.from(stateSelector.options).forEach(option => {
+      const value = option.value;
+      
+      if (value === '') {
+        // "All States" - show total count of everything
+        const totalCount = opportunities.length;
+        option.textContent = `All States (${totalCount})`;
+        
+      } else if (value === 'Nationwide') {
+        // "Nationwide Only" - show only nationwide opportunities
+        option.textContent = `Nationwide Only (${nationwideCount})`;
+        
+      } else {
+        // Individual state - show ONLY state-specific count (excludes nationwide)
+        const stateAbbrev = value;
+        const fullStateName = stateMapping[stateAbbrev];
+        
+        // Count only opportunities specific to this state (not nationwide)
+        let stateSpecificCount = 0;
+        opportunities.forEach(opp => {
+          if (opp.state === stateAbbrev || opp.state === fullStateName) {
+            stateSpecificCount++;
+          }
+        });
+        
+        option.textContent = `${fullStateName} (${stateSpecificCount})`;
+      }
+    });
+  }
 
   function renderCategories() {
     const grid = document.getElementById('categoriesGrid');
