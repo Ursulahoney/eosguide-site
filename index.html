@@ -830,29 +830,7 @@ filtered.sort((a, b) => {
   const bDays = b.daysLeft || 999;
   return aDays - bDays;
 });
-```
 
----
-
-## **What This Does:**
-
-### **Display Order:**
-1. **Featured opportunities** (sorted by urgency)
-2. **Non-featured opportunities** (sorted by urgency)
-
-### **Example Results:**
-```
-California (12):
-
-⭐ FEATURED
-Cencora Data Breach - 🔥 13d left
-
-⭐ FEATURED  
-Displate Settlement - 📅 45d left
-
-Regular Opportunity - ⏰ 20d left
-
-Regular Opportunity - 60d left
     oppCount.textContent = `(${filtered.length})`;
 
     if (currentCategory !== 'all') {
