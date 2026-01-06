@@ -492,20 +492,27 @@
     <script>
 // Categories for the filter buttons
 const categories = [
-  { key: "all", name: "All Opportunities", icon: "✨", color: "from-cyan-400 to-blue-500", description: "Browse all available opportunities across every category" },
-  { key: "saved", name: "My Saved", icon: "🔖", color: "from-pink-400 to-rose-500", description: "Your bookmarked opportunities for easy access" },
-  { key: "ending", name: "Ending Soon", icon: "⏰", color: "from-red-400 to-pink-500", description: "Urgent opportunities with deadlines in the next 30 days" },
-  { key: "national", name: "Nationwide refunds", icon: "🌐", color: "from-blue-400 to-indigo-500", description: "Refund programs open in many or all states" },
-  { key: "Legal settlements & enforcement", name: "Legal Settlements", icon: "⚖️", color: "from-blue-400 to-cyan-500", description: "Class action settlements, recalls, and legal enforcement opportunities" },
-  { key: "Unclaimed money & refunds", name: "Unclaimed Money", icon: "💰", color: "from-green-400 to-emerald-500", description: "Unclaimed property, refunds, credits, and forgotten money" },
-  { key: "Social services & safety net", name: "Social Services", icon: "🤝", color: "from-purple-400 to-indigo-500", description: "Safety net programs, victim compensation, and social support services" },
-  { key: "Tribal programs", name: "Tribal Programs", icon: "🪶", color: "from-orange-400 to-red-500", description: "Benefits and services for tribal members and indigenous communities" },
-  { key: "Utilities & energy", name: "Utilities & Energy", icon: "⚡", color: "from-yellow-400 to-amber-500", description: "Utility assistance, energy credits, and bill payment programs" },
-  { key: "Agriculture & rural", name: "Agriculture", icon: "🌾", color: "from-lime-400 to-green-500", description: "Farm assistance, rural development, and agricultural programs" },
-  { key: "Business & jobs", name: "Business & Jobs", icon: "💼", color: "from-slate-400 to-gray-500", description: "Business grants, job training, and employment opportunities" },
-  { key: "Education & student help", name: "Education", icon: "🎓", color: "from-indigo-400 to-blue-500", description: "Student aid, scholarships, loan forgiveness, and education grants" },
-  { key: "Health & medical debt", name: "Health & Medical", icon: "🏥", color: "from-rose-400 to-pink-500", description: "Medical debt relief, healthcare assistance, and health programs" },
-  { key: "Tax & property relief", name: "Tax & Property", icon: "🏠", color: "from-cyan-400 to-teal-500", description: "Property tax relief, tax credits, and homeowner assistance" }
+  { 
+    key: 'all', 
+    name: 'All Opportunities', 
+    icon: '✨', 
+    color: 'from-cyan-600 to-blue-600',
+    description: 'Browse all available opportunities'
+  },
+  { 
+    key: 'saved', 
+    name: 'My Saved', 
+    icon: '🔖', 
+    color: 'from-pink-600 to-rose-600',
+    description: 'Opportunities you\'ve bookmarked'
+  },
+  { 
+    key: 'ending', 
+    name: 'Ending Soon', 
+    icon: '⏰', 
+    color: 'from-orange-600 to-red-600',
+    description: 'Deadlines within 30 days'
+  }
 ];
 
   // This will be filled from your JSON file
@@ -812,7 +819,40 @@ const stateMapping = {
 
   return matchesState && matchesCategory && matchesSearch;
 });
+// Sort to put featured opportunities first
+filtered.sort((a, b) => {
+  // Featured items come first
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+  
+  // Within featured/non-featured groups, sort by urgency (days left)
+  const aDays = a.daysLeft || 999;
+  const bDays = b.daysLeft || 999;
+  return aDays - bDays;
+});
+```
 
+---
+
+## **What This Does:**
+
+### **Display Order:**
+1. **Featured opportunities** (sorted by urgency)
+2. **Non-featured opportunities** (sorted by urgency)
+
+### **Example Results:**
+```
+California (12):
+
+⭐ FEATURED
+Cencora Data Breach - 🔥 13d left
+
+⭐ FEATURED  
+Displate Settlement - 📅 45d left
+
+Regular Opportunity - ⏰ 20d left
+
+Regular Opportunity - 60d left
     oppCount.textContent = `(${filtered.length})`;
 
     if (currentCategory !== 'all') {
