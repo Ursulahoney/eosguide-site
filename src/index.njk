@@ -328,7 +328,57 @@
                 </div>
             </div>
 
-            <div id="opportunitiesGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+            <div id="opportunitiesGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  {% for opp in opportunities %}
+    <div class="group bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+      <div class="relative">
+
+        <div class="flex flex-wrap gap-2 mb-2">
+          <div class="inline-flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-xs font-bold text-gray-700">
+            <span>📋</span>
+            <span class="truncate">{{ opp.category }}</span>
+          </div>
+
+          {% if opp.state == "Nationwide" %}
+            <div class="inline-flex items-center space-x-1 px-2 py-1 rounded-full bg-blue-50 text-[10px] font-semibold text-blue-700 border border-blue-100">
+              <span aria-hidden="true">🌐</span>
+              <span>Nationwide</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-1 text-green-600">
+            <span class="font-black text-sm">{{ opp.amount }}</span>
+          </div>
+        </div>
+
+        <h4 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{{ opp.title }}</h4>
+
+        <p class="text-sm text-gray-600 mb-4 line-clamp-2 font-light">{{ opp.description }}</p>
+
+        <div class="space-y-2 mb-4 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600">Deadline:</span>
+            <span class="font-bold text-gray-900">{{ opp.deadline }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600">Location:</span>
+            <span class="font-bold text-gray-900">{{ opp.state }}</span>
+          </div>
+        </div>
+
+        <a href="{{ opp.url }}" target="_blank" rel="noopener noreferrer"
+           class="block w-full text-center px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300"
+           style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+          View Details →
+        </a>
+
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
 
             <div id="noResults" class="text-center py-20 hidden">
                 <div class="text-6xl mb-4" id="noResultsIcon">🔍</div>
@@ -1029,7 +1079,7 @@ filtered.sort((a, b) => {
 
   // Initial render
   renderCategories();
-  loadOpportunities();
+  // loadOpportunities();
     // Back to top button behavior
   const backToTopBtn = document.getElementById('backToTop');
 
