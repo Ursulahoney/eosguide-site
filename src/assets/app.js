@@ -35,3 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchInput) searchInput.addEventListener("input", applyFilters);
   if (stateSelect) stateSelect.addEventListener("change", applyFilters);
 });
+// Compatibility wrappers for existing HTML handlers
+window.filterOpportunities = applyFilters;
+window.toggleCategories = function () {
+  // If "Show All" just resets filters
+  const searchInput = document.querySelector("#searchInput");
+  const stateSelect = document.querySelector("#stateSelector");
+
+  if (searchInput) searchInput.value = "";
+  if (stateSelect) stateSelect.value = "All";
+
+  applyFilters();
+};
