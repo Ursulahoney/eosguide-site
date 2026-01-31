@@ -1,7 +1,7 @@
 // src/assets/app.js
 
 function getCards() {
-  return Array.from(document.querySelectorAll("#opportunitiesGrid article"));
+  return Array.from(document.querySelectorAll("#opportunitiesGrid > div"));
 }
 
 function cardText(card) {
