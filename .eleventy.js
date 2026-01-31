@@ -5,6 +5,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("app.js");
   eleventyConfig.addPassthroughCopy("Circular-badge-logo.png");
   eleventyConfig.addPassthroughCopy("eos-logo.png");
+eleventyConfig.addPassthroughCopy("src/assets");
 
   return {
     dir: {
