@@ -1,9 +1,1134 @@
-<!doctype html>
-<html>
-  <head>
-    <title>eosguide</title>
-  </head>
-  <body>
-    <h1>Eleventy test</h1>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eosguide - Your Money Clearinghouse</title>
+    <meta name="description" content="eosguide is your money clearinghouse. We track class actions, refunds, unclaimed money, and benefit programs in one searchable place so you don't have to hunt for them.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+      @keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-logo {
+  animation: floatSoft 4s ease-in-out infinite;
+}
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fadeInUp { animation: fadeInUp 0.5s ease-out both; }
+        .animate-scaleIn { animation: scaleIn 0.3s ease-out; }
+        .delay-50 { animation-delay: 0.05s; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-150 { animation-delay: 0.15s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-250 { animation-delay: 0.25s; }
+        .delay-300 { animation-delay: 0.3s; }
+        
+        body { 
+            font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+            font-weight: 400;
+        }
+        
+        .blob {
+            filter: blur(80px);
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, -20px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 20px) scale(1.05); }
+        }
+        .blob-2 { animation-delay: -5s; animation-duration: 25s; }
+        .blob-3 { animation-delay: -10s; animation-duration: 30s; }
+#backToTop {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 40;
+  display: none;
+}
+
+
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50 relative overflow-x-hidden">
+    
+    <!-- Animated background blobs - matching logo gradient -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="blob absolute w-96 h-96 bg-gradient-to-br from-cyan-300 to-blue-400 rounded-full opacity-20" style="top: 10%; left: 5%;"></div>
+        <div class="blob blob-2 absolute w-80 h-80 bg-gradient-to-br from-purple-300 to-fuchsia-400 rounded-full opacity-20" style="top: 60%; right: 10%;"></div>
+        <div class="blob blob-3 absolute w-72 h-72 bg-gradient-to-br from-pink-300 to-rose-400 rounded-full opacity-20" style="bottom: 5%; left: 50%;"></div>
+    </div>
+
+    <!-- Header -->
+<header class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
+  <nav class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+    <!-- Logo + tagline -->
+    <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 group cursor-pointer">
+      <!-- Logo with subtle animation -->
+      <div class="relative flex-shrink-0 animate-logo">
+        <img src="Circular-badge-logo.png"
+             alt="eosguide logo"
+             aria-label="Eosguide logo with goddess profile and sunrise rays"
+             class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40">
+      </div>
+
+      <!-- Tagline to the right, wrapped into multiple lines -->
+      <blockquote class="text-xs sm:text-sm md:text-base font-semibold italic leading-snug 
+                         text-gray-500 max-w-xs md:max-w-sm text-center md:text-left"
+                  style="font-family: 'DM Sans', 'Montserrat', system-ui, sans-serif;">
+        "We do the searching<br>
+        so you don't have to<br>
+        pretend it's fun."
+      </blockquote>
+    </div>
+
+    <!-- Newsletter button -->
+    <button onclick="openNewsletter()"
+            class="mt-3 md:mt-0 self-center md:self-auto flex items-center space-x-2 px-6 py-3 
+                   text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
+            style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+      </svg>
+      <span>Get Alerts</span>
+    </button>
+
+  </nav>
+</header>
+
+
+
+    <!-- Hero Section -->
+    <section class="relative z-10 px-4 py-8 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 leading-tight">
+                <span class="bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Your Money Clearinghouse
+                </span>
+            </h2>
+            
+            <p class="text-lg sm:text-xl text-gray-700 mb-8 max-w-3xl mx-auto font-normal">
+                Track opportunities in one searchable place—
+                <span class="text-purple-600 font-semibold">settlements, refunds, benefits, and more.</span> 
+                Save what matters, never miss a deadline.
+            </p>
+
+            <!-- State Selector -->
+            <div class="flex justify-center mb-4">
+                <div class="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-2xl p-2 shadow-lg">
+                    <svg class="w-5 h-5 text-purple-600 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold text-gray-700">State:</span>
+                   
+<select id="stateSelector" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+  <option value="">All States</option>
+  <option value="Nationwide">Nationwide Only</option>
+  <option value="AL">Alabama</option>
+  <option value="AK">Alaska</option>
+  <option value="AZ">Arizona</option>
+  <option value="AR">Arkansas</option>
+  <option value="CA">California</option>
+  <option value="CO">Colorado</option>
+  <option value="CT">Connecticut</option>
+  <option value="DE">Delaware</option>
+  <option value="FL">Florida</option>
+  <option value="GA">Georgia</option>
+  <option value="HI">Hawaii</option>
+  <option value="ID">Idaho</option>
+  <option value="IL">Illinois</option>
+  <option value="IN">Indiana</option>
+  <option value="IA">Iowa</option>
+  <option value="KS">Kansas</option>
+  <option value="KY">Kentucky</option>
+  <option value="LA">Louisiana</option>
+  <option value="ME">Maine</option>
+  <option value="MD">Maryland</option>
+  <option value="MA">Massachusetts</option>
+  <option value="MI">Michigan</option>
+  <option value="MN">Minnesota</option>
+  <option value="MS">Mississippi</option>
+  <option value="MO">Missouri</option>
+  <option value="MT">Montana</option>
+  <option value="NE">Nebraska</option>
+  <option value="NV">Nevada</option>
+  <option value="NH">New Hampshire</option>
+  <option value="NJ">New Jersey</option>
+  <option value="NM">New Mexico</option>
+  <option value="NY">New York</option>
+  <option value="NC">North Carolina</option>
+  <option value="ND">North Dakota</option>
+  <option value="OH">Ohio</option>
+  <option value="OK">Oklahoma</option>
+  <option value="OR">Oregon</option>
+  <option value="PA">Pennsylvania</option>
+  <option value="RI">Rhode Island</option>
+  <option value="SC">South Carolina</option>
+  <option value="SD">South Dakota</option>
+  <option value="TN">Tennessee</option>
+  <option value="TX">Texas</option>
+  <option value="UT">Utah</option>
+  <option value="VT">Vermont</option>
+  <option value="VA">Virginia</option>
+  <option value="WA">Washington</option>
+  <option value="WV">West Virginia</option>
+  <option value="WI">Wisconsin</option>
+  <option value="WY">Wyoming</option>
+</select>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="max-w-3xl mx-auto">
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                    <div class="relative bg-white rounded-3xl shadow-2xl p-2 flex items-center">
+                        <svg class="w-6 h-6 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search any opportunity type..." class="flex-1 px-4 py-4 text-lg focus:outline-none font-light" onkeyup="filterOpportunities()">
+                        <button class="px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disclaimer Banner -->
+    <section class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-400 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0 text-2xl">💡</div>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-800 leading-relaxed font-normal">
+                            <strong>Quick heads up:</strong> Only file claims you actually qualify for. 
+                            Each settlement has specific rules—check the official site's 
+                            FAQ before claiming. False claims hurt others and have legal 
+                            consequences.
+                        </p>
+                        <p class="text-xs text-gray-600 mt-2 font-light">
+                            <strong>Note:</strong> eosguide is a directory. We don't run these settlements 
+                            or process claims—we just help you find them.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Quick Links -->
+    <section class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-black text-gray-800">Browse by Category</h3>
+                <button onclick="toggleCategories()" id="toggleBtn" class="flex items-center space-x-1 text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors">
+                    <span id="toggleText">Show All</span>
+                    <svg id="toggleIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <!-- Categories will be rendered here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Description -->
+    <section id="categoryInfo" class="relative z-10 px-4 pb-4 sm:px-6 lg:px-8 hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-4 border-l-4 border-purple-500">
+                <div class="flex items-start space-x-3">
+                    <div id="catIcon" class="text-3xl"></div>
+                    <div>
+                        <h4 id="catName" class="font-bold text-gray-900 mb-1"></h4>
+                        <p id="catDesc" class="text-sm text-gray-600"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opportunities List -->
+    <section class="relative z-10 px-4 py-6 sm:px-6 lg:px-8 mb-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                <h3 class="text-2xl font-black text-gray-800">
+                    <span class="text-purple-600" id="oppCount">(6)</span> Opportunities
+                </h3>
+
+                <!-- Share bar -->
+                <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm text-xs sm:text-sm text-gray-600">
+                    <span class="hidden sm:inline font-semibold">Share:</span>
+                    <button type="button"
+                            onclick="shareCopyPage()"
+                            class="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <span aria-hidden="true">🔗</span>
+                        <span class="hidden md:inline">Copy</span>
+                    </button>
+                    <a href="#"
+                       onclick="shareSmsPage(event)"
+                       class="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <span aria-hidden="true">💬</span>
+                        <span class="hidden md:inline">Text</span>
+                    </a>
+                    <a href="#"
+                       onclick="shareEmailPage(event)"
+                       class="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <span aria-hidden="true">✉️</span>
+                        <span class="hidden md:inline">Email</span>
+                    </a>
+                    <a href="#"
+                       onclick="shareFacebookPage(event)"
+                       class="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <span aria-hidden="true">f</span>
+                        <span class="hidden md:inline">Facebook</span>
+                    </a>
+                    <a href="#"
+                       onclick="shareRedditPage(event)"
+                       class="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <span aria-hidden="true">👽</span>
+                        <span class="hidden md:inline">Reddit</span>
+                    </a>
+                </div>
+            </div>
+
+            <div id="opportunitiesGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+
+            <div id="noResults" class="text-center py-20 hidden">
+                <div class="text-6xl mb-4" id="noResultsIcon">🔍</div>
+                <h3 class="text-2xl font-bold text-gray-700 mb-2" id="noResultsTitle">No opportunities found</h3>
+                <p class="text-gray-600" id="noResultsText">Try adjusting your search or filters</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Modal -->
+    <div id="newsletterModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-scaleIn">
+            <button onclick="closeNewsletter()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, #06B6D4 0%, #8B5CF6 50%, #EC4899 100%);">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-black mb-2">Never Miss Out</h3>
+                <p class="text-gray-600 font-normal">Get weekly alerts about new opportunities in <span id="selectedState">MT</span></p>
+            </div>
+
+            <form onsubmit="handleNewsletterSubmit(event)" class="space-y-4">
+                <input type="email" id="emailInput" placeholder="Enter your email" required class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light">
+                <button type="submit" class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                    Subscribe Free
+                </button>
+            </form>
+
+            <p class="text-xs text-gray-500 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
+        </div>
+    </div>
+
+    <!-- About -->
+    <section id="about" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-white/70 backdrop-blur-md">
+      <div class="max-w-4xl mx-auto space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">About eosguide</h2>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          eosguide is a calm dashboard for noisy money news. We track class actions, refunds, relief programs,
+          and "you might have money waiting" lists, then sort them into one searchable place.
+        </p>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          You still visit the official sites to read the fine print and apply. We just cut down the time you spend hunting.
+        </p>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed font-light italic">
+          eosguide is an information clearinghouse. We organize and share links to settlements, refunds, and programs 
+          but we don't administer them. Always verify details on the official site.
+        </p>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-r from-cyan-50 to-purple-50">
+      <div class="max-w-4xl mx-auto space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">How it works</h2>
+        <ol class="list-decimal list-inside text-sm sm:text-base text-gray-700 space-y-2">
+          <li>We collect public information about settlements, refunds, and programs.</li>
+          <li>We tag each opportunity by category, state, and difficulty.</li>
+          <li>You search and skim the cards to find what fits your situation.</li>
+          <li>When you click through, you go straight to the official source.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-white/80 backdrop-blur-md">
+      <div class="max-w-4xl mx-auto space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">FAQ</h2>
+
+        <div class="space-y-4 text-sm sm:text-base text-gray-800">
+          <div>
+            <h3 class="font-semibold mb-1">Do you take a cut of any money I get?</h3>
+            <p class="font-light">
+              No. We never take a cut. If we use affiliate links in the future, we'll label them as sponsored so you can see them clearly.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-1">Are you giving legal or financial advice?</h3>
+            <p class="font-light">
+              No. We organize information so you can see what might apply to you. For legal, financial, or tax decisions,
+              talk with a professional.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-1">Is everything on the site guaranteed or up to date?</h3>
+            <p class="font-light">
+              Programs change and everyone's situation is different. We try to stay current, but you should always confirm
+              dates, rules, and details on the official site.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Legal sections -->
+    <section id="privacy" class="relative z-10 px-4 sm:px-6 lg:px-8 py-10 bg-gray-50">
+      <div class="max-w-4xl mx-auto space-y-3">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Privacy</h2>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          We collect as little information as we reasonably can. Right now that mainly means your email address if you join
+          our alerts and basic usage stats from analytics tools.
+        </p>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          We use this information to send updates you asked for and to understand which parts of the site are helpful.
+          We don't sell your data. If you ever want us to stop contacting you, you can unsubscribe or reach out and we'll remove you.
+        </p>
+      </div>
+    </section>
+
+    <section id="terms" class="relative z-10 px-4 sm:px-6 lg:px-8 py-10 bg-gray-50">
+      <div class="max-w-4xl mx-auto space-y-3">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Terms</h2>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          eosguide is an information tool. We share links and short summaries so you can research opportunities that might fit you.
+          We do not run these programs and we can't promise that any listing is current, accurate, or right for you.
+        </p>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          By using this site, you agree that you'll double-check details on the official site and that eosguide isn't responsible
+          for any decisions you make, missed deadlines, or outcomes from applying.
+        </p>
+      </div>
+    </section>
+
+    <section id="disclaimer" class="relative z-10 px-4 sm:px-6 lg:px-8 py-10 bg-gray-50">
+      <div class="max-w-4xl mx-auto space-y-3">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Disclaimer</h2>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          Nothing on this site is legal, financial, or tax advice. We're doing our best to surface helpful information,
+          but your situation is unique.
+        </p>
+        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+          If you have questions about your rights, options, or money, please talk with a qualified professional who can look
+          at your specific case.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+<footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <!-- Brand blurb -->
+      <div>
+        <h4 class="font-black text-xl mb-4 bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+          eosguide
+        </h4>
+        <p class="text-gray-400 text-sm font-light">
+          We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.
+        </p>
+      
+
+    </div>
+
+       <!-- Contact -->
+    <div class="text-center mb-6">
+      <p class="text-gray-300 text-sm font-light">
+        Have a question, suggestion, or request?
+      </p>
+      <p class="text-gray-200 text-sm font-light">
+        Email: <a href="/cdn-cgi/l/email-protection#274e4941486742485440524e43420944484a" class="text-cyan-300 hover:text-cyan-400 underline">
+          <span class="__cf_email__" data-cfemail="a3cacdc5cce3c6ccd0c4d6cac7c68dc0ccce">[email&#160;protected]</span>
+        </a>
+      </p>
+    </div>
+
+    <div class="text-center mb-6">
+      <p class="text-gray-300 text-sm font-light">© 2025 eosguide. Information only. We're not affiliated with the programs we link to and we don't give legal, financial, or tax advice.</p>
+    </div>
+
+  </div>
+</footer>
+
+
+<button id="backToTop"
+        class="px-3 py-2 rounded-full bg-purple-600 text-white text-xs font-semibold shadow-lg
+               hover:bg-purple-700 hover:scale-105 transition-all duration-200 fixed right-6 bottom-6 z-40 hidden">
+  ↑ Top
+</button>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Categories for the filter buttons
+const categories = [
+  { 
+    key: 'all', 
+    name: 'All Opportunities', 
+    icon: '✨', 
+    color: 'from-cyan-600 to-blue-600',
+    description: 'Browse all available opportunities'
+  },
+  { 
+    key: 'saved', 
+    name: 'My Saved', 
+    icon: '🔖', 
+    color: 'from-pink-600 to-rose-600',
+    description: 'Opportunities you\'ve bookmarked'
+  },
+  { 
+    key: 'ending', 
+    name: 'Ending Soon', 
+    icon: '⏰', 
+    color: 'from-orange-600 to-red-600',
+    description: 'Deadlines within 30 days'
+  }
+];
+
+  // This will be filled from your JSON file
+  let opportunities = [];
+
+  let currentCategory = 'all';
+  let currentSearch = '';
+  let categoriesExpanded = false;
+  let savedOpportunities = JSON.parse(localStorage.getItem('eosguide-saved') || '[]');
+
+  // Turn CSV row (now JSON) into the shape the UI expects
+  function calculateDaysLeft(deadlineStr) {
+    if (!deadlineStr) return -1;
+
+    const raw = String(deadlineStr).trim();
+    if (!raw) return -1;
+
+    const lower = raw.toLowerCase();
+    if (['ongoing','none','n/a','na'].includes(lower)) return 999;
+    if (lower.includes('rolling') || lower.includes('varies') || lower.includes('tbd')) return 999;
+
+    // Try native Date parsing first (handles ISO like 2026-01-15)
+    const parsedMs = Date.parse(raw);
+    if (!Number.isNaN(parsedMs)) {
+      const deadlineDate = new Date(parsedMs);
+      const today = new Date();
+      deadlineDate.setHours(0,0,0,0);
+      today.setHours(0,0,0,0);
+      const diffMs = deadlineDate - today;
+      return Math.round(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    // Fallback: MM/DD/YYYY
+    const parts = raw.split('/');
+    if (parts.length !== 3) return -1;
+
+    const month = parseInt(parts[0], 10);
+    const day = parseInt(parts[1], 10);
+    const year = parseInt(parts[2], 10);
+    if (!month || !day || !year) return -1;
+
+    const deadlineDate = new Date(year, month - 1, day);
+    const today = new Date();
+    deadlineDate.setHours(0,0,0,0);
+    today.setHours(0,0,0,0);
+    const diffMs = deadlineDate - today;
+    return Math.round(diffMs / (1000 * 60 * 60 * 24));
+  }
+
+
+  // CHANGE 1: Updated loadOpportunities to use JSON instead of CSV
+  async function loadOpportunities() {
+    try {
+      const response = await fetch('data/opportunities.json');
+      if (!response.ok) {
+        throw new Error('Failed to load opportunities');
+      }
+      const data = await response.json();
+      opportunities = data.map(opp => ({
+        id: opp.id || opp.title,
+        title: opp.title,
+        url: opp.url,
+        category: opp.category,
+        program_type: opp.program_type || opp.category,
+        geography: opp.state === 'Nationwide' ? 'national' : 'state',
+        who_qualifies: opp.description,
+        description: opp.description,
+        how_to_apply: 'Visit official link',
+        deadline: opp.deadline,
+        daysLeft: opp.urgencyDays || calculateDaysLeft(opp.deadline),
+        proof_required: opp.proofRequired || opp.proof_required || 'Unknown',
+        amount: opp.amount,
+        source: opp.url,
+        state: opp.state,
+        difficulty: opp.difficulty || 'Medium',
+        value: opp.value || 'fair',
+        featured: opp.featured || false,
+        urgencyDays: opp.urgencyDays
+      }));
+      
+      console.log(`✅ Loaded ${opportunities.length} opportunities`);
+      renderOpportunities();
+        updateStateDropdownCounts();
+    } catch (error) {
+      console.error('Error loading opportunities:', error);
+      document.getElementById('opportunitiesGrid').innerHTML = `
+        <div class="text-center py-12">
+          <p class="text-gray-600">Unable to load opportunities. Please try again later.</p>
+        </div>
+      `;
+    }
+  }
+function updateStateDropdownCounts() {
+    const stateSelector = document.getElementById('stateSelector');
+    if (!stateSelector) return;
+    
+    // Count opportunities by state
+    const stateCounts = {};
+    let nationwideCount = 0;
+    
+    opportunities.forEach(opp => {
+      const state = opp.state;
+      if (state === 'Nationwide') {
+        nationwideCount++;
+      } else {
+        stateCounts[state] = (stateCounts[state] || 0) + 1;
+      }
+    });
+    
+    // Update each option with counts
+    Array.from(stateSelector.options).forEach(option => {
+      const value = option.value;
+      
+      if (value === '') {
+        // "All States" - show total count of everything
+        const totalCount = opportunities.length;
+        option.textContent = `All States (${totalCount})`;
+        
+      } else if (value === 'Nationwide') {
+        // "Nationwide Only" - show only nationwide opportunities
+        option.textContent = `Nationwide Only (${nationwideCount})`;
+        
+      } else {
+        // Individual state - show ONLY state-specific count (excludes nationwide)
+        const stateAbbrev = value;
+        const fullStateName = stateMapping[stateAbbrev];
+        
+        // Count only opportunities specific to this state (not nationwide)
+        let stateSpecificCount = 0;
+        opportunities.forEach(opp => {
+          if (opp.state === stateAbbrev || opp.state === fullStateName) {
+            stateSpecificCount++;
+          }
+        });
+        
+        option.textContent = `${fullStateName} (${stateSpecificCount})`;
+      }
+    });
+  }
+
+  function renderCategories() {
+    const grid = document.getElementById('categoriesGrid');
+    const visible = categoriesExpanded ? categories : categories.slice(0, 6);
+
+    grid.innerHTML = visible.map((cat, idx) => `
+      <button onclick="filterCategory('${cat.key}')" class="category-btn animate-fadeInUp delay-${idx * 50} p-3 rounded-2xl transition-all duration-300 hover:scale-105 group text-left ${currentCategory === cat.key ? 'bg-white shadow-xl ring-2 ring-purple-500' : 'bg-white/70 hover:bg-white hover:shadow-lg'}" data-category="${cat.key}">
+        <div class="text-3xl mb-1 group-hover:scale-110 transition-transform duration-300">${cat.icon}</div>
+        <div class="text-xs font-bold bg-gradient-to-r ${cat.color} bg-clip-text text-transparent leading-tight">${cat.name}</div>
+      </button>
+    `).join('');
+
+    document.getElementById('toggleText').textContent = categoriesExpanded ? 'Show Less' : 'Show All';
+    document.getElementById('toggleIcon').style.transform = categoriesExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+
+  function toggleCategories() {
+    categoriesExpanded = !categoriesExpanded;
+    renderCategories();
+  }
+
+  function toggleSaved(oppId) {
+    if (savedOpportunities.includes(oppId)) {
+      savedOpportunities = savedOpportunities.filter(id => id !== oppId);
+    } else {
+      savedOpportunities.push(oppId);
+    }
+    localStorage.setItem('eosguide-saved', JSON.stringify(savedOpportunities));
+    renderOpportunities();
+  }
+
+  // CHANGE 2: Added helper functions for badges
+  function getUrgencyBadge(urgencyDays, daysLeft) {
+    const days = urgencyDays || daysLeft;
+    if (!days || days < 0 || days > 900) return '';
+    
+    if (days <= 7) {
+      return `<div class="flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full text-xs font-bold animate-pulse">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>🔥 ${days}d left</span>
+      </div>`;
+    } else if (days <= 30) {
+      return `<div class="flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full text-xs font-bold">
+        <span>⏰ ${days}d left</span>
+      </div>`;
+    } else if (days <= 60) {
+      return `<div class="flex items-center space-x-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">
+        <span>📅 ${days}d</span>
+      </div>`;
+    }
+    return '';
+  }
+
+  function getValueBadge(value, featured) {
+    if (featured) {
+      return '<span class="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-xs font-bold border-2 border-purple-300">⭐ FEATURED</span>';
+    }
+    
+    if (value === 'excellent') {
+      return '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">⭐ EXCELLENT</span>';
+    } else if (value === 'good') {
+      return '<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">✓ GOOD</span>';
+    } else if (value === 'fair') {
+      return '<span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">~ FAIR</span>';
+    }
+    return '';
+  }
+
+  function formatDeadline(deadline) {
+    if (!deadline) return 'No deadline';
+    
+    try {
+      // Parse the date
+      const date = new Date(deadline);
+      
+      // Format as "Jan 15, 2026"
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    } catch (error) {
+      return deadline; // If parsing fails, return original
+    }
+  }
+
+// State mapping: converts abbreviations to full names
+const stateMapping = {
+  'AL': 'Alabama',
+  'AK': 'Alaska',
+  'AZ': 'Arizona',
+  'AR': 'Arkansas',
+  'CA': 'California',
+  'CO': 'Colorado',
+  'CT': 'Connecticut',
+  'DE': 'Delaware',
+  'FL': 'Florida',
+  'GA': 'Georgia',
+  'HI': 'Hawaii',
+  'ID': 'Idaho',
+  'IL': 'Illinois',
+  'IN': 'Indiana',
+  'IA': 'Iowa',
+  'KS': 'Kansas',
+  'KY': 'Kentucky',
+  'LA': 'Louisiana',
+  'ME': 'Maine',
+  'MD': 'Maryland',
+  'MA': 'Massachusetts',
+  'MI': 'Michigan',
+  'MN': 'Minnesota',
+  'MS': 'Mississippi',
+  'MO': 'Missouri',
+  'MT': 'Montana',
+  'NE': 'Nebraska',
+  'NV': 'Nevada',
+  'NH': 'New Hampshire',
+  'NJ': 'New Jersey',
+  'NM': 'New Mexico',
+  'NY': 'New York',
+  'NC': 'North Carolina',
+  'ND': 'North Dakota',
+  'OH': 'Ohio',
+  'OK': 'Oklahoma',
+  'OR': 'Oregon',
+  'PA': 'Pennsylvania',
+  'RI': 'Rhode Island',
+  'SC': 'South Carolina',
+  'SD': 'South Dakota',
+  'TN': 'Tennessee',
+  'TX': 'Texas',
+  'UT': 'Utah',
+  'VT': 'Vermont',
+  'VA': 'Virginia',
+  'WA': 'Washington',
+  'WV': 'West Virginia',
+  'WI': 'Wisconsin',
+  'WY': 'Wyoming',
+  'DC': 'District of Columbia'
+};
+  function renderOpportunities() {
+    const grid = document.getElementById('opportunitiesGrid');
+    const noResults = document.getElementById('noResults');
+    const oppCount = document.getElementById('oppCount');
+    const categoryInfo = document.getElementById('categoryInfo');
+    const stateSelector = document.getElementById('stateSelector');
+    const selectedState = stateSelector ? stateSelector.value : 'MT';
+
+    const filtered = opportunities.filter(opp => {
+  // STATE FILTERING - Now handles both abbreviations and full names
+  let matchesState = true;
+  
+  if (selectedState && selectedState !== '') {
+    if (selectedState === 'Nationwide') {
+      // User selected "Nationwide Only" - show only nationwide opportunities
+      matchesState = opp.state === 'Nationwide';
+    } else {
+      // User selected a specific state
+      // Get the full state name from the abbreviation
+      const fullStateName = stateMapping[selectedState];
+      
+      // Show opportunities that are either:
+      // 1. Nationwide
+      // 2. Match the selected state code (e.g., "CA")
+      // 3. Match the full state name (e.g., "California")
+      matchesState = 
+        opp.state === 'Nationwide' || 
+        opp.state === selectedState || 
+        opp.state === fullStateName;
+    }
+  }
+  // If no state selected (empty string), show all opportunities
+  
+  const matchesCategory =
+    currentCategory === 'all' ||
+    (currentCategory === 'saved' ? savedOpportunities.includes(opp.id) : false) ||
+    (currentCategory === 'ending' && opp.daysLeft < 30 && opp.daysLeft > 0) ||
+    (currentCategory === 'national' && opp.geography === 'national') ||
+    opp.category === currentCategory;
+
+  const matchesSearch =
+    opp.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+    (opp.description || '').toLowerCase().includes(currentSearch.toLowerCase());
+
+  return matchesState && matchesCategory && matchesSearch;
+});
+// Sort to put featured opportunities first
+filtered.sort((a, b) => {
+  // Featured items come first
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+  
+  // Within featured/non-featured groups, sort by urgency (days left)
+  const aDays = a.daysLeft || 999;
+  const bDays = b.daysLeft || 999;
+  return aDays - bDays;
+});
+
+    oppCount.textContent = `(${filtered.length})`;
+
+    if (currentCategory !== 'all') {
+      const catInfo = categories.find(c => c.key === currentCategory);
+      if (catInfo) {
+        categoryInfo.classList.remove('hidden');
+        document.getElementById('catIcon').textContent = catInfo.icon;
+        document.getElementById('catName').textContent = catInfo.name;
+        document.getElementById('catDesc').textContent = catInfo.description;
+      }
+    } else {
+      categoryInfo.classList.add('hidden');
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      noResults.classList.remove('hidden');
+      document.getElementById('noResultsIcon').textContent = currentCategory === 'saved' ? '🔖' : '🔍';
+      document.getElementById('noResultsTitle').textContent = currentCategory === 'saved' ? 'No saved opportunities yet' : 'No opportunities found';
+      document.getElementById('noResultsText').textContent = currentCategory === 'saved'
+        ? 'Start saving opportunities to access them quickly later'
+        : 'Try adjusting your search or filters';
+      return;
+    }
+
+    noResults.classList.add('hidden');
+
+    grid.innerHTML = filtered.map((opp, index) => {
+      const catInfo = categories.find(c => c.key === opp.category) || { icon: '📋', name: opp.category };
+      const isSaved = savedOpportunities.includes(opp.id);
+
+      return `
+        <div class="animate-fadeInUp delay-${Math.min(index, 5) * 100} group bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/5 group-hover:to-pink-500/5 transition-all duration-300 rounded-3xl"></div>
+
+          <div class="relative">
+            <!-- CHANGE 3: Updated card header with badges -->
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex-1">
+                <div class="flex flex-wrap gap-2 mb-2">
+                  ${opp.featured || opp.value ? getValueBadge(opp.value, opp.featured) : ''}
+                  <div class="inline-flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-xs font-bold text-gray-700">
+                    <span>${catInfo.icon}</span>
+                    <span class="truncate">${catInfo.name}</span>
+                  </div>
+                  ${opp.geography === 'national' ? `
+                    <div class="inline-flex items-center space-x-1 px-2 py-1 rounded-full bg-blue-50 text-[10px] font-semibold text-blue-700 border border-blue-100">
+                      <span aria-hidden="true">🌐</span>
+                      <span>Nationwide</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+              <button onclick="toggleSaved('${opp.id}')" class="p-2 hover:bg-purple-50 rounded-full transition-colors flex-shrink-0" title="${isSaved ? 'Remove from saved' : 'Save for later'}">
+                ${isSaved
+                  ? '<svg class="w-5 h-5 text-purple-600 fill-purple-600" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>'
+                  : '<svg class="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>'
+                }
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-2">
+                ${getUrgencyBadge(opp.urgencyDays, opp.daysLeft)}
+              </div>
+              <div class="flex items-center space-x-1 text-green-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="font-black text-sm">${opp.amount}</span>
+              </div>
+            </div>
+
+            <h4 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-300">${opp.title}</h4>
+
+            <p class="text-sm text-gray-600 mb-4 line-clamp-2 font-light">${opp.description || ''}</p>
+
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600 font-normal">Deadline:</span>
+                <span class="font-bold text-gray-900">${formatDeadline(opp.deadline)}</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600 font-normal">Difficulty:</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold ${
+                  opp.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                  opp.difficulty === 'Hard' ? 'bg-red-100 text-red-700' :
+                  'bg-yellow-100 text-yellow-700'
+                }">${opp.difficulty}</span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600 font-normal">Location:</span>
+                <span class="font-bold text-gray-900">${opp.state}</span>
+              </div>
+            </div>
+
+            <a href="${opp.url}" target="_blank" rel="noopener noreferrer" class="block w-full text-center px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+              View Details →
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function filterCategory(category) {
+    // If clicking the already-active category, go back to "All Opportunities"
+    if (currentCategory === category && category !== 'all') {
+      currentCategory = 'all';
+    } else {
+      currentCategory = category;
+    }
+    
+    renderCategories();
+    renderOpportunities();
+  }
+
+  function filterOpportunities() {
+  currentSearch = document.getElementById('searchInput').value || '';
+
+  // Search override: whenever there is text, reset to All Opportunities
+  if (currentSearch.trim() !== '') {
+    currentCategory = 'all';
+  }
+
+  // Repaint the category cards so "All Opportunities" looks active
+  renderCategories();
+  renderOpportunities();
+}
+
+  function openNewsletter() {
+    const state = document.getElementById('stateSelector').value;
+    document.getElementById('selectedState').textContent = state;
+    document.getElementById('newsletterModal').classList.remove('hidden');
+  }
+
+  function closeNewsletter() {
+    document.getElementById('newsletterModal').classList.add('hidden');
+  }
+
+  function handleNewsletterSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value;
+    alert(`Thanks for subscribing! We'll send updates to ${email}`);
+    document.getElementById('emailInput').value = '';
+    closeNewsletter();
+  }
+
+  // Hook state dropdown so changing state re-runs the filter
+  const stateSelectorEl = document.getElementById('stateSelector');
+  if (stateSelectorEl) {
+    stateSelectorEl.addEventListener('change', function () {
+      renderOpportunities();
+    });
+  }
+
+  // Initial render
+  renderCategories();
+  loadOpportunities();
+    // Back to top button behavior
+  const backToTopBtn = document.getElementById('backToTop');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      backToTopBtn.style.display = 'block';
+    } else {
+      backToTopBtn.style.display = 'none';
+    }
+  });
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+
+  // ------- Sharing helpers -------
+  function getCurrentShareInfo() {
+    const url = window.location.href.split('#')[0];
+    const title = document.title || 'eosguide';
+    return { url, title };
+  }
+
+  function shareCopyPage() {
+    const { url } = getCurrentShareInfo();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          alert('Link copied to clipboard.');
+        })
+        .catch(() => {
+          alert('Copy failed. You can still copy from the address bar.');
+        });
+    } else {
+      prompt('Copy this link:', url);
+    }
+  }
+
+  function shareSmsPage(event) {
+    event.preventDefault();
+    const { url, title } = getCurrentShareInfo();
+    const body = encodeURIComponent(title + ' - ' + url);
+    window.location.href = 'sms:?&body=' + body;
+  }
+
+  function shareEmailPage(event) {
+    event.preventDefault();
+    const { url, title } = getCurrentShareInfo();
+    const subject = encodeURIComponent(title);
+    const body = encodeURIComponent('Thought this might be useful:\n\n' + url);
+    window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  }
+
+  function shareFacebookPage(event) {
+    event.preventDefault();
+    const { url } = getCurrentShareInfo();
+    const shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+    window.open(shareUrl, '_blank');
+  }
+
+  function shareRedditPage(event) {
+    event.preventDefault();
+    const { url, title } = getCurrentShareInfo();
+    const shareUrl = 'https://www.reddit.com/submit?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent(title);
+    window.open(shareUrl, '_blank');
+  }
+
+  // ------- Mobile bottom nav helpers -------
+  function mobileNavHome() {
+    filterCategory('all');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function mobileNavSaved() {
+    filterCategory('saved');
+    const oppSection = document.getElementById('opportunitiesGrid');
+    if (oppSection) {
+      oppSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function mobileNavInfo() {
+    const about = document.getElementById('about');
+    if (about) {
+      about.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+
+</script>
+
+
+<!-- Mobile bottom nav -->
+<nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 border-t border-gray-200 shadow-[0_-4px_12px_rgba(15,23,42,0.06)] md:hidden">
+  <div class="max-w-7xl mx-auto flex items-center justify-around py-2 text-xs text-gray-600">
+    <button type="button" onclick="mobileNavHome()" class="flex flex-col items-center gap-1 px-3 py-1">
+      <span aria-hidden="true">🏠</span>
+      <span>Home</span>
+    </button>
+    <button type="button" onclick="mobileNavSaved()" class="flex flex-col items-center gap-1 px-3 py-1">
+      <span aria-hidden="true">🔖</span>
+      <span>Saved</
