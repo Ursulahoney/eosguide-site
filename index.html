@@ -1137,6 +1137,10 @@ if (state) state.value = '';
   });
 }
 
+function mobileNavSaved() {
+  filterCategory('saved');
+  document.getElementById('saved-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 
 </script>
