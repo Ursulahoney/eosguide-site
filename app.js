@@ -1,580 +1,484 @@
-let ALL_ROWS = [];
-let CURRENT_STATE = "MT";
-let CURRENT_CATEGORY = "All";
+/* eosguide app logic
+   Source of truth for UI behaviors: filters, categories, saved items, share, mobile nav.
+   This file is loaded by index.html using <script defer src="app.js"></script>
+*/
+// Categories for the filter buttons
+    const categories = [
+      { key: 'all', name: 'All Opportunities', icon: '✨', color: 'from-cyan-600 to-blue-600', description: 'Browse all available opportunities' },
+      { key: 'saved', name: 'My Saved', icon: '🔖', color: 'from-pink-600 to-rose-600', description: 'Opportunities you\'ve bookmarked' },
+      { key: 'ending', name: 'Ending Soon', icon: '⏰', color: 'from-orange-600 to-red-600', description: 'Deadlines within 30 days' }
+    ];
 
-const priorityOrder = { high: 0, medium: 1, low: 2 };
-const speedOrder = { Fast: 0, Medium: 1, Slow: 2 };
+    let opportunities = [];
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let categoriesExpanded = false;
+    let savedOpportunities = JSON.parse(localStorage.getItem('eosguide-saved') || '[]');
 
-// Categories that feel like "money you might be owed or can claim"
-const MONEY_FIRST_CATEGORIES = new Set([
-  "Unclaimed money & refunds",
-  "Legal settlements & enforcement",
-  "Tax & property relief",
-  "Utilities & energy",
-  "Health & medical debt",
-  "Veterans",
-  "Tribal programs",
-  "Education & student help",
-  "Agriculture & rural",
-  "Business & jobs"
-]);
+    function calculateDaysLeft(deadlineStr) {
+      if (!deadlineStr) return -1;
+      const raw = String(deadlineStr).trim();
+      if (!raw) return -1;
+      const lower = raw.toLowerCase();
+      if (['ongoing','none','n/a','na'].includes(lower)) return 999;
+      if (lower.includes('rolling') || lower.includes('varies') || lower.includes('tbd')) return 999;
 
-// Help / assistance style categories (shown later / separate)
-const ASSISTANCE_CATEGORIES = new Set([
-  "Social services & safety net",
-  "Other"
-]);
+      const parsedMs = Date.parse(raw);
+      if (!Number.isNaN(parsedMs)) {
+        const deadlineDate = new Date(parsedMs);
+        const today = new Date();
+        deadlineDate.setHours(0,0,0,0);
+        today.setHours(0,0,0,0);
+        const diffMs = deadlineDate - today;
+        return Math.round(diffMs / (1000 * 60 * 60 * 24));
+      }
 
-// Category display order for sorting within groups
-const CATEGORY_PRIORITY = {
-  "Unclaimed money & refunds": 1,
-  "Legal settlements & enforcement": 2,
-  "Tax & property relief": 3,
-  "Utilities & energy": 4,
-  "Health & medical debt": 5,
-  "Veterans": 6,
-  "Tribal programs": 7,
-  "Education & student help": 8,
-  "Agriculture & rural": 9,
-  "Business & jobs": 10,
-  "Social services & safety net": 11,
-  "Other": 12
-};
+      const parts = raw.split('/');
+      if (parts.length !== 3) return -1;
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadData();
-  setupFilterListeners();
-});
+      const month = parseInt(parts[0], 10);
+      const day = parseInt(parts[1], 10);
+      const year = parseInt(parts[2], 10);
+      if (!month || !day || !year) return -1;
 
-function loadData() {
-  Papa.parse("opportunities_tagged_with_state.csv", {
-    header: true,
-    skipEmptyLines: true,
-    download: true,
-    complete: (results) => {
-      ALL_ROWS = results.data || [];
-      initStateSelector();
-      initCategoryChips();
-      renderAll();
-    },
-    error: (err) => {
-      console.error("Error loading CSV:", err);
+      const deadlineDate = new Date(year, month - 1, day);
+      const today = new Date();
+      deadlineDate.setHours(0,0,0,0);
+      today.setHours(0,0,0,0);
+      const diffMs = deadlineDate - today;
+      return Math.round(diffMs / (1000 * 60 * 60 * 24));
     }
-  });
-}
 
-function setupFilterListeners() {
-  const searchInput = document.getElementById("search-input");
-  const speedSelect = document.getElementById("speed-select");
-  const difficultySelect = document.getElementById("difficulty-select");
-  const proofSelect = document.getElementById("proof-select");
-  const stateSelect = document.getElementById("state-select");
-  const clearFiltersButton = document.getElementById("clear-filters-button");
+    async function loadOpportunities() {
+      try {
+        const response = await fetch('/data/opportunities.json');
+        if (!response.ok) throw new Error('Failed to load opportunities');
 
-  // OPTION A: search overrides category
-  searchInput.addEventListener(
-    "input",
-    debounce(() => {
-      const value = searchInput.value;
+        const data = await response.json();
+        opportunities = data.map(opp => ({
+          id: opp.id || opp.title,
+          title: opp.title,
+          url: opp.url,
+          category: opp.category,
+          program_type: opp.program_type || opp.category,
+          geography: opp.state === 'Nationwide' ? 'national' : 'state',
+          who_qualifies: opp.description,
+          description: opp.description,
+          how_to_apply: 'Visit official link',
+          deadline: opp.deadline,
+          daysLeft: opp.urgencyDays || calculateDaysLeft(opp.deadline),
+          proof_required: opp.proofRequired || opp.proof_required || 'Unknown',
+          amount: opp.amount,
+          source: opp.url,
+          state: opp.state,
+          difficulty: opp.difficulty || 'Medium',
+          value: opp.value || 'fair',
+          featured: opp.featured || false,
+          urgencyDays: opp.urgencyDays
+        }));
 
-      // When user is typing anything, reset category to All
-      if (value.trim() !== "") {
-        CURRENT_CATEGORY = "All";
+        renderOpportunities();
+        updateStateDropdownCounts();
+      } catch (error) {
+        console.error('Error loading opportunities:', error);
+        document.getElementById('opportunitiesGrid').innerHTML = `
+          <div class="text-center py-12">
+            <p class="text-gray-600">Unable to load opportunities. Please try again later.</p>
+          </div>
+        `;
+      }
+    }
 
-        const chips = document.querySelectorAll("#category-chips .chip");
-        chips.forEach((el) => el.classList.remove("chip-active"));
+    const stateMapping = {
+      'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California','CO':'Colorado','CT':'Connecticut','DE':'Delaware',
+      'FL':'Florida','GA':'Georgia','HI':'Hawaii','ID':'Idaho','IL':'Illinois','IN':'Indiana','IA':'Iowa','KS':'Kansas','KY':'Kentucky',
+      'LA':'Louisiana','ME':'Maine','MD':'Maryland','MA':'Massachusetts','MI':'Michigan','MN':'Minnesota','MS':'Mississippi','MO':'Missouri',
+      'MT':'Montana','NE':'Nebraska','NV':'Nevada','NH':'New Hampshire','NJ':'New Jersey','NM':'New Mexico','NY':'New York','NC':'North Carolina',
+      'ND':'North Dakota','OH':'Ohio','OK':'Oklahoma','OR':'Oregon','PA':'Pennsylvania','RI':'Rhode Island','SC':'South Carolina','SD':'South Dakota',
+      'TN':'Tennessee','TX':'Texas','UT':'Utah','VT':'Vermont','VA':'Virginia','WA':'Washington','WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming',
+      'DC':'District of Columbia'
+    };
 
-        const firstChip = document.querySelector("#category-chips .chip");
-        if (firstChip) {
-          firstChip.classList.add("chip-active");
+    function updateStateDropdownCounts() {
+      const stateSelector = document.getElementById('stateSelector');
+      if (!stateSelector) return;
+
+      let nationwideCount = 0;
+      opportunities.forEach(opp => { if (opp.state === 'Nationwide') nationwideCount++; });
+
+      Array.from(stateSelector.options).forEach(option => {
+        const value = option.value;
+        if (value === '') {
+          option.textContent = `All States (${opportunities.length})`;
+        } else if (value === 'Nationwide') {
+          option.textContent = `Nationwide Only (${nationwideCount})`;
+        } else {
+          const fullStateName = stateMapping[value];
+          let stateSpecificCount = 0;
+          opportunities.forEach(opp => {
+            if (opp.state === value || opp.state === fullStateName) stateSpecificCount++;
+          });
+          option.textContent = `${fullStateName} (${stateSpecificCount})`;
         }
-      }
-
-      renderAll();
-    }, 250)
-  );
-
-  speedSelect.addEventListener("change", renderAll);
-  difficultySelect.addEventListener("change", renderAll);
-  proofSelect.addEventListener("change", renderAll);
-
-  stateSelect.addEventListener("change", () => {
-    CURRENT_STATE = stateSelect.value;
-    renderAll();
-  });
-
-  clearFiltersButton.addEventListener("click", () => {
-    resetFilters();
-    renderAll();
-  });
-}
-
-function resetFilters() {
-  document.getElementById("search-input").value = "";
-  document.getElementById("speed-select").value = "";
-  document.getElementById("difficulty-select").value = "";
-  document.getElementById("proof-select").value = "";
-  CURRENT_CATEGORY = "All";
-
-  document
-    .querySelectorAll("#category-chips .chip")
-    .forEach((chip) => chip.classList.remove("chip-active"));
-
-  const firstChip = document.querySelector("#category-chips .chip");
-  if (firstChip) {
-    firstChip.classList.add("chip-active");
-  }
-}
-
-function initStateSelector() {
-  const stateSelect = document.getElementById("state-select");
-  const states = Array.from(
-    new Set(ALL_ROWS.map((row) => (row.state || "").trim()).filter(Boolean))
-  ).sort();
-
-  stateSelect.innerHTML = "";
-  states.forEach((state) => {
-    const opt = document.createElement("option");
-    opt.value = state;
-    opt.textContent = state;
-    stateSelect.appendChild(opt);
-  });
-
-  if (states.includes("MT")) {
-    stateSelect.value = "MT";
-    CURRENT_STATE = "MT";
-  } else if (states.length > 0) {
-    stateSelect.value = states[0];
-    CURRENT_STATE = states[0];
-  }
-}
-
-function initCategoryChips() {
-  const container = document.getElementById("category-chips");
-  container.innerHTML = "";
-
-  const categories = Array.from(
-    new Set(
-      ALL_ROWS.map((row) => (row.category || "").trim()).filter(Boolean)
-    )
-  ).sort((a, b) => {
-    const aRank = CATEGORY_PRIORITY[a] ?? 999;
-    const bRank = CATEGORY_PRIORITY[b] ?? 999;
-    return aRank - bRank;
-  });
-
-  const allChip = createChipElement("All");
-  allChip.classList.add("chip-active");
-  container.appendChild(allChip);
-
-  categories.forEach((cat) => {
-    const chip = createChipElement(cat);
-    container.appendChild(chip);
-  });
-}
-
-function createChipElement(label) {
-  const chip = document.createElement("button");
-  chip.type = "button";
-  chip.className = "chip";
-  chip.textContent = label;
-  chip.dataset.category = label;
-
-  chip.addEventListener("click", () => {
-    CURRENT_CATEGORY = label;
-    document
-      .querySelectorAll("#category-chips .chip")
-      .forEach((el) => el.classList.remove("chip-active"));
-    chip.classList.add("chip-active");
-    renderAll();
-  });
-
-  return chip;
-}
-
-function renderAll() {
-  const filtered = applyFilters();
-  renderSpotlight(filtered);
-  renderGroupedResults(filtered);
-}
-
-function applyFilters() {
-  const searchValue = document
-    .getElementById("search-input")
-    .value.trim()
-    .toLowerCase();
-  const speedValue = document.getElementById("speed-select").value;
-  const difficultyValue = document.getElementById("difficulty-select").value;
-  const proofValue = document.getElementById("proof-select").value;
-
-  let rows = ALL_ROWS.filter((row) => {
-    if (CURRENT_STATE && (row.state || "").trim() !== CURRENT_STATE) {
-      return false;
-    }
-
-    if (CURRENT_CATEGORY && CURRENT_CATEGORY !== "All") {
-      if ((row.category || "").trim() !== CURRENT_CATEGORY) return false;
-    }
-
-    if (speedValue && (row.money_speed || "").trim() !== speedValue) {
-      return false;
-    }
-
-    if (
-      difficultyValue &&
-      (row.difficulty || "").trim() !== difficultyValue
-    ) {
-      return false;
-    }
-
-    if (proofValue && (row.proof_simple || "").trim() !== proofValue) {
-      return false;
-    }
-
-    if (searchValue) {
-      const haystack =
-        (row.title || "") +
-        " " +
-        (row.description_short || "") +
-        " " +
-        (row.company_or_agency || "");
-      if (!haystack.toLowerCase().includes(searchValue)) {
-        return false;
-      }
-    }
-
-    return true;
-  });
-
-  rows.sort((a, b) => {
-    const catA = a.category || "";
-    const catB = b.category || "";
-    const catRankA = CATEGORY_PRIORITY[catA] ?? 999;
-    const catRankB = CATEGORY_PRIORITY[catB] ?? 999;
-    if (catRankA !== catRankB) return catRankA - catRankB;
-
-    const prA = (a.priority_for_user || "").toLowerCase();
-    const prB = (b.priority_for_user || "").toLowerCase();
-    const prScoreA = priorityOrder[prA] ?? 99;
-    const prScoreB = priorityOrder[prB] ?? 99;
-    if (prScoreA !== prScoreB) return prScoreA - prScoreB;
-
-    const spA = a.money_speed || "";
-    const spB = b.money_speed || "";
-    const spScoreA = speedOrder[spA] ?? 99;
-    const spScoreB = speedOrder[spB] ?? 99;
-    if (spScoreA !== spScoreB) return spScoreA - spScoreB;
-
-    const dA = a.date_found || "";
-    const dB = b.date_found || "";
-    if (dA > dB) return -1;
-    if (dA < dB) return 1;
-    return 0;
-  });
-
-  return rows;
-}
-
-function renderSpotlight(rows) {
-  const container = document.getElementById("spotlight-carousel");
-  container.innerHTML = "";
-
-  const spotlight = rows.filter((row) => {
-    const cat = row.category || "";
-    if (!MONEY_FIRST_CATEGORIES.has(cat)) return false;
-
-    const pr = (row.priority_for_user || "").toLowerCase();
-    const speed = row.money_speed || "";
-    const status = (row.status || "").toLowerCase();
-    const isHigh = pr === "high";
-    const isMed = pr === "medium";
-    const isFastish = speed === "Fast" || speed === "Medium";
-    const isOpen = !status || status === "open";
-
-    return isOpen && (isHigh || isMed) && isFastish;
-  });
-
-  const top = spotlight.slice(0, 8);
-
-  if (top.length === 0) {
-    const msg = document.createElement("div");
-    msg.className = "empty-message";
-    msg.textContent = "No spotlight programs match your filters yet.";
-    container.appendChild(msg);
-    return;
-  }
-
-  top.forEach((row) => {
-    const card = document.createElement("article");
-    card.className = "spotlight-card";
-
-    const header = document.createElement("div");
-    header.className = "spotlight-card-header";
-
-    const title = document.createElement("h3");
-    title.className = "spotlight-card-title";
-    title.textContent = row.title || "Untitled opportunity";
-
-    const desc = document.createElement("p");
-    desc.className = "spotlight-card-text";
-    desc.textContent =
-      (row.description_short || "").slice(0, 200) ||
-      "Program or refund worth checking.";
-
-    header.appendChild(title);
-    header.appendChild(desc);
-
-    const badges = document.createElement("div");
-    badges.className = "badge-row";
-
-    const catBadge = document.createElement("span");
-    catBadge.className = "badge";
-    catBadge.textContent = row.category || "Other";
-    badges.appendChild(catBadge);
-
-    if (row.money_speed) {
-      const sp = document.createElement("span");
-      sp.className = "badge";
-      sp.textContent = "Speed: " + row.money_speed;
-      badges.appendChild(sp);
-    }
-
-    if (row.difficulty) {
-      const diff = document.createElement("span");
-      diff.className = "badge badge-outline";
-      diff.textContent = "Difficulty: " + row.difficulty;
-      badges.appendChild(diff);
-    }
-
-    const footer = document.createElement("div");
-    footer.className = "spotlight-card-footer";
-
-    const stateLabel = document.createElement("span");
-    stateLabel.className = "section-subtitle";
-    stateLabel.textContent = row.state || "";
-
-    const actions = document.createElement("div");
-    const infoUrl = (row.url_info || "").trim();
-    const claimUrl = (row.url_claim || "").trim();
-    const mainUrl = claimUrl || infoUrl;
-
-    if (mainUrl) {
-      const btn = document.createElement("button");
-      btn.className = "link-button";
-      btn.textContent = "Open official page";
-      btn.addEventListener("click", () => {
-        window.open(mainUrl, "_blank");
       });
-      actions.appendChild(btn);
     }
 
-    footer.appendChild(stateLabel);
-    footer.appendChild(actions);
+    function renderCategories() {
+      const grid = document.getElementById('categoriesGrid');
+      const visible = categoriesExpanded ? categories : categories.slice(0, 6);
 
-    card.appendChild(header);
-    card.appendChild(badges);
-    card.appendChild(footer);
+      grid.innerHTML = visible.map((cat, idx) => `
+        <button onclick="filterCategory('${cat.key}')"
+          class="category-btn animate-fadeInUp delay-${idx * 50} p-3 rounded-2xl transition-all duration-300 hover:scale-105 group text-left ${currentCategory === cat.key ? 'bg-white shadow-xl ring-2 ring-purple-500' : 'bg-white/70 hover:bg-white hover:shadow-lg'}"
+          data-category="${cat.key}">
+          <div class="text-3xl mb-1 group-hover:scale-110 transition-transform duration-300">${cat.icon}</div>
+          <div class="text-xs font-bold bg-gradient-to-r ${cat.color} bg-clip-text text-transparent leading-tight">${cat.name}</div>
+        </button>
+      `).join('');
 
-    container.appendChild(card);
-  });
-}
-
-function renderGroupedResults(rows) {
-  const moneyList = document.getElementById("money-first-list");
-  const assistList = document.getElementById("assistance-list");
-  const moneyBlock = document.getElementById("money-first-block");
-  const assistBlock = document.getElementById("assistance-block");
-  const countLabel = document.getElementById("results-count");
-
-  moneyList.innerHTML = "";
-  assistList.innerHTML = "";
-
-  countLabel.textContent = `${rows.length} opportunities found`;
-
-  if (rows.length === 0) {
-    moneyBlock.style.display = "none";
-    assistBlock.style.display = "none";
-
-    const empty = document.createElement("div");
-    empty.className = "empty-message";
-    empty.textContent =
-      "No results match your filters yet. Try clearing filters or changing your search.";
-    moneyList.appendChild(empty);
-    return;
-  }
-
-  const moneyRows = [];
-  const assistRows = [];
-
-  rows.forEach((row) => {
-    const cat = row.category || "";
-    if (ASSISTANCE_CATEGORIES.has(cat)) {
-      assistRows.push(row);
-    } else {
-      moneyRows.push(row);
+      document.getElementById('toggleText').textContent = categoriesExpanded ? 'Show Less' : 'Show All';
+      document.getElementById('toggleIcon').style.transform = categoriesExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
     }
-  });
 
-  if (moneyRows.length > 0) {
-    moneyBlock.style.display = "";
-    moneyRows.forEach((row) => {
-      const card = buildResultCard(row);
-      moneyList.appendChild(card);
+    function toggleCategories() {
+      categoriesExpanded = !categoriesExpanded;
+      renderCategories();
+    }
+
+    function toggleSaved(oppId) {
+      if (savedOpportunities.includes(oppId)) {
+        savedOpportunities = savedOpportunities.filter(id => id !== oppId);
+      } else {
+        savedOpportunities.push(oppId);
+      }
+      localStorage.setItem('eosguide-saved', JSON.stringify(savedOpportunities));
+      renderOpportunities();
+    }
+
+    function getUrgencyBadge(urgencyDays, daysLeft) {
+      const days = urgencyDays || daysLeft;
+      if (!days || days < 0 || days > 900) return '';
+
+      if (days <= 7) {
+        return `<div class="flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full text-xs font-bold animate-pulse">
+          <span>🔥 ${days}d left</span>
+        </div>`;
+      } else if (days <= 30) {
+        return `<div class="flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full text-xs font-bold">
+          <span>⏰ ${days}d left</span>
+        </div>`;
+      } else if (days <= 60) {
+        return `<div class="flex items-center space-x-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">
+          <span>📅 ${days}d</span>
+        </div>`;
+      }
+      return '';
+    }
+
+    function getValueBadge(value, featured) {
+      if (featured) return '<span class="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-xs font-bold border-2 border-purple-300">⭐ FEATURED</span>';
+      if (value === 'excellent') return '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">⭐ EXCELLENT</span>';
+      if (value === 'good') return '<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">✓ GOOD</span>';
+      if (value === 'fair') return '<span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">~ FAIR</span>';
+      return '';
+    }
+
+    function formatDeadline(deadline) {
+      if (!deadline) return 'No deadline';
+      try {
+        const date = new Date(deadline);
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch {
+        return deadline;
+      }
+    }
+
+    function renderOpportunities() {
+      const grid = document.getElementById('opportunitiesGrid');
+      const noResults = document.getElementById('noResults');
+      const oppCount = document.getElementById('oppCount');
+      const categoryInfo = document.getElementById('categoryInfo');
+      const stateSelector = document.getElementById('stateSelector');
+      const selectedState = stateSelector ? stateSelector.value : '';
+
+      const filtered = opportunities.filter(opp => {
+        let matchesState = true;
+
+        if (selectedState && selectedState !== '') {
+          if (selectedState === 'Nationwide') {
+            matchesState = opp.state === 'Nationwide';
+          } else {
+            const fullStateName = stateMapping[selectedState];
+            matchesState =
+              opp.state === 'Nationwide' ||
+              opp.state === selectedState ||
+              opp.state === fullStateName;
+          }
+        }
+
+        const matchesCategory =
+          currentCategory === 'all' ||
+          (currentCategory === 'saved' ? savedOpportunities.includes(opp.id) : false) ||
+          (currentCategory === 'ending' && opp.daysLeft < 30 && opp.daysLeft > 0) ||
+          (currentCategory === 'national' && opp.geography === 'national') ||
+          opp.category === currentCategory;
+
+        const matchesSearch =
+          opp.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          (opp.description || '').toLowerCase().includes(currentSearch.toLowerCase());
+
+        return matchesState && matchesCategory && matchesSearch;
+      });
+
+      filtered.sort((a, b) => {
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        const aDays = a.daysLeft || 999;
+        const bDays = b.daysLeft || 999;
+        return aDays - bDays;
+      });
+
+      oppCount.textContent = `(${filtered.length})`;
+
+      if (currentCategory !== 'all') {
+        const catInfo = categories.find(c => c.key === currentCategory);
+        if (catInfo) {
+          categoryInfo.classList.remove('hidden');
+          document.getElementById('catIcon').textContent = catInfo.icon;
+          document.getElementById('catName').textContent = catInfo.name;
+          document.getElementById('catDesc').textContent = catInfo.description;
+        }
+      } else {
+        categoryInfo.classList.add('hidden');
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        noResults.classList.remove('hidden');
+        document.getElementById('noResultsIcon').textContent = currentCategory === 'saved' ? '🔖' : '🔍';
+        document.getElementById('noResultsTitle').textContent = currentCategory === 'saved' ? 'No saved opportunities yet' : 'No opportunities found';
+        document.getElementById('noResultsText').textContent = currentCategory === 'saved'
+          ? 'Start saving opportunities to access them quickly later'
+          : 'Try adjusting your search or filters';
+        return;
+      }
+
+      noResults.classList.add('hidden');
+
+      grid.innerHTML = filtered.map((opp, index) => {
+        const catInfo = categories.find(c => c.key === opp.category) || { icon: '📋', name: opp.category };
+        const isSaved = savedOpportunities.includes(opp.id);
+
+        return `
+          <div class="animate-fadeInUp delay-${Math.min(index, 5) * 100} group bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/5 group-hover:to-pink-500/5 transition-all duration-300 rounded-3xl"></div>
+
+            <div class="relative">
+              <!-- FIX: pin save icon so long badges don't push it offscreen -->
+              <div class="relative mb-3 pr-12">
+                <div class="flex flex-wrap gap-2 mb-2">
+                  ${opp.featured || opp.value ? getValueBadge(opp.value, opp.featured) : ''}
+                  <div class="inline-flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-xs font-bold text-gray-700">
+                    <span>${catInfo.icon}</span>
+                    <span class="truncate">${catInfo.name}</span>
+                  </div>
+                  ${opp.geography === 'national' ? `
+                    <div class="inline-flex items-center space-x-1 px-2 py-1 rounded-full bg-blue-50 text-[10px] font-semibold text-blue-700 border border-blue-100">
+                      <span aria-hidden="true">🌐</span>
+                      <span>Nationwide</span>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <button type="button"
+                        onclick="toggleSaved('${opp.id}')"
+                        class="absolute top-0 right-0 p-2 hover:bg-purple-50 rounded-full transition-colors"
+                        title="${isSaved ? 'Remove from saved' : 'Save for later'}"
+                        aria-label="${isSaved ? 'Unsave' : 'Save'}">
+                  ${isSaved
+                    ? '<svg class="w-5 h-5 text-purple-600 fill-purple-600" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>'
+                    : '<svg class="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>'
+                  }
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-2">
+                  ${getUrgencyBadge(opp.urgencyDays, opp.daysLeft)}
+                </div>
+                <div class="flex items-center space-x-1 text-green-600">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span class="font-black text-sm">${opp.amount || ''}</span>
+                </div>
+              </div>
+
+              <h4 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-300">${opp.title || ''}</h4>
+              <p class="text-sm text-gray-600 mb-4 line-clamp-2 font-light">${opp.description || ''}</p>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600 font-normal">Deadline:</span>
+                  <span class="font-bold text-gray-900">${formatDeadline(opp.deadline)}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600 font-normal">Difficulty:</span>
+                  <span class="px-3 py-1 rounded-full text-xs font-bold ${
+                    opp.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                    opp.difficulty === 'Hard' ? 'bg-red-100 text-red-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }">${opp.difficulty || 'Medium'}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600 font-normal">Location:</span>
+                  <span class="font-bold text-gray-900">${opp.state || ''}</span>
+                </div>
+              </div>
+
+              <a href="${opp.url}" target="_blank" rel="noopener noreferrer"
+                 class="block w-full text-center px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300"
+                 style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                View Details →
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterCategory(category) {
+      if (currentCategory === category && category !== 'all') currentCategory = 'all';
+      else currentCategory = category;
+
+      renderCategories();
+      renderOpportunities();
+    }
+
+    function filterOpportunities() {
+      currentSearch = document.getElementById('searchInput').value || '';
+      if (currentSearch.trim() !== '') currentCategory = 'all';
+      renderCategories();
+      renderOpportunities();
+    }
+
+    function openNewsletter() {
+      const state = document.getElementById('stateSelector')?.value || '';
+      document.getElementById('selectedState').textContent = state || 'All States';
+      document.getElementById('newsletterModal').classList.remove('hidden');
+    }
+    function closeNewsletter() {
+      document.getElementById('newsletterModal').classList.add('hidden');
+    }
+    function handleNewsletterSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      alert(`Thanks for subscribing! We'll send updates to ${email}`);
+      document.getElementById('emailInput').value = '';
+      closeNewsletter();
+    }
+
+    const stateSelectorEl = document.getElementById('stateSelector');
+    if (stateSelectorEl) {
+      stateSelectorEl.addEventListener('change', function () {
+        renderOpportunities();
+      });
+    }
+
+    // Back to top
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      backToTopBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
     });
-  } else {
-    moneyBlock.style.display = "none";
-  }
-
-  if (assistRows.length > 0) {
-    assistBlock.style.display = "";
-    assistRows.forEach((row) => {
-      const card = buildResultCard(row);
-      assistList.appendChild(card);
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    // ------- Sharing helpers -------
+    function getCurrentShareInfo() {
+      const url = window.location.href.split('#')[0];
+      const title = document.title || 'eosguide';
+      return { url, title };
+    }
+    function shareCopyPage() {
+      const { url } = getCurrentShareInfo();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard.')).catch(() => alert('Copy failed. You can still copy from the address bar.'));
+      } else {
+        prompt('Copy this link:', url);
+      }
+    }
+    function shareSmsPage(event) {
+      event.preventDefault();
+      const { url, title } = getCurrentShareInfo();
+      const body = encodeURIComponent(title + ' - ' + url);
+      window.location.href = 'sms:?&body=' + body;
+    }
+    function shareEmailPage(event) {
+      event.preventDefault();
+      const { url, title } = getCurrentShareInfo();
+      const subject = encodeURIComponent(title);
+      const body = encodeURIComponent('Thought this might be useful:\n\n' + url);
+      window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+    }
+    function shareFacebookPage(event) {
+      event.preventDefault();
+      const { url } = getCurrentShareInfo();
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
+    }
+    function shareRedditPage(event) {
+      event.preventDefault();
+      const { url, title } = getCurrentShareInfo();
+      window.open('https://www.reddit.com/submit?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent(title), '_blank');
+    }
+
+    // ------- Mobile bottom nav helpers -------
+    function mobileNavHome() {
+      filterCategory('all');
+      const search = document.getElementById('searchInput');
+      if (search) search.value = '';
+      const state = document.getElementById('stateSelector');
+      if (state) state.value = '';
+      filterOpportunities();
+      document.getElementById('home-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function mobileNavSaved() {
+      filterCategory('saved');
+      document.getElementById('saved-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function mobileNavInfo() {
+      document.getElementById('info-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Initial render
+    renderCategories();
+    loadOpportunities();
+  function initApp() {
+    // Hook state dropdown so changing state re-runs the filter
+    const stateSelectorEl = document.getElementById('stateSelector');
+    if (stateSelectorEl) {
+      stateSelectorEl.addEventListener('change', function () {
+        renderOpportunities();
+      });
+    }
+
+    // Back to top
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        backToTopBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
+      });
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    renderCategories();
+    loadOpportunities();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
   } else {
-    assistBlock.style.display = "none";
+    initApp();
   }
-}
-
-function buildResultCard(row) {
-  const card = document.createElement("article");
-  card.className = "result-card";
-
-  const header = document.createElement("div");
-  header.className = "result-card-header";
-
-  const titleRow = document.createElement("div");
-  titleRow.className = "result-title-row";
-
-  const emojiSpan = document.createElement("span");
-  emojiSpan.className = "result-emoji";
-  emojiSpan.textContent = getCategoryEmoji(row.category || "");
-
-  const title = document.createElement("h3");
-  title.className = "result-title";
-  title.textContent = row.title || "Untitled opportunity";
-
-  titleRow.appendChild(emojiSpan);
-  titleRow.appendChild(title);
-
-  const agency = document.createElement("div");
-  agency.className = "result-agency";
-  agency.textContent = row.company_or_agency || "";
-
-  header.appendChild(titleRow);
-  if (agency.textContent) header.appendChild(agency);
-
-  const desc = document.createElement("p");
-  desc.className = "result-desc";
-  desc.textContent =
-    (row.description_short || "").slice(0, 240) ||
-    "Program or opportunity that may reduce bills or bring in money.";
-
-  const metaRow = document.createElement("div");
-  metaRow.className = "result-meta-row";
-
-  const catPill = document.createElement("span");
-  catPill.className = "pill";
-  catPill.textContent = row.category || "Other";
-  metaRow.appendChild(catPill);
-
-  if (row.money_speed) {
-    const sp = document.createElement("span");
-    sp.className =
-      "pill " + (row.money_speed === "Fast" ? "pill-fast" : "");
-    sp.textContent = row.money_speed + " money";
-    metaRow.appendChild(sp);
-  }
-
-  if (row.difficulty) {
-    const diff = document.createElement("span");
-    diff.className =
-      "pill " + (row.difficulty === "Hard" ? "pill-hard" : "");
-    diff.textContent = "Difficulty: " + row.difficulty;
-    metaRow.appendChild(diff);
-  }
-
-  if (row.proof_simple) {
-    const proof = document.createElement("span");
-    proof.className = "pill";
-    proof.textContent = "Paperwork: " + row.proof_simple;
-    metaRow.appendChild(proof);
-  }
-
-  if (row.state) {
-    const st = document.createElement("span");
-    st.className = "pill";
-    st.textContent = row.state;
-    metaRow.appendChild(st);
-  }
-
-  const actions = document.createElement("div");
-  actions.className = "result-actions";
-
-  const infoUrl = (row.url_info || "").trim();
-  const claimUrl = (row.url_claim || "").trim();
-
-  if (claimUrl) {
-    const a = document.createElement("a");
-    a.href = claimUrl;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.className = "result-link primary-link";
-    a.textContent = "Go to application / claim page";
-    actions.appendChild(a);
-  }
-
-  if (infoUrl && infoUrl !== claimUrl) {
-    const a2 = document.createElement("a");
-    a2.href = infoUrl;
-    a2.target = "_blank";
-    a2.rel = "noopener noreferrer";
-    a2.className = "result-link";
-    a2.textContent = "Read more details";
-    actions.appendChild(a2);
-  }
-
-  card.appendChild(header);
-  card.appendChild(desc);
-  card.appendChild(metaRow);
-  card.appendChild(actions);
-
-  return card;
-}
-
-function getCategoryEmoji(category) {
-  switch (category) {
-    case "Unclaimed money & refunds":
-      return "💵";
-    case "Legal settlements & enforcement":
-      return "📝";
-    case "Tax & property relief":
-      return "🏡";
-    case "Utilities & energy":
-      return "⚡";
-    case "Health & medical debt":
-      return "🏥";
-    case "Social services & safety net":
-      return "❤️";
-    case "Education & student help":
-      return "🎓";
-    case "Veterans":
-      return "🇺🇸";
-    case "Tribal programs":
-      return "🪶";
-    case "Agriculture & rural":
-      return "🚜";
-    case "Business & jobs":
-      return "💼";
-    default:
-      return "✨";
-  }
-}
-
-function debounce(fn, delay) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn.apply(null, args), delay);
-  };
-}
