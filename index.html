@@ -1118,8 +1118,9 @@ filtered.sort((a, b) => {
   if (search) search.value = '';
 
   // reset state dropdown if it exists (optional)
-  const state = document.getElementById('stateSelect');
-  if (state) state.value = 'all';
+ const state = document.getElementById('stateSelector');
+if (state) state.value = '';
+
 
   // re-run the filter so the UI refreshes
   if (typeof filterOpportunities === 'function') filterOpportunities();
