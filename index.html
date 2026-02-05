@@ -129,7 +129,7 @@
 
 
     <!-- Hero Section -->
-    <section class="relative z-10 px-4 py-8 sm:px-6 lg:px-8">
+    <section id="home-section" class="relative z-10 px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto text-center">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 leading-tight">
                 <span class="bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -285,7 +285,7 @@
     </section>
 
     <!-- Opportunities List -->
-    <section class="relative z-10 px-4 py-6 sm:px-6 lg:px-8 mb-20">
+    <section id="saved-section" class="relative z-10 px-4 py-6 sm:px-6 lg:px-8 mb-20">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                 <h3 class="text-2xl font-black text-gray-800">
@@ -368,6 +368,17 @@
         </div>
     </div>
 
+<!-- Info (section header for About + How it works + FAQ) -->
+<section id="info-section" class="relative z-10 px-4 sm:px-6 lg:px-8 pt-12">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-2xl sm:text-3xl font-black text-gray-900">Info</h2>
+    <p class="text-sm sm:text-base text-gray-700 mt-2">
+      What eosguide is, how it works, and common questions.
+    </p>
+  </div>
+</section>
+
+    
     <!-- About -->
     <section id="about" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-white/70 backdrop-blur-md">
       <div class="max-w-4xl mx-auto space-y-4">
@@ -1099,24 +1110,32 @@ filtered.sort((a, b) => {
 
   // ------- Mobile bottom nav helpers -------
   function mobileNavHome() {
-    filterCategory('all');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  // reset to "all" (so cards come back)
+  filterCategory('all');
 
-  function mobileNavSaved() {
-    filterCategory('saved');
-    const oppSection = document.getElementById('opportunitiesGrid');
-    if (oppSection) {
-      oppSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
+  // clear search box if it exists
+  const search = document.getElementById('searchInput');
+  if (search) search.value = '';
 
-  function mobileNavInfo() {
-    const about = document.getElementById('about');
-    if (about) {
-      about.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
+  // reset state dropdown if it exists (optional)
+  const state = document.getElementById('stateSelect');
+  if (state) state.value = 'all';
+
+  // re-run the filter so the UI refreshes
+  if (typeof filterOpportunities === 'function') filterOpportunities();
+
+  // scroll to hero section
+  document.getElementById('home-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+
+ function mobileNavInfo() {
+  document.getElementById('info-section')?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+}
+
 
 
 </script>
