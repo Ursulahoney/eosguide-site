@@ -181,7 +181,6 @@
     <main id="main">
 
 
-
     <!-- Hero Section -->
     <section id="hero" class="relative z-10 px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto text-center">
@@ -309,14 +308,8 @@
     <section id="browse-by-category" class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-black text-gray-800">Browse by Category</h2>
-                <button onclick="toggleCategories()" id="toggleBtn" class="flex items-center space-x-1 text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors">
-                    <span id="toggleText">Show All</span>
-                    <svg id="toggleIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-            </div>
+                <h2 class="text-xl font-black text-gray-800">Quick filters</h2>
+</div>
             
             <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 <!-- Categories will be rendered here -->
@@ -603,7 +596,6 @@ const categories = [
 
   let currentCategory = 'all';
   let currentSearch = '';
-  let categoriesExpanded = false;
   let savedOpportunities = JSON.parse(localStorage.getItem('eosguide-saved') || '[]');
 
   // Turn CSV row (now JSON) into the shape the UI expects
@@ -738,23 +730,20 @@ function updateStateDropdownCounts() {
 
   function renderCategories() {
     const grid = document.getElementById('categoriesGrid');
-    const visible = categoriesExpanded ? categories : categories.slice(0, 6);
+    if (!grid) return;
 
-    grid.innerHTML = visible.map((cat, idx) => `
-      <button onclick="filterCategory('${cat.key}')" class="category-btn animate-fadeInUp delay-${idx * 50} p-3 rounded-2xl transition-all duration-300 hover:scale-105 group text-left ${currentCategory === cat.key ? 'bg-white shadow-xl ring-2 ring-purple-500' : 'bg-white/70 hover:bg-white hover:shadow-lg'}" data-category="${cat.key}">
-        <div class="text-3xl mb-1 group-hover:scale-110 transition-transform duration-300">${cat.icon}</div>
-        <div class="text-xs font-bold bg-gradient-to-r ${cat.color} bg-clip-text text-transparent leading-tight">${cat.name}</div>
+    // These are "quick filters" (not a full category browser).
+    grid.innerHTML = categories.map((cat) => `
+      <button onclick="filterCategory('${cat.key}')" class="group w-full text-left bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-lg" aria-hidden="true">${cat.icon}</span>
+          <span class="font-bold text-gray-800">${cat.name}</span>
+        </div>
+        <p class="text-sm text-gray-500">${cat.description}</p>
       </button>
     `).join('');
-
-    document.getElementById('toggleText').textContent = categoriesExpanded ? 'Show Less' : 'Show All';
-    document.getElementById('toggleIcon').style.transform = categoriesExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
   }
 
-  function toggleCategories() {
-    categoriesExpanded = !categoriesExpanded;
-    renderCategories();
-  }
 
   function toggleSaved(oppId) {
     if (savedOpportunities.includes(oppId)) {
@@ -1178,7 +1167,6 @@ filtered.sort((a, b) => {
       about.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
-
 
 
 // ------- UI event wiring (keeps filters responsive) -------
