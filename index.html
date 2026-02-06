@@ -647,7 +647,7 @@ const categories = [
 
 
   // CHANGE 1: Updated loadOpportunities to use JSON instead of CSV
-  async function loadOpportunities() {
+  async async function loadOpportunities() {
     try {
       const response = await fetch('data/opportunities.json');
       if (!response.ok) {
@@ -754,7 +754,7 @@ function updateStateDropdownCounts() {
     const oppCount = document.getElementById('oppCount');
     const categoryInfo = document.getElementById('categoryInfo');
     const stateSelector = document.getElementById('stateSelector');
-    const selectedState = stateSelector ? stateSelector.value : 'MT';
+    const selectedState = stateSelector ? stateSelector.value : '';
 
     const filtered = opportunities.filter(opp => {
   // STATE FILTERING - Now handles both abbreviations and full names
@@ -961,9 +961,11 @@ filtered.sort((a, b) => {
   }
 
   // Initial render
-  renderCategories();
-  loadOpportunities();
-    // Back to top button behavior
+  document.addEventListener('DOMContentLoaded', function () {
+    renderCategories();
+    loadOpportunities();
+  });
+// Back to top button behavior
   const backToTopBtn = document.getElementById('backToTop');
 
   window.addEventListener('scroll', () => {
