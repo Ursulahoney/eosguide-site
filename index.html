@@ -912,11 +912,11 @@ const stateMapping = {
     (currentCategory === 'national' && opp.geography === 'national') ||
     opp.category === currentCategory;
 
-  const matchesSearch =
-    opp.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
-    (opp.description || '').toLowerCase().includes(currentSearch.toLowerCase());
+  const q = (currentSearch || '').toString().toLowerCase().trim();
+  const title = (opp.title || '').toString().toLowerCase();
+  const desc  = (opp.description || '').toString().toLowerCase();
 
-  return matchesState && matchesCategory && matchesSearch;
+  const matchesSearch = title.includes(q) || desc.includes(q);return matchesState && matchesCategory && matchesSearch;
 });
 // Sort to put featured opportunities first
 filtered.sort((a, b) => {
