@@ -272,7 +272,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         <label for="searchInput" class="sr-only">Search opportunities</label>
-                        <input type="text" id="searchInput" placeholder="Search any opportunity type..." class="flex-1 px-4 py-4 text-lg focus:outline-none font-light" onkeyup="filterOpportunities()">
+                        <input type="text" id="searchInput" placeholder="Search any opportunity type..." class="flex-1 px-4 py-4 text-lg focus:outline-none font-light">
                         <button type="button" onclick="filterOpportunities()" class="px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
                             Search
                         </button>
@@ -878,7 +878,7 @@ const stateMapping = {
     const oppCount = document.getElementById('oppCount');
     const categoryInfo = document.getElementById('categoryInfo');
     const stateSelector = document.getElementById('stateSelector');
-    const selectedState = stateSelector ? stateSelector.value : 'MT';
+    const selectedState = stateSelector ? stateSelector.value : '';
 
     const filtered = opportunities.filter(opp => {
   // STATE FILTERING - Now handles both abbreviations and full names
@@ -893,14 +893,9 @@ const stateMapping = {
       // Get the full state name from the abbreviation
       const fullStateName = stateMapping[selectedState];
       
-      // Show opportunities that are either:
-      // 1. Nationwide
-      // 2. Match the selected state code (e.g., "CA")
-      // 3. Match the full state name (e.g., "California")
-      matchesState = 
-        opp.state === 'Nationwide' || 
-        opp.state === selectedState || 
-        opp.state === fullStateName;
+      // Show opportunities that match the selected state code (e.g., "CA")
+      // or the full state name (e.g., "California").ia")
+      matchesState = (opp.state === selectedState || opp.state === fullStateName);
     }
   }
   // If no state selected (empty string), show all opportunities
@@ -913,10 +908,19 @@ const stateMapping = {
     opp.category === currentCategory;
 
   const q = (currentSearch || '').toString().toLowerCase().trim();
-  const title = (opp.title || '').toString().toLowerCase();
-  const desc  = (opp.description || '').toString().toLowerCase();
 
-  const matchesSearch = title.includes(q) || desc.includes(q);return matchesState && matchesCategory && matchesSearch;
+  // Build one searchable text blob from the fields people expect to search.
+  const haystack = [
+    opp.title,
+    opp.description,
+    opp.category,
+    opp.state,
+    opp.amount,
+    opp.value,
+    opp.difficulty
+  ].map(v => (v || '').toString().toLowerCase()).join(' ');
+
+  const matchesSearch = (q === '') ? true : haystack.includes(q);return matchesState && matchesCategory && matchesSearch;
 });
 // Sort to put featured opportunities first
 filtered.sort((a, b) => {
@@ -1175,6 +1179,30 @@ filtered.sort((a, b) => {
     }
   }
 
+
+
+// ------- UI event wiring (keeps filters responsive) -------
+document.addEventListener('DOMContentLoaded', () => {
+  const searchEl = document.getElementById('searchInput');
+  if (searchEl) {
+    // Works on desktop + mobile (better than keyup)
+    searchEl.addEventListener('input', filterOpportunities);
+    // Enter key should also trigger a search
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        filterOpportunities();
+      }
+    });
+  }
+
+  const stateEl = document.getElementById('stateSelector');
+  if (stateEl) {
+    stateEl.addEventListener('change', () => {
+      renderOpportunities();
+    });
+  }
+});
 
 </script>
 
