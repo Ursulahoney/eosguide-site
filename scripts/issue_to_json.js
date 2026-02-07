@@ -225,40 +225,4 @@ function writeDraft(issueNumber, md) {
   writeJson(jsonPath, existing);
   console.log(`Saved opportunities.json. Total active: ${existing.length}`);
 
-  // Try to generate an AI article draft
-  let rawText = "";
-  try {
-    rawText = await fetchPageText(details_url);
-    console.log("Fetched details_url text for drafting.");
-  } catch (e) {
-    console.log(`Fetch failed (${e.message}). Using source_text fallback if present.`);
-    rawText = safeStr(source_text);
-  }
-
-  if (rawText) {
-    try {
-      const ai = await callOpenAI({
-        detailsUrl: details_url,
-        rawText,
-        existingCardDescription: card_description,
-      });
-
-      if (ai && ai.article_markdown) {
-        const md = ai.article_markdown
-          .replace(/\r\n/g, "\n")
-          .trim();
-        const savedPath = writeDraft(issueNumber, md);
-        console.log(`Draft saved: ${savedPath}`);
-      } else {
-        console.log("No AI draft generated (empty output).");
-      }
-    } catch (e) {
-      console.log(`AI draft skipped/failed: ${e.message}`);
-    }
-  } else {
-    console.log("No source text available. Skipping AI draft.");
-  }
-})().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+ 
