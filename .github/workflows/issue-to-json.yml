@@ -10,8 +10,8 @@ permissions:
 
 jobs:
   update:
-    if: contains(github.event.issue.labels.*.name, 'publish-opportunity')
     runs-on: ubuntu-latest
+
 
     steps:
       - name: Checkout
