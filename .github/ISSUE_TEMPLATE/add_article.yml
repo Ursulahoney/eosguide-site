@@ -1,0 +1,99 @@
+name: Add article
+description: Create a news article for an opportunity
+title: "Article: "
+labels: ["article"]
+body:
+  - type: input
+    id: opportunity_title
+    attributes:
+      label: Opportunity title
+      description: Must match the opportunity this article is for
+      placeholder: "DoorDash Chicago settlement"
+    validations:
+      required: true
+
+  - type: input
+    id: article_title
+    attributes:
+      label: Article headline
+      placeholder: "DoorDash Chicago settlement: who qualifies and how to apply"
+    validations:
+      required: true
+
+  - type: textarea
+    id: subhead
+    attributes:
+      label: Subhead (1 sentence)
+      placeholder: "Small Chicago restaurants may qualify for up to $2,500 under a city settlement."
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Opening summary (2–3 short paragraphs)
+      placeholder: "Explain what this is, who it’s for, and why it matters."
+    validations:
+      required: true
+
+  - type: textarea
+    id: quick_facts
+    attributes:
+      label: Quick facts (bullet list)
+      placeholder: |
+        - Who qualifies:
+        - Deadline:
+        - Potential payment:
+        - Proof required:
+        - Apply at:
+    validations:
+      required: true
+
+  - type: textarea
+    id: qualifications
+    attributes:
+      label: Who qualifies
+      placeholder: "Explain eligibility in plain language."
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: What you may need
+      placeholder: "Documents, info, or steps."
+    validations:
+      required: true
+
+  - type: textarea
+    id: how_to_apply
+    attributes:
+      label: How to apply
+      placeholder: "Step-by-step filing instructions."
+    validations:
+      required: true
+
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline and payment expectations
+      placeholder: "When claims are due and when payments may happen."
+    validations:
+      required: false
+
+  - type: textarea
+    id: tools
+    attributes:
+      label: Helpful tools and resources (optional)
+      placeholder: "Optional monetization links or tools."
+    validations:
+      required: false
+
+  - type: input
+    id: slug
+    attributes:
+      label: URL slug
+      description: lowercase, hyphens only
+      placeholder: "doordash-chicago-settlement"
+    validations:
+      required: true
