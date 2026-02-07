@@ -8,12 +8,18 @@ function safeStr(v) {
   return String(v).trim();
 }
 
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function parseField(body, label) {
-  const re = new RegExp(`###\\s+${label}\\s*\\n([\\s\\S]*?)(\\n###\\s+|$)`, "i");
+  const escaped = escapeRegExp(label);
+  const re = new RegExp(`###\\s+${escaped}\\s*\\n([\\s\\S]*?)(\\n###\\s+|$)`, "i");
   const m = body.match(re);
   if (!m) return "";
   return safeStr(m[1]).replace(/\n+$/g, "");
 }
+
 
 function parseFeatured(body) {
   return /- \[x\]\s+Mark as featured/i.test(body);
