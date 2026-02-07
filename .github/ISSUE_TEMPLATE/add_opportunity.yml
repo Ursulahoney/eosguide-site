@@ -1,0 +1,80 @@
+name: Add opportunity
+description: Add a new opportunity to eosguidehub
+title: "Add: "
+labels: ["opportunity", "publish-opportunity"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      placeholder: "Westlake Financial Services illegal fees settlement"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Class Action
+        - Rebates
+        - Government
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: state
+    attributes:
+      label: State
+      placeholder: "Nationwide or Colorado or CA"
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Deadline (YYYY-MM-DD)
+      placeholder: "2026-03-15"
+    validations:
+      required: false
+
+  - type: input
+    id: amount
+    attributes:
+      label: Amount
+      placeholder: "$50–$200"
+    validations:
+      required: false
+
+  - type: input
+    id: official_url
+    attributes:
+      label: Official info URL
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: input
+    id: apply_url
+    attributes:
+      label: Apply URL (optional, if different)
+      placeholder: "https://..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description (public)
+      placeholder: "2–4 short sentences. Who qualifies, what you need, and key deadline."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: featured
+    attributes:
+      label: Featured
+      options:
+        - label: Mark as featured
+          required: false
