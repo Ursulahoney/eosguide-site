@@ -1,4 +1,4 @@
-name: Issue form -> opportunities.json
+name: Issue form -> opportunities.json (+ optional AI draft)
 
 on:
   issues:
@@ -22,20 +22,21 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Update opportunities.json from issue
+      - name: Update opportunities.json from issue (and generate draft if possible)
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: node scripts/issue_to_json.js
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/opportunities.json
+          git add data/opportunities.json drafts || true
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Add opportunity from issue #${{ github.event.issue.number }}"
+            git commit -m "Update opportunities from issue #${{ github.event.issue.number }}"
             git push
           fi
