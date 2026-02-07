@@ -22,12 +22,12 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Update opportunities.json from issue (and generate draft if possible)
-        env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: node scripts/issue_to_json.js
+      - name: Update opportunities.json from issue
+  env:
+    ISSUE_BODY: ${{ github.event.issue.body }}
+    ISSUE_NUMBER: ${{ github.event.issue.number }}
+  run: node scripts/issue_to_json.js
+
 
       - name: Commit and push if changed
         run: |
