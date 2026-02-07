@@ -4,10 +4,10 @@ title: "Add: "
 labels: ["opportunity", "publish-opportunity"]
 body:
   - type: input
-    id: title
+    id: public_title
     attributes:
-      label: Title
-      placeholder: "Westlake Financial Services illegal fees settlement"
+      label: Opportunity title (shows on site)
+      placeholder: "Example: Westlake Financial Services illegal fees settlement"
     validations:
       required: true
 
@@ -48,9 +48,9 @@ body:
       required: false
 
   - type: input
-    id: official_url
+    id: details_url
     attributes:
-      label: Official info URL
+      label: Details URL (info page)
       placeholder: "https://..."
     validations:
       required: true
@@ -58,18 +58,27 @@ body:
   - type: input
     id: apply_url
     attributes:
-      label: Apply URL (optional, if different)
+      label: Apply URL (where user files claim)
       placeholder: "https://..."
     validations:
       required: false
 
   - type: textarea
-    id: description
+    id: card_description
     attributes:
-      label: Description (public)
-      placeholder: "2–4 short sentences. Who qualifies, what you need, and key deadline."
+      label: Card description (shows on site)
+      placeholder: "2–4 short sentences in your own words."
     validations:
       required: true
+
+  - type: textarea
+    id: source_text
+    attributes:
+      label: Source text (optional fallback)
+      description: "Paste key lines from the details page if it blocks bots. Eligibility, deadline, proof, payout, how to file."
+      placeholder: "Paste key lines here (not required if URL fetch works)."
+    validations:
+      required: false
 
   - type: checkboxes
     id: featured
