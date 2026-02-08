@@ -12,7 +12,9 @@ permissions:
 
 jobs:
   update:
+    if: contains(github.event.issue.labels.*.name, 'opportunity')
     runs-on: ubuntu-latest
+
 
     steps:
       - name: Checkout
