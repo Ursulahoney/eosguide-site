@@ -1,0 +1,97 @@
+name: New Article
+description: Create a new article for eosguide
+title: "[Article] "
+labels: ["article"]
+body:
+
+  - type: input
+    id: title
+    attributes:
+      label: Article title
+      description: The full article headline
+      placeholder: Chicago DoorDash Settlement: Who may qualify and how to file
+    validations:
+      required: true
+
+  - type: input
+    id: slug
+    attributes:
+      label: URL slug
+      description: Used in /articles/your-slug.html
+      placeholder: chicago-doordash-settlement
+    validations:
+      required: true
+
+  - type: textarea
+    id: blurb
+    attributes:
+      label: Short blurb
+      description: 1–2 sentence summary shown on the Articles page
+      placeholder: A plain-language guide to the City of Chicago’s DoorDash settlement for eligible restaurants.
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Deadline
+      description: Claim deadline or “None listed”
+      placeholder: March 30, 2026
+    validations:
+      required: false
+
+  - type: input
+    id: last_updated
+    attributes:
+      label: Last updated
+      description: Displayed on the article page
+      placeholder: February 8, 2026
+    validations:
+      required: true
+
+  - type: input
+    id: hero_image
+    attributes:
+      label: Hero image filename
+      description: Path under /assets/articles/
+      placeholder: sergey-konstantinov-XxxZghCcX3s-unsplash.jpg
+    validations:
+      required: false
+
+  - type: textarea
+    id: hero_credit
+    attributes:
+      label: Hero image credit (optional)
+      description: HTML credit line for the image
+      placeholder: Photo by Sergey Konstantinov on Unsplash
+    validations:
+      required: false
+
+  - type: textarea
+    id: article_body
+    attributes:
+      label: Article body
+      description: Paste the article text (Markdown or plain text)
+      placeholder: |
+        ## What this is
+        Write the full article here.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: monetization
+    attributes:
+      label: Monetization
+      options:
+        - label: Include monetization block
+          required: false
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Publish status
+      options:
+        - Draft
+        - Publish
+    validations:
+      required: true
