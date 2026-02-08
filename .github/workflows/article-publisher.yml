@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build_draft:
-if: contains(github.event.issue.labels.*.name, 'article')
+    if: contains(github.event.issue.labels.*.name, 'article')
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +21,9 @@ if: contains(github.event.issue.labels.*.name, 'article')
         run: |
           mkdir -p .tmp
           python - << 'PY'
-          import os
           body = """${{ github.event.issue.body }}"""
           with open(".tmp/issue_body.md", "w", encoding="utf-8") as f:
-            f.write(body)
+              f.write(body)
           PY
 
       - name: Set up Python
@@ -64,7 +63,7 @@ if: contains(github.event.issue.labels.*.name, 'article')
           python - << 'PY'
           body = """${{ github.event.issue.body }}"""
           with open(".tmp/issue_body.md", "w", encoding="utf-8") as f:
-            f.write(body)
+              f.write(body)
           PY
 
       - name: Set up Python
