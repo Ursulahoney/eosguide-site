@@ -1,0 +1,90 @@
+name: Article Publisher
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  build_draft:
+    if: contains(github.event.issue.labels.*.name, 'article') && github.event.action != 'labeled' || (github.event.action == 'labeled' && github.event.label.name == 'article')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Save issue body to file
+        run: |
+          mkdir -p .tmp
+          python - << 'PY'
+          import os
+          body = """${{ github.event.issue.body }}"""
+          with open(".tmp/issue_body.md", "w", encoding="utf-8") as f:
+            f.write(body)
+          PY
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install markdown converter
+        run: pip install markdown
+
+      - name: Generate draft article file
+        env:
+          MODE: draft
+          ISSUE_BODY_PATH: .tmp/issue_body.md
+        run: python scripts/publish_article.py
+
+      - name: Commit draft output
+        run: |
+          git config user.name "eosguide-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add articles/drafts/*.html || true
+          git commit -m "Add/update draft article from issue #${{ github.event.issue.number }}" || exit 0
+          git push
+
+  publish:
+    if: github.event.action == 'labeled' && github.event.label.name == 'publish' && contains(github.event.issue.labels.*.name, 'article')
+    runs-on: ubuntu-latest
+    needs: build_draft
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Save issue body to file
+        run: |
+          mkdir -p .tmp
+          python - << 'PY'
+          body = """${{ github.event.issue.body }}"""
+          with open(".tmp/issue_body.md", "w", encoding="utf-8") as f:
+            f.write(body)
+          PY
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install markdown converter
+        run: pip install markdown
+
+      - name: Generate published article + update articles index
+        env:
+          MODE: publish
+          ISSUE_BODY_PATH: .tmp/issue_body.md
+        run: python scripts/publish_article.py
+
+      - name: Commit published output
+        run: |
+          git config user.name "eosguide-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add articles/*.html articles/index.html || true
+          git commit -m "Publish article from issue #${{ github.event.issue.number }}" || exit 0
+          git push
