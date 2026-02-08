@@ -167,12 +167,7 @@
     </div>
 
    <!-- Right-side nav -->
-<div class="flex items-center gap-4 self-center md:self-auto">
-
-  <a href="/articles/"
-     class="text-sm font-semibold text-gray-600 hover:text-purple-600 transition">
-    Articles
-  </a>
+<div class="flex flex-col items-center gap-2 self-center md:self-auto">
 
   <button onclick="openNewsletter()"
           class="flex items-center space-x-2 px-6 py-3 
@@ -184,6 +179,16 @@
     </svg>
     <span>Get Alerts</span>
   </button>
+
+  <a href="/articles/"
+  class="text-sm font-semibold text-purple-600 hover:text-purple-700
+       px-3 py-1 rounded-full hover:bg-purple-50
+       flex items-center gap-1 transition"
+
+  <span>Articles</span>
+  <span aria-hidden="true">→</span>
+</a>
+
 
 </div>
 
