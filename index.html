@@ -1072,9 +1072,7 @@ filtered.sort((a, b) => {
     });
   }
 
-  // Initial render
-  renderCategories();
-  loadOpportunities();
+  
     // Back to top button behavior
   const backToTopBtn = document.getElementById('backToTop');
 
@@ -1115,11 +1113,14 @@ filtered.sort((a, b) => {
 
 // ------- UI event wiring (keeps filters responsive) -------
 document.addEventListener('DOMContentLoaded', () => {
+  // Initial boot
+  renderCategories();
+  loadOpportunities();
+
+  // Search wiring
   const searchEl = document.getElementById('searchInput');
   if (searchEl) {
-    // Works on desktop + mobile (better than keyup)
     searchEl.addEventListener('input', filterOpportunities);
-    // Enter key should also trigger a search
     searchEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -1128,6 +1129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // State filter wiring
   const stateEl = document.getElementById('stateSelector');
   if (stateEl) {
     stateEl.addEventListener('change', () => {
@@ -1135,6 +1137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
 
 </script>
 
