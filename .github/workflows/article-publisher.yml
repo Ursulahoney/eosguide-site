@@ -2,14 +2,14 @@ name: Article Publisher
 
 on:
   issues:
-    types: [opened, edited, labeled]
+    types: [opened, edited]
 
 permissions:
   contents: write
   issues: read
 
 jobs:
-  build_draft:
+  build_or_publish:
     if: contains(github.event.issue.labels.*.name, 'article')
     runs-on: ubuntu-latest
 
@@ -26,45 +26,27 @@ jobs:
               f.write(body)
           PY
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install markdown converter
-        run: pip install markdown
-
-      - name: Generate draft article file
-        env:
-          MODE: draft
-          ISSUE_BODY_PATH: .tmp/issue_body.md
-        run: python scripts/publish_article.py
-
-      - name: Commit draft output
+      - name: Decide Draft vs Publish from "Publish status" field
         run: |
-          git config user.name "eosguide-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add articles/drafts/*.html || true
-          git commit -m "Add/update draft article from issue #${{ github.event.issue.number }}" || exit 0
-          git push
-
-  publish:
-    if: github.event.action == 'labeled' && github.event.label.name == 'publish' && contains(github.event.issue.labels.*.name, 'article')
-    runs-on: ubuntu-latest
-    needs: build_draft
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Save issue body to file
-        run: |
-          mkdir -p .tmp
           python - << 'PY'
-          body = """${{ github.event.issue.body }}"""
-          with open(".tmp/issue_body.md", "w", encoding="utf-8") as f:
-              f.write(body)
+          import re
+
+          body = open(".tmp/issue_body.md", "r", encoding="utf-8").read()
+
+          # Issue forms usually render like:
+          # ### Publish status
+          # Draft   (or Publish)
+          m = re.search(r"###\s*Publish status\s*\n+([^\n]+)", body, re.IGNORECASE)
+          status = (m.group(1).strip() if m else "Draft").lower()
+
+          mode = "publish" if status == "publish" else "draft"
+
+          with open(".tmp/mode.txt", "w", encoding="utf-8") as f:
+              f.write(mode)
+
+          print("MODE =", mode)
           PY
+          echo "MODE=$(cat .tmp/mode.txt)" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -74,16 +56,23 @@ jobs:
       - name: Install markdown converter
         run: pip install markdown
 
-      - name: Generate published article + update articles index
+      - name: Generate article output
         env:
-          MODE: publish
+          MODE: ${{ env.MODE }}
           ISSUE_BODY_PATH: .tmp/issue_body.md
         run: python scripts/publish_article.py
 
-      - name: Commit published output
+      - name: Commit and push
         run: |
           git config user.name "eosguide-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add articles/*.html articles/index.html || true
-          git commit -m "Publish article from issue #${{ github.event.issue.number }}" || exit 0
+
+          if [ "${MODE}" = "publish" ]; then
+            git add articles/*.html articles/index.html || true
+            git commit -m "Publish article from issue #${{ github.event.issue.number }}" || exit 0
+          else
+            git add articles/drafts/*.html || true
+            git commit -m "Add/update draft article from issue #${{ github.event.issue.number }}" || exit 0
+          fi
+
           git push
