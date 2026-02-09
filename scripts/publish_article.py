@@ -34,18 +34,26 @@ def slugify(s: str) -> str:
 
 def extract_field(body: str, label: str) -> str:
     """
-    GitHub Issue Forms render like:
-
-    ### Article title
-    Some value
-
-    We'll capture the text between this header and the next ### header.
+    GitHub Issue Forms can be inconsistent in how they render headings.
+    This version is more forgiving (case-insensitive, whitespace-tolerant).
     """
+    body = body.replace("\r\n", "\n")
+
+    # Exact match first
     pattern = rf"^###\s+{re.escape(label)}\s*$\n(.*?)(?=\n###\s+|\Z)"
     m = re.search(pattern, body, flags=re.MULTILINE | re.DOTALL)
-    if not m:
-        return ""
-    return m.group(1).strip()
+    if m:
+        return m.group(1).strip()
+
+    # Fallback: ignore case and allow extra/multiple spaces in the heading
+    label_ws = re.sub(r"\s+", r"\\s+", re.escape(label))
+    pattern2 = rf"^###\s+{label_ws}\s*$\n(.*?)(?=\n###\s+|\Z)"
+    m2 = re.search(pattern2, body, flags=re.MULTILINE | re.DOTALL | re.IGNORECASE)
+    if m2:
+        return m2.group(1).strip()
+
+    return ""
+
 
 def checkbox_checked(body: str, label: str) -> bool:
     # Forms render checkboxes as "- [x] Include monetization block"
