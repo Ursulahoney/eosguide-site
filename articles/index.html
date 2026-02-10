@@ -77,8 +77,34 @@
         Factual guides to settlements, refunds, and programs that might apply to you.
         No hype. Always link to the official source.
       </p>
+<div class="mb-6">
+  <label for="articleSearch" class="block text-sm font-semibold text-gray-700 mb-2">
+    Search articles
+  </label>
 
-      <div class="space-y-6">
+  <div class="flex flex-col sm:flex-row gap-3">
+    <input
+      id="articleSearch"
+      type="search"
+      placeholder="Search by keyword (Northwell, pixel, DoorDash...)"
+      class="w-full sm:flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3
+             focus:outline-none focus:ring-2 focus:ring-purple-300"
+      autocomplete="off"
+    />
+
+    <button
+      id="clearSearch"
+      type="button"
+      class="rounded-xl bg-gray-100 px-4 py-3 font-semibold text-gray-700 hover:bg-gray-200 transition"
+    >
+      Clear
+    </button>
+  </div>
+
+  <p id="searchMeta" class="mt-2 text-sm text-gray-500" aria-live="polite"></p>
+</div>
+
+      <div id="articlesList" class="space-y-6">
 
         <!-- ARTICLES_LIST_INSERT_HERE -->
 
@@ -190,6 +216,52 @@
 </div>
 
 </footer>
+<script>
+  (function () {
+    const input = document.getElementById('articleSearch');
+    const clearBtn = document.getElementById('clearSearch');
+    const meta = document.getElementById('searchMeta');
+    const list = document.getElementById('articlesList');
+
+    if (!input || !clearBtn || !meta || !list) return;
+
+    function normalize(text) {
+      return (text || '')
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function update() {
+      const q = normalize(input.value);
+      const cards = Array.from(list.querySelectorAll('article')); // auto-includes future articles
+      let shown = 0;
+
+      cards.forEach(card => {
+        const haystack = normalize(card.innerText);
+        const match = q === '' || haystack.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) shown++;
+      });
+
+      if (q === '') {
+        meta.textContent = `Showing ${cards.length} article${cards.length === 1 ? '' : 's'}.`;
+      } else {
+        meta.textContent = `Showing ${shown} result${shown === 1 ? '' : 's'} for "${input.value}".`;
+      }
+    }
+
+    input.addEventListener('input', update);
+
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      update();
+    });
+
+    update();
+  })();
+</script>
 
 </body>
 </html>
