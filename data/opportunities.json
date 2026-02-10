@@ -1,3 +1,4 @@
+
 [
   {
     "id": "ashley-homestore-ca-2017",
@@ -22,7 +23,7 @@
     "difficulty": "Medium",
     "description": "Legacy Health patients in Oregon and Washington may qualify for a $15 cash payment if you used your patient portal between 2019-2024. The class action settlement alleges Legacy Health shared your protected health information with Meta (Facebook) and Google using tracking pixels without consent, violating patient privacy rights. File your claim by March 16, 2026 to receive compensation plus free Medical Shield Complete privacy monitoring (1 year, $1M identity theft insurance).",
     "url": "https://pixellegacyhealthsettlement.com/form/claim",
-    "state": "Oregon", "Washington",
+    "state": "OR, WA",
     "value": null,
     "featured": false,
     "details_url": "https://pixellegacyhealthsettlement.com/",
@@ -40,7 +41,7 @@
     "state": "Illinois",
     "value": null,
     "featured": false,
-    "details_url": "https://eosguidehub.com/articles/chicago-doordash-settlement",
+    "details_url": "https://www.chicagodoordashsettlement.com/",
     "apply_url": "https://www.chicagodoordashsettlement.com/chicago-door-dash-claim-form-login/"
   },
   {
@@ -55,7 +56,7 @@
     "state": "Nationwide",
     "value": null,
     "featured": false,
-    "details_url": "https://eosguidehub.com/articles/gryphon-healthcare-data-breach-settlement-2024",
+    "details_url": "https://gryphonhealthcaredatasettlement.com/",
     "apply_url": "https://gryphonhealthcaredatasettlement.com/form/claim"
   },
   {
