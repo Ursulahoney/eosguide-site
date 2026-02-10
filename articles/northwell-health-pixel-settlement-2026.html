@@ -18,299 +18,644 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Optional: helps tables behave better in small screens -->
   <style>
     .table-wrap { overflow-x: auto; }
     .table-wrap table { width: 100%; border-collapse: collapse; }
     .table-wrap th, .table-wrap td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    
+    .prose p { margin-bottom: 1.25rem; }
+    .prose ul, .prose ol { margin-bottom: 1.5rem; }
+    .prose li { margin-bottom: 0.5rem; }
   </style>
 </head>
 
-
 <body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50">
 
-  <!-- SITE HEADER -->
-    <!-- Header -->
-<header class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
-  <nav class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-    <!-- Logo + tagline -->
-    <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 group cursor-pointer">
-      <!-- Logo with subtle animation -->
-      <div class="relative flex-shrink-0 animate-logo">
-  <a href="/" aria-label="Back to eosguide home">
-    <img src="/Circular-badge-logo.png"
-         alt="eosguide logo"
-         class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40">
-  </a>
-</div>
-
-
-      <!-- Tagline to the right, wrapped into multiple lines -->
-      <blockquote class="text-xs sm:text-sm md:text-base font-semibold italic leading-snug 
-                         text-gray-500 max-w-xs md:max-w-sm text-center md:text-left"
-                  style="font-family: 'DM Sans', 'Montserrat', system-ui, sans-serif;">
-        "We do the searching<br>
-        so you don't have to<br>
-        pretend it's fun."
-      </blockquote>
-    </div>
-<div class="flex flex-col items-center gap-2 self-center md:self-auto">
-
-  <button onclick="openNewsletter()"
-          class="flex items-center space-x-2 px-6 py-3 
-                 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
-          style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-    </svg>
-    <span>Get Alerts</span>
-  </button>
-
-  <a href="/articles/"
-  class="text-sm font-semibold text-purple-600 hover:text-purple-700
-       px-3 py-1 rounded-full hover:bg-purple-50
-       flex items-center gap-1 transition">
-
-  <span>Articles</span>
-  <span aria-hidden="true">→</span>
-</a>
-
-
-</div>
-
-
-  </nav>
-</header>
+  <header class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
+    <nav class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 group cursor-pointer">
+        <div class="relative flex-shrink-0 animate-logo">
+          <a href="/" aria-label="Back to eosguide home">
+            <img src="/Circular-badge-logo.png"
+                 alt="eosguide logo"
+                 class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40">
+          </a>
+        </div>
+        <blockquote class="text-xs sm:text-sm md:text-base font-semibold italic leading-snug 
+                           text-gray-500 max-w-xs md:max-w-sm text-center md:text-left"
+                    style="font-family: 'DM Sans', 'Montserrat', system-ui, sans-serif;">
+          "We do the searching<br>
+          so you don't have to<br>
+          pretend it's fun."
+        </blockquote>
+      </div>
+      <div class="flex flex-col items-center gap-2 self-center md:self-auto">
+        <button onclick="openNewsletter()"
+                class="flex items-center space-x-2 px-6 py-3 
+                       text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
+                style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          <span>Get Alerts</span>
+        </button>
+        <a href="/articles/"
+           class="text-sm font-semibold text-purple-600 hover:text-purple-700
+                  px-3 py-1 rounded-full hover:bg-purple-50
+                  flex items-center gap-1 transition">
+          <span>Articles</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </nav>
+  </header>
 
   <main class="relative z-10 px-4 sm:px-6 lg:px-8 py-12">
-  <article class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-8">
+    <article class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-8">
 
-  
+      <h1 class="mt-3 text-3xl sm:text-4xl font-black text-gray-900 mb-3">
+        Northwell Health Pixel Settlement 2026 - $15 Cash Payment for New York Patients
+      </h1>
 
-    <!-- Title -->
-    <h1 class="mt-3 text-3xl sm:text-4xl font-black text-gray-900 mb-3">
-      Northwell Health Pixel Settlement 2026 - $15 Cash Payment for New York Patients
-    </h1>
-
-    <!-- Article meta: Deadline + Last updated -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-      <div class="text-sm text-gray-700">
-        <span class="font-semibold">Deadline:</span> April 20, 2026
-      </div>
-      <div class="text-sm text-gray-500">
-        <span class="font-semibold">Last updated:</span> February 10, 2026
-      </div>
-    </div>
-
-    <!-- Intro line -->
-    <p class="text-gray-700 mb-6 italic">
-      New York patients of Northwell Health who used the FollowMyHealth portal or booked appointments between 2020-2024 may be eligible for $15 cash and 12 months of privacy monitoring from a class action settlement over Meta Pixel and Google Analytics tracking.
-    </p>
-
-    <!-- Hero image -->
-    <img
-      src="/assets/articles/national-cancer-institute-NFvdKIhxYlU-unsplash.jpg"
-      alt="Article image"
-      class="rounded-2xl mb-2 w-full"
-    >
-
-    <!-- Optional hero credit (empty if none) -->
-    Photo by <a href="https://unsplash.com/@nci" target="_blank" rel="noopener">National Cancer Institute</a> on <a href="https://unsplash.com/photos/NFvdKIhxYlU" target="_blank" rel="noopener">Unsplash</a>
-
-    <!-- Main content -->
-    <div class="prose prose-gray max-w-none mt-8">
-      <h1>Northwell Health Pixel Settlement 2026 - $15 Cash Payment for New York Patients</h1>
-<p><strong>Deadline: April 20, 2026</strong></p>
-<p><em>Last Updated: February 10, 2026</em></p>
-<hr />
-<p><strong>⚠️ All Deadlines: April 20, 2026 (Claims) / March 23, 2026 (Opt-out/Objections)</strong></p>
-<p>You have about 2 months to file your claim, opt out, or object to the settlement.</p>
-<p><a href="https://www.nwpixelsettlement.com/form/claim/">File Your Claim Now →</a></p>
-<hr />
-<p>If you were a patient at Northwell Health between 2020 and 2024, you may be entitled to compensation from a class action settlement.</p>
-<p><strong>What happened:</strong> Northwell Health allegedly embedded Meta Pixel and Google Analytics tracking tools on its website and patient portal, which shared your protected health information with Meta (Facebook) and Google without your permission.</p>
-<p>Here's what you need to know about eligibility, payment amounts, and how to file your claim.</p>
-<h2>Quick Summary</h2>
-<ul>
-<li><strong>Who's eligible:</strong> Northwell Health patients who logged into FollowMyHealth portal or booked appointments between 2020-2024</li>
-<li><strong>Where:</strong> New York (Northwell Health service areas - Long Island, NYC, Westchester)</li>
-<li><strong>Cash payment:</strong> $15 for Subclass 1 members</li>
-<li><strong>Free service:</strong> 12 months CyEx Privacy Shield Pro (includes VPN, dark web monitoring, password manager)</li>
-<li><strong>Total eligible:</strong> Approximately hundreds of thousands of patients</li>
-<li><strong>Claim deadline:</strong> April 20, 2026</li>
-<li><strong>Official site:</strong> <a href="https://www.nwpixelsettlement.com/">NWPixelSettlement.com</a></li>
-</ul>
-<p><strong>Important:</strong> This settlement covers patient privacy violations related to website tracking technologies (Meta Pixel and Google Analytics). It does not involve a data breach or unauthorized access to Northwell Health's medical record systems.</p>
-<h2>What Is Northwell Health?</h2>
-<p>Northwell Health is New York's largest healthcare provider and private employer, serving the New York metropolitan area. The organization operates:</p>
-<ul>
-<li>21 hospitals</li>
-<li>Over 900 outpatient facilities</li>
-<li>Multiple specialty care centers</li>
-<li>FollowMyHealth patient portal system</li>
-<li>Primary service areas: Long Island, New York City, and Westchester County</li>
-</ul>
-<p>Northwell Health serves millions of patients annually across the New York region.</p>
-<h2>What Were the Allegations Against Northwell Health?</h2>
-<p>A class action lawsuit filed as Kaplan v. Northwell Health, Inc. alleged that Northwell Health embedded third-party tracking tools on its website and patient portal without patient knowledge or consent.</p>
-<p><strong>The tracking tools in question:</strong></p>
-<ul>
-<li><strong>Meta Pixel</strong> (formerly Facebook Pixel) - tracking code from Meta/Facebook</li>
-<li><strong>Google Analytics</strong> - website analytics tool from Google</li>
-</ul>
-<p><strong>What information was allegedly shared:</strong></p>
-<ul>
-<li>Patient portal login activity (FollowMyHealth portal)</li>
-<li>Pages viewed within the patient portal</li>
-<li>Appointment booking information on northwell.edu</li>
-<li>Medical conditions searched or viewed</li>
-<li>Health-related website interactions</li>
-<li>Personal identifiable information</li>
-</ul>
-<p>The lawsuit claimed this information could be linked to patients' Facebook or Google accounts, allowing these companies to identify specific individuals and their health-related activities.</p>
-<p><strong>Legal claims alleged:</strong></p>
-<ol>
-<li>Violation of Electronic Communications Privacy Act</li>
-<li>Breach of confidence</li>
-<li>Breach of implied contract</li>
-<li>Unjust enrichment</li>
-<li>Negligence</li>
-<li>Violation of New York privacy laws</li>
-</ol>
-<p><strong>Northwell Health's response:</strong> Northwell Health denies all allegations and any wrongdoing. The settlement is not an admission of liability. Northwell agreed to settle to avoid the cost and uncertainty of continued litigation.</p>
-<h2>Am I Eligible for the Settlement?</h2>
-<p><strong>You're eligible if you fall into either of these categories:</strong></p>
-<p><strong>Settlement Subclass 1:</strong></p>
-<ul>
-<li>You logged into Northwell's <strong>FollowMyHealth patient portal</strong> at least once between <strong>January 1, 2020</strong> and <strong>December 31, 2023</strong>, OR</li>
-<li>You booked an appointment on <strong>northwell.edu</strong> between <strong>January 1, 2020</strong> and <strong>December 31, 2023</strong></li>
-</ul>
-<p><strong>Settlement Subclass 2:</strong></p>
-<ul>
-<li>You do not fall into Subclass 1, BUT</li>
-<li>You were a patient of Northwell Health at any time between <strong>January 1, 2020</strong> and <strong>July 25, 2024</strong></li>
-</ul>
-<p><strong>Excluded from the settlement:</strong><br />
-- Northwell's officers and directors<br />
-- Northwell's legal counsel<br />
-- Members of the judiciary assigned to the case and their families</p>
-    </div>
-
-    <!-- OPTIONAL MONETIZATION (empty when off) -->
-    
-
-    <!-- Trust + legal line -->
-    <p class="mt-10 text-xs text-gray-500">
-      Info only. Verify details on the official site. Not legal, financial, or tax advice.
-      <a href="/legal/" class="underline">Legal</a>
-    </p>
-
-    <!-- Share -->
-    <div class="mt-6 pt-6 border-t border-gray-200">
-      <p class="text-sm font-semibold text-gray-700 mb-3">Share this:</p>
-
-      <div class="flex flex-wrap gap-2 text-sm">
-        <button type="button" id="copyLinkBtn"
-          class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition">
-          Copy link
-        </button>
-
-        <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
-           target="_blank" rel="noopener"
-           href="mailto:?subject=Northwell Health Pixel Settlement 2026 - $15 Cash Payment for New York Patients&body=https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html">
-          Email
-        </a>
-
-        <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
-           target="_blank" rel="noopener"
-           href="https://twitter.com/intent/tweet?url=https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html&text=Northwell Health Pixel Settlement 2026 - $15 Cash Payment for New York Patients">
-          X
-        </a>
-
-        <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
-           target="_blank" rel="noopener"
-           href="https://www.facebook.com/sharer/sharer.php?u=https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html">
-          Facebook
-        </a>
+      <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="text-sm text-gray-700">
+          <span class="font-semibold">Deadline:</span> April 20, 2026
+        </div>
+        <div class="text-sm text-gray-500">
+          <span class="font-semibold">Last updated:</span> February 10, 2026
+        </div>
       </div>
 
-      <p id="copyStatus" class="text-xs text-gray-500 mt-2" aria-live="polite"></p>
-    </div>
+      <p class="text-gray-700 mb-6 italic">
+        New York patients of Northwell Health who used the FollowMyHealth portal or booked appointments between 2020-2024 may be eligible for $15 cash and 12 months of privacy monitoring from a class action settlement over Meta Pixel and Google Analytics tracking.
+      </p>
 
-    <script>
-      (function () {
-        const btn = document.getElementById('copyLinkBtn');
-        const status = document.getElementById('copyStatus');
-        if (!btn) return;
+      <img
+        src="/assets/articles/national-cancer-institute-NFvdKIhxYlU-unsplash.jpg"
+        alt="Article image"
+        class="rounded-2xl mb-2 w-full"
+      >
 
-        btn.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText('https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html');
-            status.textContent = 'Link copied.';
-          } catch (e) {
-            status.textContent = 'Copy failed. You can copy from the address bar.';
-          }
-        });
-      })();
-    </script>
+      <p class="text-xs text-gray-500 mb-6">
+        Photo by <a href="https://unsplash.com/@nci" target="_blank" rel="noopener">National Cancer Institute</a> on <a href="https://unsplash.com/photos/NFvdKIhxYlU" target="_blank" rel="noopener">Unsplash</a>
+      </p>
 
-  </article>
-</main>
-
-
-  <!-- SITE FOOTER -->
-<footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-7xl mx-auto">
-
-    <div class="grid md:grid-cols-3 gap-8 mb-8">
-
-      <!-- Brand blurb -->
-      <div>
-        <h4 class="font-black text-xl mb-4 bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-          eosguide
-        </h4>
-        <p class="text-gray-400 text-sm font-light">
-          We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.
-        </p>
-      </div>
-
-      <!-- Contact -->
-      <div class="text-center md:text-left">
-        <p class="text-gray-300 text-sm font-light">
-          Have a question, suggestion, or request?
-        </p>
-        <p class="text-gray-200 text-sm font-light">
-          Email:
-          <a href="/cdn-cgi/l/email-protection#274e4941486742485440524e43420944484a"
-             class="text-cyan-300 hover:text-cyan-400 underline">
-            <span class="__cf_email__" data-cfemail="a3cacdc5cce3c6ccd0c4d6cac7c68dc0ccce">
-              [email&#160;protected]
-            </span>
+      <div class="prose prose-gray max-w-none mt-8">
+        
+        <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 rounded-r-lg">
+          <div class="flex items-center mb-2">
+            <svg class="w-6 h-6 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+            </svg>
+            <h3 class="text-lg font-bold text-red-800 m-0">All Deadlines</h3>
+          </div>
+          <p class="text-red-700 mb-2">Claims: April 20, 2026</p>
+          <p class="text-red-700 mb-3">Opt-out/Objections: March 23, 2026</p>
+          <p class="text-red-700 mb-3">You have about 2 months to file your claim, opt out, or object to the settlement.</p>
+          <a href="https://www.nwpixelsettlement.com/form/claim/" 
+             target="_blank"
+             class="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition no-underline">
+            File Your Claim Now →
           </a>
-        </p>
+        </div>
+
+        <p>If you were a patient at Northwell Health between 2020 and 2024, you may be entitled to compensation from a class action settlement.</p>
+        
+        <p><strong>What happened:</strong> Northwell Health allegedly embedded Meta Pixel and Google Analytics tracking tools on its website and patient portal, which shared your protected health information with Meta (Facebook) and Google without your permission.</p>
+        
+        <p>Here's what you need to know about eligibility, payment amounts, and how to file your claim.</p>
+
+        <div class="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 mb-8 shadow-sm">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Quick Summary</h2>
+          <ul class="space-y-2 list-none p-0">
+            <li><strong>Who's eligible:</strong> Northwell Health patients who logged into FollowMyHealth portal or booked appointments between 2020-2024</li>
+            <li><strong>Where:</strong> New York (Northwell Health service areas - Long Island, NYC, Westchester)</li>
+            <li><strong>Cash payment:</strong> $15 for Subclass 1 members</li>
+            <li><strong>Free service:</strong> 12 months CyEx Privacy Shield Pro (includes VPN, dark web monitoring, password manager)</li>
+            <li><strong>Total eligible:</strong> Approximately hundreds of thousands of patients</li>
+            <li><strong>Claim deadline:</strong> April 20, 2026</li>
+            <li><strong>Official site:</strong> <a href="https://www.nwpixelsettlement.com/" class="text-blue-600 hover:underline">NWPixelSettlement.com</a></li>
+          </ul>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-5 mb-8">
+          <p class="text-sm mb-0"><strong>Important:</strong> This settlement covers patient privacy violations related to website tracking technologies (Meta Pixel and Google Analytics). It does not involve a data breach or unauthorized access to Northwell Health's medical record systems.</p>
+        </div>
+
+        <h2>What Is Northwell Health?</h2>
+        <p>Northwell Health is New York's largest healthcare provider and private employer, serving the New York metropolitan area. The organization operates:</p>
+        <ul>
+          <li>21 hospitals</li>
+          <li>Over 900 outpatient facilities</li>
+          <li>Multiple specialty care centers</li>
+          <li>FollowMyHealth patient portal system</li>
+          <li>Primary service areas: Long Island, New York City, and Westchester County</li>
+        </ul>
+        <p>Northwell Health serves millions of patients annually across the New York region.</p>
+
+        <h2>What Were the Allegations Against Northwell Health?</h2>
+        <p>A class action lawsuit filed as Kaplan v. Northwell Health, Inc. alleged that Northwell Health embedded third-party tracking tools on its website and patient portal without patient knowledge or consent.</p>
+        
+        <p><strong>The tracking tools in question:</strong></p>
+        <ul>
+          <li><strong>Meta Pixel</strong> (formerly Facebook Pixel) - tracking code from Meta/Facebook</li>
+          <li><strong>Google Analytics</strong> - website analytics tool from Google</li>
+        </ul>
+
+        <p><strong>What information was allegedly shared:</strong></p>
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-5 mb-6">
+          <ul class="space-y-1 mb-0">
+            <li>Patient portal login activity (FollowMyHealth portal)</li>
+            <li>Pages viewed within the patient portal</li>
+            <li>Appointment booking information on northwell.edu</li>
+            <li>Medical conditions searched or viewed</li>
+            <li>Health-related website interactions</li>
+            <li>Personal identifiable information</li>
+          </ul>
+        </div>
+
+        <p>The lawsuit claimed this information could be linked to patients' Facebook or Google accounts, allowing these companies to identify specific individuals and their health-related activities.</p>
+
+        <p><strong>Legal claims alleged:</strong></p>
+        <ol>
+          <li>Violation of Electronic Communications Privacy Act</li>
+          <li>Breach of confidence</li>
+          <li>Breach of implied contract</li>
+          <li>Unjust enrichment</li>
+          <li>Negligence</li>
+          <li>Violation of New York privacy laws</li>
+        </ol>
+
+        <p><strong>Northwell Health's response:</strong> Northwell Health denies all allegations and any wrongdoing. The settlement is not an admission of liability. Northwell agreed to settle to avoid the cost and uncertainty of continued litigation.</p>
+
+        <h2>Am I Eligible for the Settlement?</h2>
+        <p><strong>You're eligible if you fall into either of these categories:</strong></p>
+
+        <div class="bg-green-50 border border-green-200 rounded-lg p-5 mb-6">
+          <p class="mb-3"><strong>Settlement Subclass 1:</strong></p>
+          <ul class="mb-4">
+            <li>You logged into Northwell's <strong>FollowMyHealth patient portal</strong> at least once between <strong>January 1, 2020</strong> and <strong>December 31, 2023</strong>, OR</li>
+            <li>You booked an appointment on <strong>northwell.edu</strong> between <strong>January 1, 2020</strong> and <strong>December 31, 2023</strong></li>
+          </ul>
+
+          <p class="mb-3"><strong>Settlement Subclass 2:</strong></p>
+          <ul class="mb-0">
+            <li>You do not fall into Subclass 1, BUT</li>
+            <li>You were a patient of Northwell Health at any time between <strong>January 1, 2020</strong> and <strong>July 25, 2024</strong></li>
+          </ul>
+        </div>
+
+        <p><strong>Excluded from the settlement:</strong></p>
+        <ul>
+          <li>Northwell's officers and directors</li>
+          <li>Northwell's legal counsel</li>
+          <li>Members of the judiciary assigned to the case and their families</li>
+        </ul>
+
+        <h3>How Do I Know If I'm in the Settlement Class?</h3>
+        <p><strong>If you received a notice email from the settlement administrator, you're in the class.</strong></p>
+        <p>The notice would have been sent to the email address or mailing address Northwell Health had on file for you.</p>
+        <p><strong>Didn't receive a notice?</strong> You may still be eligible if you meet the criteria above. Contact the settlement administrator at (833) 360-6887 or info@NWPixelSettlement.com to verify your eligibility.</p>
+
+        <h2>What Benefits Can I Receive?</h2>
+        <p>The settlement provides different benefits depending on which subclass you're in:</p>
+
+        <h3>Settlement Subclass 1 Benefits</h3>
+        <p><strong>If you logged into FollowMyHealth OR booked an appointment on northwell.edu between Jan 1, 2020 - Dec 31, 2023:</strong></p>
+
+        <p><strong>1. Cash Payment ($15)</strong></p>
+        <ul>
+          <li><strong>Amount:</strong> $15 per eligible class member</li>
+          <li><strong>Requirement:</strong> Must file a valid claim form by April 20, 2026</li>
+          <li><strong>Payment timing:</strong> Approximately 150 days after final court approval</li>
+          <li><strong>Payment method:</strong> Check or electronic payment (options provided during claim process)</li>
+        </ul>
+
+        <p><strong>2. CyEx Privacy Shield Pro (12 Months Free)</strong></p>
+        <ul>
+          <li><strong>Requirement:</strong> Must file a claim form by April 20, 2026</li>
+        </ul>
+
+        <p><strong>What's included:</strong></p>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-5 mb-6">
+          <ul class="grid md:grid-cols-2 gap-2 mb-0">
+            <li>✓ Virtual Private Network (VPN)</li>
+            <li>✓ Private search engine</li>
+            <li>✓ Dark web monitoring</li>
+            <li>✓ Multi-device password manager</li>
+            <li>✓ Encrypted digital vault</li>
+            <li>✓ Automatic data broker removal</li>
+            <li>✓ Identity theft monitoring</li>
+          </ul>
+        </div>
+
+        <h3>Settlement Subclass 2 Benefits</h3>
+        <p><strong>If you were a Northwell patient Jan 1, 2020 - July 25, 2024 (but NOT in Subclass 1):</strong></p>
+        <p><strong>CyEx Privacy Shield Pro (12 Months Free)</strong></p>
+        <ul>
+          <li><strong>Requirement:</strong> Must file a claim form by April 20, 2026</li>
+          <li>Same privacy protection services as Subclass 1 (listed above)</li>
+          <li><strong>Note:</strong> Subclass 2 members are NOT eligible for the $15 cash payment</li>
+        </ul>
+
+        <h2 id="how-to-file">How to File a Claim</h2>
+        <p>To receive settlement benefits, you must submit a claim form by April 20, 2026.</p>
+
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 mb-8 border border-gray-200">
+          <div class="space-y-6">
+            
+            <div class="flex items-start">
+              <div class="flex-shrink-0 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold mr-4">1</div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 mt-0 mb-2">Visit the Settlement Website</h3>
+                <p class="text-gray-700">Go to <a href="https://www.nwpixelsettlement.com/form/claim/" class="text-blue-600 hover:underline">NWPixelSettlement.com/form/claim</a></p>
+              </div>
+            </div>
+
+            <div class="flex items-start">
+              <div class="flex-shrink-0 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold mr-4">2</div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 mt-0 mb-2">Locate Your Notice ID and PIN</h3>
+                <p class="text-gray-700 mb-2">You need two pieces of information from the notice you received:</p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                  <li><strong>Notice ID</strong> (found at the top of your email or mailed notice)</li>
+                  <li><strong>PIN</strong> (found at the top of your email or mailed notice)</li>
+                </ul>
+                <p class="text-gray-700 mt-2"><strong>Lost your notice?</strong> Contact the settlement administrator at info@NWPixelSettlement.com or (833) 360-6887 with your full name and mailing address to request your Notice ID and PIN.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start">
+              <div class="flex-shrink-0 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold mr-4">3</div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 mt-0 mb-2">Complete and Submit the Claim Form</h3>
+                <p class="text-gray-700">Enter your Notice ID and PIN to access the online claim form. Complete all required fields and submit by <strong>April 20, 2026 at 11:59 PM ET</strong>.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-gray-300 text-center">
+            <a href="https://www.nwpixelsettlement.com/form/claim/" 
+               target="_blank"
+               class="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:from-purple-700 hover:to-blue-700 transition shadow-lg no-underline">
+              File Your Claim Now →
+            </a>
+          </div>
+        </div>
+
+        <h3>Alternative: Mail Your Claim</h3>
+        <p>If you prefer to submit a paper claim:</p>
+        <ol>
+          <li>Download the <a href="https://cw.simpluris.com/docs/public/downloads/NKC/CLAIM_FORM" class="text-blue-600 hover:underline">claim form</a></li>
+          <li>Print and complete it</li>
+          <li>Mail it to:</li>
+        </ol>
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+          <p class="font-mono text-sm mb-0">
+            Northwell Health Pixel Settlement<br>
+            c/o Settlement Administrator<br>
+            PO Box 25232<br>
+            Santa Ana, CA 92799
+          </p>
+        </div>
+
+        <p><strong>Postmark deadline:</strong> April 20, 2026</p>
+
+        <h2>What If I Don't Want to Participate?</h2>
+        <p>You have two options if you don't want to be part of this settlement:</p>
+
+        <h3>Option 1: Opt Out (Exclude Yourself)</h3>
+        <p><strong>What this means:</strong></p>
+        <ul>
+          <li>You will not receive any benefits from the settlement</li>
+          <li>You keep your right to sue Northwell Health independently on these claims</li>
+          <li>You can pursue your own lawsuit or join a different one</li>
+        </ul>
+
+        <p><strong>How to opt out:</strong></p>
+        <p>Send a written exclusion request that must:</p>
+        <ol>
+          <li>Contain the statement: <strong>"I unequivocally wish to be excluded from the Settlement Class in the case of Kaplan v. Northwell Health, Inc., Case No. 520763/2025"</strong></li>
+          <li>Include your full name, address, phone number, and signature</li>
+          <li>Be postmarked no later than <strong>March 23, 2026</strong></li>
+          <li>Be mailed to the settlement administrator address above</li>
+        </ol>
+        <p><strong>Note:</strong> Any request purporting to exclude more than one Settlement Class Member will be deemed invalid.</p>
+
+        <h3>Option 2: Object to the Settlement</h3>
+        <p><strong>What this means:</strong></p>
+        <ul>
+          <li>You remain in the settlement class</li>
+          <li>You can still file a claim and receive benefits</li>
+          <li>You tell the court why you think the settlement is unfair or inadequate</li>
+        </ul>
+
+        <p><strong>How to object:</strong></p>
+        <p>No later than <strong>March 23, 2026</strong>, you must:</p>
+        <ol>
+          <li>File your written objection with the Clerk of Court</li>
+          <li>Include specific reasons why you believe the settlement is unfair</li>
+          <li>Include any supporting documentation</li>
+          <li>Send copies to both Class Counsel and Northwell Health's Counsel (addresses available on settlement website)</li>
+        </ol>
+
+        <p>You may also attend the final approval hearing on <strong>April 21, 2026 at 9:30 AM ET</strong> to voice your objection in person.</p>
+        <p><strong>If you opt out, you cannot object.</strong> If your objection is overruled, you remain bound by the settlement terms.</p>
+
+        <h2>Important Dates</h2>
+        <div class="table-wrap mb-8">
+          <table class="w-full border-collapse bg-white shadow-sm rounded-lg overflow-hidden">
+            <thead class="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+              <tr>
+                <th class="p-4 text-left font-semibold">Date</th>
+                <th class="p-4 text-left font-semibold">Event</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-4">December 10, 2025</td>
+                <td class="p-4">Preliminary approval granted</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-4">January 2026</td>
+                <td class="p-4">Notice emails sent to class members</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-4 font-bold">March 23, 2026</td>
+                <td class="p-4 font-bold">Opt-out deadline / Objection deadline</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-4 font-bold">April 20, 2026</td>
+                <td class="p-4 font-bold">CLAIM DEADLINE (11:59 PM ET)</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-4">April 21, 2026</td>
+                <td class="p-4">Final approval hearing (9:30 AM ET)</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="p-4">~September 2026</td>
+                <td class="p-4">Settlement payments distributed (approximately 150 days after final approval)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="text-sm text-gray-600"><strong>Note:</strong> Dates are subject to change by Court Order. Check NWPixelSettlement.com for updates.</p>
+
+        <h2>Frequently Asked Questions</h2>
+        <div class="space-y-4 mb-8">
+          
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">How much will I actually receive?</summary>
+            <p class="mt-2 text-gray-700">If you're in Subclass 1, you can receive a $15 cash payment plus 12 months of CyEx Privacy Shield Pro privacy monitoring. If you're in Subclass 2, you can receive 12 months of privacy monitoring only. The exact cash payment amount depends on the total number of valid claims submitted.</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">How do I know which subclass I'm in?</summary>
+            <p class="mt-2 text-gray-700">If you logged into the FollowMyHealth patient portal OR booked an appointment on northwell.edu between January 1, 2020 and December 31, 2023, you're in Subclass 1 (eligible for $15 + privacy monitoring). If you were a Northwell patient during 2020-2024 but didn't do those specific actions, you're in Subclass 2 (eligible for privacy monitoring only).</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">What is CyEx Privacy Shield Pro?</summary>
+            <p class="mt-2 text-gray-700">It's a comprehensive privacy protection service that includes a VPN for secure browsing, private search engine, dark web monitoring, password manager, encrypted document vault, and automatic requests to data brokers to remove your personal information.</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">Is this settlement legitimate?</summary>
+            <p class="mt-2 text-gray-700">Yes. This is a court-approved class action settlement pending final approval. The case is Kaplan v. Northwell Health, Inc., Case No. 520763/2025, in the Supreme Court of the State of New York, County of Kings. Always verify you're visiting the official website: NWPixelSettlement.com</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">Was my actual medical data stolen or leaked?</summary>
+            <p class="mt-2 text-gray-700">No. This case involves tracking pixels that monitored your activity on Northwell's website and patient portal, not unauthorized access to Northwell Health's medical records database. Your actual medical records stored in Northwell's systems were not compromised.</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">Do I need to provide proof of anything?</summary>
+            <p class="mt-2 text-gray-700">No. If you're in the settlement class, you don't need to provide proof of purchase, receipts, medical records, or documentation. You just need to submit a claim form with your Notice ID and PIN.</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">Will filing a claim affect my current healthcare?</summary>
+            <p class="mt-2 text-gray-700">No. Participating in this settlement will not affect your current or future healthcare with Northwell Health or any other provider.</p>
+          </details>
+
+          <details class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition">
+            <summary class="font-semibold text-gray-900">I'm a current Northwell patient. Can I still file?</summary>
+            <p class="mt-2 text-gray-700">Yes! Being a current patient does not disqualify you. As long as you meet the eligibility criteria for the relevant time periods, you can file a claim.</p>
+          </details>
+
+        </div>
+
+        <h2>Should You File a Claim?</h2>
+        <p><strong>Our recommendation: Yes, especially for the CyEx Privacy Shield Pro service.</strong></p>
+        
+        <p><strong>Reasons to participate:</strong></p>
+        <ul>
+          <li><strong>Quick process:</strong> Filing takes approximately 5-10 minutes</li>
+          <li><strong>No cost:</strong> Filing a claim is completely free</li>
+          <li><strong>Valuable privacy protection:</strong> CyEx Privacy Shield Pro offers comprehensive online privacy tools</li>
+          <li><strong>Cash payment:</strong> Subclass 1 members receive $15 (better than nothing!)</li>
+          <li><strong>No downside:</strong> You give up nothing by participating except the theoretical right to sue Northwell Health on these specific claims</li>
+        </ul>
+
+        <h2>Understanding the Settlement Amount</h2>
+        <p>The total settlement fund amount has not been publicly disclosed, but will be distributed as follows:</p>
+        <ul>
+          <li>Court-approved attorneys' fees and costs</li>
+          <li>Settlement administration expenses</li>
+          <li>Service awards to class representatives</li>
+          <li>CyEx Privacy Shield Pro services for all class members who file claims</li>
+          <li>$15 cash payments to Subclass 1 members who file claims</li>
+        </ul>
+
+        <h2>What About Future Privacy Protections?</h2>
+        <p>As part of the settlement, Northwell Health has agreed to enhanced data privacy practices regarding tracking technologies on its website and patient portal.</p>
+        <p>This settlement is part of a nationwide trend of healthcare providers being held accountable for using third-party tracking tools that may share protected health information without proper patient consent.</p>
+
+        <h2>Contact Information</h2>
+        <div class="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-bold text-gray-900 mb-2">Settlement Administrator</h3>
+              <p class="text-gray-700 mb-4">
+                Simpluris<br>
+                Email: <a href="mailto:info@NWPixelSettlement.com" class="text-blue-600 hover:underline">info@NWPixelSettlement.com</a><br>
+                Phone: (833) 360-6887<br>
+                Mail:<br>
+                <span class="font-mono text-sm">
+                  Northwell Health Pixel Settlement<br>
+                  c/o Settlement Administrator<br>
+                  PO Box 25232<br>
+                  Santa Ana, CA 92799
+                </span>
+              </p>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-900 mb-2">Official Website</h3>
+              <p class="mb-4"><a href="https://www.nwpixelsettlement.com/" class="text-blue-600 hover:underline text-lg font-medium">NWPixelSettlement.com</a></p>
+            </div>
+          </div>
+          
+          <div class="mt-4 pt-4 border-t border-gray-300">
+            <h3 class="font-bold text-gray-900 mb-2">Court Case Information</h3>
+            <p class="text-sm text-gray-600">
+              <strong>Case name:</strong> Kaplan v. Northwell Health, Inc.<br>
+              <strong>Case number:</strong> 520763/2025<br>
+              <strong>Court:</strong> Supreme Court of the State of New York, County of Kings<br>
+              <strong>Court location:</strong> 360 Adams Street, Brooklyn, New York<br>
+              <strong>Final approval hearing:</strong> April 21, 2026 at 9:30 AM ET
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-xl p-8 mb-8 text-center shadow-lg">
+          <h2 class="text-3xl font-black text-white mb-4">Next Steps</h2>
+          <p class="text-lg mb-6 text-purple-100">If you were a Northwell Health patient between 2020-2024, take action before the April 20, 2026 deadline.</p>
+          
+          <div class="bg-white bg-opacity-20 rounded-lg p-6 mb-6 backdrop-blur">
+            <div class="space-y-3 text-left max-w-md mx-auto">
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>File your claim by April 20, 2026</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>Receive 12 months CyEx Privacy Shield Pro</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>Get $15 cash (Subclass 1 only)</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>Protect your online privacy with VPN & dark web monitoring</span>
+              </div>
+            </div>
+          </div>
+
+          <a href="https://www.nwpixelsettlement.com/form/claim/" 
+             target="_blank"
+             class="inline-block bg-white text-purple-600 px-10 py-4 rounded-lg font-black text-xl hover:bg-gray-100 transition shadow-xl no-underline">
+            File Your Claim Now →
+          </a>
+
+          <p class="mt-6 text-purple-100 text-sm">This page will be updated if any deadlines or payment amounts change.</p>
+        </div>
+
+        <hr class="my-8 border-gray-300">
+
+        <p class="text-sm text-gray-600"><em>Disclaimer: This article is for informational purposes only. We are not affiliated with Northwell Health or the settlement administrator. For official information, visit NWPixelSettlement.com or contact Simpluris directly.</em></p>
+
       </div>
 
-      <!-- Legal -->
-      <div class="text-center md:text-right">
-        <p class="text-gray-300 text-sm font-light">
-          © 2025 eosguide. Information only.
-        </p>
-        <p class="text-gray-400 text-xs font-light mt-1">
-          Not legal, financial, or tax advice.
-        </p>
-        <p class="mt-2 text-sm">
-          <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
-        </p>
+      <p class="mt-10 text-xs text-gray-500">
+        Info only. Verify details on the official site. Not legal, financial, or tax advice.
+        <a href="/legal/" class="underline">Legal</a>
+      </p>
+
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm font-semibold text-gray-700 mb-3">Share this:</p>
+
+        <div class="flex flex-wrap gap-2 text-sm">
+          <button type="button" id="copyLinkBtn"
+            class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition">
+            Copy link
+          </button>
+
+          <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
+             target="_blank" rel="noopener"
+             href="mailto:?subject=Northwell Health Pixel Settlement 2026&body=https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html">
+            Email
+          </a>
+
+          <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
+             target="_blank" rel="noopener"
+             href="https://twitter.com/intent/tweet?url=https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html&text=Northwell Health Pixel Settlement 2026">
+            X
+          </a>
+
+          <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
+             target="_blank" rel="noopener"
+             href="https://www.facebook.com/sharer/sharer.php?u=https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html">
+            Facebook
+          </a>
+        </div>
+
+        <p id="copyStatus" class="text-xs text-gray-500 mt-2" aria-live="polite"></p>
       </div>
 
+      <script>
+        (function () {
+          const btn = document.getElementById('copyLinkBtn');
+          const status = document.getElementById('copyStatus');
+          if (!btn) return;
+
+          btn.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText('https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026.html');
+              status.textContent = 'Link copied.';
+            } catch (e) {
+              status.textContent = 'Copy failed. You can copy from the address bar.';
+            }
+          });
+        })();
+      </script>
+
+    </article>
+  </main>
+
+  <footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        
+        <div>
+          <h4 class="font-black text-xl mb-4 bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+            eosguide
+          </h4>
+          <p class="text-gray-400 text-sm font-light">
+            We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.
+          </p>
+        </div>
+
+        <div class="text-center md:text-left">
+          <p class="text-gray-300 text-sm font-light">
+            Have a question, suggestion, or request?
+          </p>
+          <p class="text-gray-200 text-sm font-light">
+            Email:
+            <a href="mailto:hello@eosguidehub.com" class="text-cyan-300 hover:text-cyan-400 underline">
+              hello@eosguidehub.com
+            </a>
+          </p>
+        </div>
+
+        <div class="text-center md:text-right">
+          <p class="text-gray-300 text-sm font-light">
+            © 2025 eosguide. Information only.
+          </p>
+          <p class="text-gray-400 text-xs font-light mt-1">
+            Not legal, financial, or tax advice.
+          </p>
+          <p class="mt-2 text-sm">
+            <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
+          </p>
+        </div>
+
+      </div>
     </div>
-
-  </div>
-</footer>
-
+  </footer>
 
 </body>
 </html>
-
