@@ -388,12 +388,13 @@
                 <p class="text-gray-600 font-normal">Get weekly alerts about new opportunities in <span id="selectedState">MT</span></p>
             </div>
 
-          <form
+         <form
+  id="newsletterForm"
   action="/.netlify/functions/buttondown-subscribe"
   method="post"
-  onsubmit="return onBdSubscribeSubmit(event)"
   class="space-y-4"
 >
+
 
   <input
     type="email"
@@ -1183,7 +1184,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+const newsletterForm = document.getElementById("newsletterForm");
+  if (newsletterForm) {
+    newsletterForm.addEventListener("submit", onBdSubscribeSubmit);
+  }
 
+});
   // State filter wiring
   const stateEl = document.getElementById('stateSelector');
   if (stateEl) {
