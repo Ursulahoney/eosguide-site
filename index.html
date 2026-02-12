@@ -411,6 +411,7 @@
     Subscribe Free
   </button>
 </form>
+<p id="newsletterMessage" class="text-sm text-center text-gray-600 mt-2 hidden"></p>
 
             <p class="text-xs text-gray-500 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
         </div>
@@ -1081,7 +1082,8 @@ function onBdSubscribeSubmit() {
     const msg = document.getElementById("newsletterMessage");
     if (msg) {
       msg.textContent = "Almost done. Check your email to confirm your subscription.";
-      msg.style.display = "block";
+      msg.classList.remove("hidden");
+
     }
 
     setTimeout(() => {
