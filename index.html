@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -388,17 +388,15 @@
                 <p class="text-gray-600 font-normal">Get weekly alerts about new opportunities in <span id="selectedState">MT</span></p>
             </div>
 
-         <form
-  id="newsletterForm"
-  action="/.netlify/functions/buttondown-subscribe"
+           <form
+  action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub"
   method="post"
   class="space-y-4"
 >
-
-
   <input
     type="email"
     name="email"
+    id="emailInput"
     placeholder="Enter your email"
     required
     class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light"
@@ -412,7 +410,7 @@
     Subscribe Free
   </button>
 </form>
-<p id="newsletterMessage" class="text-sm text-center text-gray-600 mt-2 hidden"></p>
+
 
             <p class="text-xs text-gray-500 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
         </div>
@@ -1061,52 +1059,16 @@ filtered.sort((a, b) => {
   renderOpportunities();
 }
 
- function openNewsletter() {
-  const state = document.getElementById('stateSelector').value;
-  document.getElementById('selectedState').textContent = state;
-  document.getElementById('newsletterModal').classList.remove('hidden');
-}
-
-function closeNewsletter() {
-  document.getElementById('newsletterModal').classList.add('hidden');
-}
-
-/* ADD THIS DIRECTLY BELOW closeNewsletter() */
-
-async function onBdSubscribeSubmit(event) {
-  event.preventDefault();
-
-  const form = event.target;
-  const msg = document.getElementById("newsletterMessage");
-
-  if (msg) {
-    msg.classList.remove("hidden");
-    msg.textContent = "Adding you now…";
+  function openNewsletter() {
+    const state = document.getElementById('stateSelector').value;
+    document.getElementById('selectedState').textContent = state;
+    document.getElementById('newsletterModal').classList.remove('hidden');
   }
 
-  try {
-    const res = await fetch(form.action, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(new FormData(form)).toString(),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (res.ok && data.ok) {
-      if (msg) msg.textContent = "You’re in. Check your email to confirm.";
-      form.reset();
-      setTimeout(() => closeNewsletter(), 1200);
-      return false;
-    }
-
-    if (msg) msg.textContent = "Hmm, that didn’t work. Try again in a moment.";
-    return false;
-  } catch (e) {
-    if (msg) msg.textContent = "Network error. Please try again.";
-    return false;
+  function closeNewsletter() {
+    document.getElementById('newsletterModal').classList.add('hidden');
   }
-}
+
 
   // Hook state dropdown so changing state re-runs the filter
   const stateSelectorEl = document.getElementById('stateSelector');
@@ -1114,18 +1076,6 @@ async function onBdSubscribeSubmit(event) {
     stateSelectorEl.addEventListener('change', function () {
       renderOpportunities();
     });
-  }
-function onBdSubscribeSubmit() {
-    const msg = document.getElementById("newsletterMessage");
-    if (msg) {
-      msg.textContent = "Almost done. Check your email to confirm your subscription.";
-      msg.classList.remove("hidden");
-
-    }
-
-    setTimeout(() => {
-      closeNewsletter();
-    }, 1200);
   }
 
   
@@ -1184,12 +1134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-const newsletterForm = document.getElementById("newsletterForm");
-  if (newsletterForm) {
-    newsletterForm.addEventListener("submit", onBdSubscribeSubmit);
-  }
 
-});
   // State filter wiring
   const stateEl = document.getElementById('stateSelector');
   if (stateEl) {
@@ -1221,8 +1166,6 @@ const newsletterForm = document.getElementById("newsletterForm");
     </button>
   </div>
 </nav>
-   
 
 </body>
 </html>
-
