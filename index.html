@@ -388,15 +388,16 @@
                 <p class="text-gray-600 font-normal">Get weekly alerts about new opportunities in <span id="selectedState">MT</span></p>
             </div>
 
-           <form
+          <form
   action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub"
   method="post"
+  target="bd_iframe"
+  onsubmit="onBdSubscribeSubmit()"
   class="space-y-4"
 >
   <input
     type="email"
     name="email"
-    id="emailInput"
     placeholder="Enter your email"
     required
     class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light"
@@ -410,7 +411,6 @@
     Subscribe Free
   </button>
 </form>
-
 
             <p class="text-xs text-gray-500 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
         </div>
@@ -1077,7 +1077,18 @@ filtered.sort((a, b) => {
       renderOpportunities();
     });
   }
+function onBdSubscribeSubmit() {
+    const msg = document.getElementById("newsletterMessage");
+    if (msg) {
+      msg.textContent = "Almost done. Check your email to confirm your subscription.";
+      msg.style.display = "block";
+    }
 
+    setTimeout(() => {
+      closeNewsletter();
+    }, 1200);
+  }
+</script>
   
     // Back to top button behavior
   const backToTopBtn = document.getElementById('backToTop');
@@ -1166,6 +1177,9 @@ document.addEventListener('DOMContentLoaded', () => {
     </button>
   </div>
 </nav>
+    <!-- Hidden iframe for Buttondown form submission -->
+    <iframe name="bd_iframe" style="display:none;"></iframe>
 
 </body>
 </html>
+
