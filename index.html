@@ -388,12 +388,29 @@
                 <p class="text-gray-600 font-normal">Get weekly alerts about new opportunities in <span id="selectedState">MT</span></p>
             </div>
 
-            <form onsubmit="handleNewsletterSubmit(event)" class="space-y-4">
-                <input type="email" id="emailInput" placeholder="Enter your email" required class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light">
-                <button type="submit" class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
-                    Subscribe Free
-                </button>
-            </form>
+           <form
+  action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub"
+  method="post"
+  class="space-y-4"
+>
+  <input
+    type="email"
+    name="email"
+    id="emailInput"
+    placeholder="Enter your email"
+    required
+    class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light"
+  />
+
+  <button
+    type="submit"
+    class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300"
+    style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);"
+  >
+    Subscribe Free
+  </button>
+</form>
+
 
             <p class="text-xs text-gray-500 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
         </div>
@@ -1052,13 +1069,6 @@ filtered.sort((a, b) => {
     document.getElementById('newsletterModal').classList.add('hidden');
   }
 
-  function handleNewsletterSubmit(e) {
-    e.preventDefault();
-    const email = document.getElementById('emailInput').value;
-    alert(`Thanks for subscribing! We'll send updates to ${email}`);
-    document.getElementById('emailInput').value = '';
-    closeNewsletter();
-  }
 
   // Hook state dropdown so changing state re-runs the filter
   const stateSelectorEl = document.getElementById('stateSelector');
