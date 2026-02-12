@@ -389,12 +389,12 @@
             </div>
 
           <form
-  action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub"
+  action="/.netlify/functions/buttondown-subscribe"
   method="post"
-  target="bd_iframe"
-  onsubmit="onBdSubscribeSubmit()"
+  onsubmit="return onBdSubscribeSubmit(event)"
   class="space-y-4"
 >
+
   <input
     type="email"
     name="email"
@@ -1060,16 +1060,52 @@ filtered.sort((a, b) => {
   renderOpportunities();
 }
 
-  function openNewsletter() {
-    const state = document.getElementById('stateSelector').value;
-    document.getElementById('selectedState').textContent = state;
-    document.getElementById('newsletterModal').classList.remove('hidden');
+ function openNewsletter() {
+  const state = document.getElementById('stateSelector').value;
+  document.getElementById('selectedState').textContent = state;
+  document.getElementById('newsletterModal').classList.remove('hidden');
+}
+
+function closeNewsletter() {
+  document.getElementById('newsletterModal').classList.add('hidden');
+}
+
+/* ADD THIS DIRECTLY BELOW closeNewsletter() */
+
+async function onBdSubscribeSubmit(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const msg = document.getElementById("newsletterMessage");
+
+  if (msg) {
+    msg.classList.remove("hidden");
+    msg.textContent = "Adding you now…";
   }
 
-  function closeNewsletter() {
-    document.getElementById('newsletterModal').classList.add('hidden');
-  }
+  try {
+    const res = await fetch(form.action, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(new FormData(form)).toString(),
+    });
 
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.ok) {
+      if (msg) msg.textContent = "You’re in. Check your email to confirm.";
+      form.reset();
+      setTimeout(() => closeNewsletter(), 1200);
+      return false;
+    }
+
+    if (msg) msg.textContent = "Hmm, that didn’t work. Try again in a moment.";
+    return false;
+  } catch (e) {
+    if (msg) msg.textContent = "Network error. Please try again.";
+    return false;
+  }
+}
 
   // Hook state dropdown so changing state re-runs the filter
   const stateSelectorEl = document.getElementById('stateSelector');
@@ -1179,8 +1215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </button>
   </div>
 </nav>
-    <!-- Hidden iframe for Buttondown form submission -->
-    <iframe name="bd_iframe" style="display:none;"></iframe>
+   
 
 </body>
 </html>
