@@ -70,12 +70,7 @@
     .prose details + details { margin-top: 12px; }
     .prose summary { cursor: pointer; font-weight: 700; }
     .prose summary::-webkit-details-marker { display:none; }
-
-    /* TOC */
-    #toc a { text-decoration: none; }
-    #toc a:hover { text-decoration: underline; }
-  
-    /* Version B visual hierarchy */
+/* Version B visual hierarchy */
     .prose :where(h2) {
       border-left: 4px solid #e5e7eb;
       padding-left: 12px;
@@ -209,30 +204,46 @@
 </div>
     </section>
 
-    <!-- Quick actions (Version B) -->
+
+    <!-- Deadline alert -->
     <section class="mb-8">
-      <div class="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div class="text-sm text-gray-700">
-          <span class="font-semibold text-gray-900">Quick actions:</span>
-          Get deadline reminders, or jump to the official links below.
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-          <button type="button"
-            onclick="openNewsletter()"
-            class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition">
-            Get Alerts
-          </button>
-
-          <button type="button"
-            onclick="scrollToOfficialLinks()"
-            class="px-4 py-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-semibold transition">
-            Official links
-          </button>
+      <div class="rounded-3xl border border-amber-200 bg-amber-50 p-5">
+        <div class="flex items-start gap-3">
+          <div class="mt-0.5 text-amber-700" aria-hidden="true">⚠</div>
+          <div>
+            <p class="text-sm font-semibold text-amber-900">Claim deadline: <span class="font-bold">{{DEADLINE}}</span></p>
+            <p class="text-sm text-amber-900/90 mt-1">
+              You usually must file by this date to get benefits. If you’re unsure, check the official site below.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- Quick summary (auto-filled from TLDR bullets) -->
+    <section class="mb-8">
+      <div class="rounded-3xl border border-gray-200 bg-white p-5">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-base font-extrabold text-gray-900 m-0">Quick summary</h2>
+          <button type="button"
+            onclick="openNewsletter()"
+            class="px-3 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition">
+            Get Alerts
+          </button>
+        </div>
+        <p class="text-sm text-gray-700 mt-2" id="quickSummaryFallback">{{META_DESCRIPTION}}</p>
+        <ul class="mt-3 space-y-2 text-sm text-gray-800" id="quickSummaryList"></ul>
+      </div>
+    </section>
+
+    <!-- Hero banner (image optional) -->
+    <section class="mb-8" id="heroFallback" style="display:none;">
+      <div class="rounded-3xl p-6 text-white" style="background: linear-gradient(135deg, #7c3aed, #0ea5e9);">
+        <p class="text-xs uppercase tracking-wide opacity-90">Settlement guide</p>
+        <h2 class="text-2xl font-extrabold leading-tight mt-1">{{TITLE}}</h2>
+        <p class="text-sm opacity-95 mt-2">{{META_DESCRIPTION}}</p>
+      </div>
+    </section>
 <!-- Hero image (optional) -->
     <div id="heroWrap">
       <!-- Hero image -->
@@ -331,13 +342,7 @@
     })();
 
     // Scroll to the "Official links" heading inside the article body
-    function scrollToOfficialLinks() {
-      const container = document.querySelector('.prose');
-      if (!container) return;
-
-      const targets = Array.from(container.querySelectorAll('h2, h3'));
-      const h = targets.find(x => (x.textContent || '').trim().toLowerCase() === 'official links');
-      if (h) h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+);
     }
   </script>
 
@@ -357,12 +362,48 @@
         });
       })();
     </script>
+<script>
+      function setOfficialLinksAnchor() {
+        // Find the "Official links" heading in the article body and ensure it has an id
+        const headings = document.querySelectorAll('.prose h2, .prose h3');
+        for (const h of headings) {
+          if ((h.textContent || '').trim().toLowerCase() === 'official links') {
+            if (!h.id) h.id = 'official-links';
+            return;
+          }
+        }
+      }
 
+      function buildQuickSummaryFromTLDR() {
+        const list = document.getElementById('quickSummaryList');
+        const fallback = document.getElementById('quickSummaryFallback');
+        if (!list) return;
 
-    <script>
-      // Hide hero image if no image was provided (prevents broken "Article image" on published pages)
+        // Look for a TLDR blockquote and pull bullet points
+        const quote = document.querySelector('.prose blockquote');
+        const items = quote ? quote.querySelectorAll('li') : [];
+
+        if (items && items.length) {
+          list.innerHTML = '';
+          items.forEach(li => {
+            const text = (li.textContent || '').trim();
+            if (!text) return;
+            const el = document.createElement('li');
+            el.className = 'flex gap-2';
+            el.innerHTML = '<span aria-hidden="true">•</span><span>' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+            list.appendChild(el);
+          });
+          if (fallback) fallback.style.display = 'none';
+        } else {
+          // No TLDR bullets found
+          if (fallback) fallback.style.display = 'block';
+        }
+      }
+
+      // Hide hero image if no image was provided; show banner fallback instead
       (function () {
         const wrap = document.getElementById('heroWrap');
+        const banner = document.getElementById('heroFallback');
         if (!wrap) return;
         const img = wrap.querySelector('img');
         if (!img) return;
@@ -375,12 +416,11 @@
 
         if (looksEmpty) {
           wrap.style.display = 'none';
+          if (banner) banner.style.display = 'block';
 
-          // Remove og:image tag if empty
           const ogImg = document.querySelector('meta[property="og:image"]');
           if (ogImg) ogImg.remove();
 
-          // Remove JSON-LD image field if empty
           const ld = document.querySelector('script[type="application/ld+json"]');
           if (ld) {
             try {
@@ -396,8 +436,11 @@
           }
         }
       })();
-    </script>
 
+      // Run helpers
+      setOfficialLinksAnchor();
+      buildQuickSummaryFromTLDR();
+    </script>
 
   </article>
 </main>
