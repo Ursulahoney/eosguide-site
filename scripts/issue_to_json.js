@@ -8,6 +8,15 @@ function safeStr(v) {
   return String(v).trim();
 }
 
+
+function toArticleUrl(slug) {
+  const s = safeStr(slug).toLowerCase();
+  // Allow [a-z0-9-] only
+  const cleaned = s.replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  return cleaned ? `/articles/${cleaned}.html` : "";
+}
+
+
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -81,29 +90,37 @@ function writeJson(jsonPath, arr) {
   const category = parseField(body, "Category");
   const state = parseField(body, "State");
   const deadline = toISODateOrEmpty(parseField(body, "Deadline (YYYY-MM-DD)"));
+  const article_slug = parseField(body, "Article slug (links to your article)");
   const amount = parseField(body, "Amount");
   const details_url = parseField(body, "Details URL (info page)");
   const apply_url = parseField(body, "Apply URL (where user files claim)");
   const card_description = parseField(body, "Card description (shows on site)");
   const featured = parseFeatured(body);
 
-  const url = safeStr(apply_url) || safeStr(details_url);
+  const url = toArticleUrl(article_slug);
 
-  if (!title || !details_url || !card_description || !url) {
+  // Keep the official URLs for the article to link out
+  const official_url = safeStr(apply_url) || safeStr(details_url);
+if (!title || !card_description || !url) {
     throw new Error(
-      "Missing required fields: title, details_url, card_description, or url."
+      "Missing required fields: title, article_slug, card_description."
     );
   }
 
-  const newItem = {
-    id: makeId({ url, title, deadline }),
+  // We still want at least one official URL stored
+  if (!official_url) {
+    throw new Error("Missing required field: at least one of details_url or apply_url.");
+  }
+const newItem = {
+    id: makeId({ url: official_url, title, deadline }),
     title,
     category: category || "Other",
     amount: safeStr(amount),
     deadline,
     difficulty: "Medium",
     description: card_description,
-    url, // apply_url preferred, else details_url
+    url, // internal article link
+    official_url: official_url,
     state: state || "Nationwide",
     value: null,
     featured: !!featured,
@@ -121,7 +138,7 @@ function writeJson(jsonPath, arr) {
 
   // Avoid duplicates by id OR url
   const already = existing.some(
-    (x) => safeStr(x.id) === newItem.id || safeStr(x.url) === newItem.url
+    (x) => safeStr(x.id) === newItem.id || safeStr(x.url) === newItem.url || safeStr(x.official_url) === newItem.official_url
   );
 
   if (!already) existing.unshift(newItem);
