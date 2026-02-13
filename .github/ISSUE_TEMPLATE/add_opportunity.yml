@@ -11,6 +11,25 @@ body:
     validations:
       required: true
 
+
+  - type: markdown
+    attributes:
+      value: |
+        **Card link behavior**
+        - The homepage card should link to your internal article page.
+        - Put the article slug below. Example: `prg-breach-settlement` links to `/articles/prg-breach-settlement.html`.
+        - Add the official settlement URLs in the fields farther down. The article should link out to the official site.
+
+  - type: input
+    id: article_slug
+    attributes:
+      label: Article slug (links to your article)
+      description: "Match the published article filename without .html. Example: prg-breach-settlement"
+      placeholder: "prg-breach-settlement"
+    validations:
+      required: true
+
+
   - type: dropdown
     id: category
     attributes:
