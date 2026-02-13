@@ -200,18 +200,22 @@
       </div>
     </section>
 
-    <!-- Hero image -->
-    <img
-      src="{{HERO_IMAGE}}"
-      alt="{{HERO_ALT}}"
-      class="rounded-2xl mb-2 w-full"
-    >
-
-    <!-- Optional hero credit (empty if none) -->
-    {{HERO_CREDIT}}
-
-    
-    <!-- Monetization slot: top (empty by default) -->
+    <!-- Hero image (optional) -->
+    <div id="heroWrap">
+      <!-- Hero image -->
+          <img
+            src="{{HERO_IMAGE}}"
+            alt="{{HERO_ALT}}"
+            class="rounded-2xl mb-2 w-full"
+          >
+      
+          <!-- Optional hero credit (empty if none) -->
+          {{HERO_CREDIT}}
+      
+          
+          
+    </div>
+<!-- Monetization slot: top (empty by default) -->
     <div id="monetizationTop" class="mt-8"></div>
 
 
@@ -231,20 +235,6 @@
 
     <!-- Monetization slot: bottom (empty by default) -->
     <div id="monetizationBottom" class="mt-10"></div>
-
-
-    
-    <!-- Official source -->
-    <section id="official-source" class="mt-10">
-      <div class="rounded-3xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
-        <p class="text-sm font-black text-gray-900 mb-2">Official source</p>
-        <p class="text-sm text-gray-700">
-          Add the official program or settlement link in your <strong>Article body</strong>.
-          Tip: include a section like <em>## Official links</em> with the URL(s).
-        </p>
-      </div>
-    </section>
-
 
 <!-- Trust + legal line -->
     <p class="mt-10 text-xs text-gray-500">
@@ -338,6 +328,47 @@
         });
       })();
     </script>
+
+
+    <script>
+      // Hide hero image if no image was provided (prevents broken "Article image" on published pages)
+      (function () {
+        const wrap = document.getElementById('heroWrap');
+        if (!wrap) return;
+        const img = wrap.querySelector('img');
+        if (!img) return;
+
+        const src = (img.getAttribute('src') || '').trim();
+        const looksEmpty =
+          !src ||
+          src.toLowerCase() === 'no response' ||
+          src.includes('{{HERO_IMAGE}}');
+
+        if (looksEmpty) {
+          wrap.style.display = 'none';
+
+          // Remove og:image tag if empty
+          const ogImg = document.querySelector('meta[property="og:image"]');
+          if (ogImg) ogImg.remove();
+
+          // Remove JSON-LD image field if empty
+          const ld = document.querySelector('script[type="application/ld+json"]');
+          if (ld) {
+            try {
+              const data = JSON.parse(ld.textContent);
+              if (data && data.image && Array.isArray(data.image) && data.image.length) {
+                const v = String(data.image[0] || '').trim();
+                if (!v || v.toLowerCase() === 'no response' || v.includes('{{HERO_IMAGE}}')) {
+                  delete data.image;
+                  ld.textContent = JSON.stringify(data, null, 2);
+                }
+              }
+            } catch (e) {}
+          }
+        }
+      })();
+    </script>
+
 
   </article>
 </main>
