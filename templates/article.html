@@ -219,24 +219,45 @@
         </div>
       </div>
     </section>
-
-    <!-- Quick summary (auto-filled from TLDR bullets) -->
+    <!-- Claim snapshot (auto-filled from TLDR bullets) -->
     <section class="mb-8">
-      <div class="rounded-3xl border border-gray-200 bg-white p-5">
+      <div class="rounded-3xl border border-gray-200 bg-gray-50 p-5">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="text-base font-extrabold text-gray-900 m-0">Quick summary</h2>
+          <h2 class="text-base font-extrabold text-gray-900 m-0">Claim snapshot</h2>
           <button type="button"
             onclick="openNewsletter()"
             class="px-3 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition">
             Get Alerts
           </button>
         </div>
-        <p class="text-sm text-gray-700 mt-2" id="quickSummaryFallback">{{META_DESCRIPTION}}</p>
-        <ul class="mt-3 space-y-2 text-sm text-gray-800" id="quickSummaryList"></ul>
+
+        <div class="mt-3 grid gap-3 sm:grid-cols-2">
+          <div class="rounded-2xl bg-white border border-gray-200 px-4 py-3">
+            <p class="text-xs text-gray-500 font-semibold">Deadline</p>
+            <p class="text-sm text-gray-900 font-bold">{{DEADLINE}}</p>
+          </div>
+          <div class="rounded-2xl bg-white border border-gray-200 px-4 py-3">
+            <p class="text-xs text-gray-500 font-semibold">Top benefit</p>
+            <p class="text-sm text-gray-900 font-bold" id="snapTopBenefit">See TLDR below</p>
+          </div>
+          <div class="rounded-2xl bg-white border border-gray-200 px-4 py-3">
+            <p class="text-xs text-gray-500 font-semibold">Cash option</p>
+            <p class="text-sm text-gray-900 font-bold" id="snapCashOption">See TLDR below</p>
+          </div>
+          <div class="rounded-2xl bg-white border border-gray-200 px-4 py-3">
+            <p class="text-xs text-gray-500 font-semibold">Extra notes</p>
+            <p class="text-sm text-gray-900 font-bold" id="snapExtra">See TLDR below</p>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-3">
+          This snapshot is pulled from the TLDR bullets at the top of the article.
+        </p>
       </div>
     </section>
 
-    <!-- Hero banner (image optional) -->
+
+<!-- Hero banner (image optional) -->
     <section class="mb-8" id="heroFallback" style="display:none;">
       <div class="rounded-3xl p-6 text-white" style="background: linear-gradient(135deg, #7c3aed, #0ea5e9);">
         <p class="text-xs uppercase tracking-wide opacity-90">Settlement guide</p>
@@ -322,6 +343,7 @@
 
 
     
+  
   <script>
     // Add stable IDs to headings so links can jump reliably
     (function () {
@@ -340,12 +362,7 @@
         if (!h.id) h.id = slugify(h.textContent || 'section');
       });
     })();
-
-    // Scroll to the "Official links" heading inside the article body
-);
-    }
   </script>
-
 <script>
       (function () {
         const btn = document.getElementById('copyLinkBtn');
@@ -371,33 +388,45 @@
             if (!h.id) h.id = 'official-links';
             return;
           }
-        }
-      }
 
-      function buildQuickSummaryFromTLDR() {
-        const list = document.getElementById('quickSummaryList');
-        const fallback = document.getElementById('quickSummaryFallback');
-        if (!list) return;
+      function buildClaimSnapshotFromTLDR() {
+        const top = document.getElementById('snapTopBenefit');
+        const cash = document.getElementById('snapCashOption');
+        const extra = document.getElementById('snapExtra');
+        if (!top || !cash || !extra) return;
 
         // Look for a TLDR blockquote and pull bullet points
         const quote = document.querySelector('.prose blockquote');
-        const items = quote ? quote.querySelectorAll('li') : [];
+        const items = quote ? Array.from(quote.querySelectorAll('li')).map(li => (li.textContent || '').trim()).filter(Boolean) : [];
 
-        if (items && items.length) {
-          list.innerHTML = '';
-          items.forEach(li => {
-            const text = (li.textContent || '').trim();
-            if (!text) return;
-            const el = document.createElement('li');
-            el.className = 'flex gap-2';
-            el.innerHTML = '<span aria-hidden="true">•</span><span>' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
-            list.appendChild(el);
-          });
-          if (fallback) fallback.style.display = 'none';
-        } else {
-          // No TLDR bullets found
-          if (fallback) fallback.style.display = 'block';
+        const pickLine = (reList) => {
+          for (const line of items) {
+            for (const re of reList) {
+              if (re.test(line)) return line;
+            }
+          }
+          return '';
+        };
+
+        const moneyRe = /\$\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?/;
+
+        // Top benefit: try to find an "up to $X" or documented losses line
+        let topLine = pickLine([/up to\s*\$/i, /documented/i, /reimbursement/i]);
+        if (!topLine) topLine = pickLine([moneyRe]);
+
+        // Cash option: try to find $100 / cash payment language
+        let cashLine = pickLine([/\$\s*100/i, /cash/i, /pro\s*rata/i, /flat/i]);
+
+        // Extra notes: state add-on or credit monitoring
+        let extraLine = pickLine([/california/i, /statutory/i, /credit monitoring/i, /monitoring/i]);
+        if (!extraLine && items.length >= 3) extraLine = items[2];
+
+        top.textContent = topLine ? topLine : 'See benefits section';
+        cash.textContent = cashLine ? cashLine : 'See benefits section';
+        extra.textContent = extraLine ? extraLine : 'See details below';
+      }
         }
+      }
       }
 
       // Hide hero image if no image was provided; show banner fallback instead
@@ -439,7 +468,8 @@
 
       // Run helpers
       setOfficialLinksAnchor();
-      buildQuickSummaryFromTLDR();
+      buildClaimSnapshotFromTLDR();
+      
     </script>
 
   </article>
