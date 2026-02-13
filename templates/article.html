@@ -74,6 +74,33 @@
     /* TOC */
     #toc a { text-decoration: none; }
     #toc a:hover { text-decoration: underline; }
+  
+    /* Version B visual hierarchy */
+    .prose :where(h2) {
+      border-left: 4px solid #e5e7eb;
+      padding-left: 12px;
+      padding-top: 2px;
+    }
+    .prose :where(blockquote) {
+      border: 1px solid #e5e7eb;
+      background: #fafafa;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-top: 1.0em;
+      margin-bottom: 1.0em;
+    }
+    .prose :where(blockquote p) { margin: 0.35em 0; }
+    .prose :where(hr) {
+      border: 0;
+      border-top: 1px solid #e5e7eb;
+      margin: 1.2em 0;
+    }
+    .table-wrap table thead th {
+      background: #f9fafb;
+      font-weight: 800;
+      color: #111827;
+    }
+
   </style>
 
 </head>
@@ -179,28 +206,34 @@
             </div>
           </div>
         </div>
+</div>
+    </section>
 
-        <div class="mt-5 flex flex-wrap gap-2">
-          <a href="#toc" class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-sm font-semibold text-gray-800">
-            Jump to sections
-          </a>
-          <a href="#official-source" class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-sm font-semibold text-gray-800">
-            Official source
-          </a>
+    <!-- Quick actions (Version B) -->
+    <section class="mb-8">
+      <div class="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="text-sm text-gray-700">
+          <span class="font-semibold text-gray-900">Quick actions:</span>
+          Get deadline reminders, or jump to the official links below.
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button type="button"
+            onclick="openNewsletter()"
+            class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition">
+            Get Alerts
+          </button>
+
+          <button type="button"
+            onclick="scrollToOfficialLinks()"
+            class="px-4 py-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-semibold transition">
+            Official links
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Table of contents (auto-generated from headings) -->
-    <section class="mb-8" id="toc">
-      <div class="rounded-3xl border border-gray-200 bg-white p-5 sm:p-6">
-        <p class="text-sm font-black text-gray-900 mb-3">On this page</p>
-        <div id="tocList" class="text-sm text-gray-700 grid gap-2"></div>
-        <p id="tocEmpty" class="text-sm text-gray-500">No sections yet. Add headings like “## Who qualifies” in the Article body.</p>
-      </div>
-    </section>
-
-    <!-- Hero image (optional) -->
+<!-- Hero image (optional) -->
     <div id="heroWrap">
       <!-- Hero image -->
           <img
@@ -273,46 +306,42 @@
 
       <p id="copyStatus" class="text-xs text-gray-500 mt-2" aria-live="polite"></p>
     </div>
+  
+
+
+
+    
   <script>
+    // Add stable IDs to headings so links can jump reliably
     (function () {
       const container = document.querySelector('.prose');
-      const tocList = document.getElementById('tocList');
-      const tocEmpty = document.getElementById('tocEmpty');
-      if (!container || !tocList || !tocEmpty) return;
+      if (!container) return;
 
-      const headings = Array.from(container.querySelectorAll('h2, h3'));
-      if (!headings.length) {
-        tocEmpty.style.display = 'block';
-        return;
-      }
-
-      tocEmpty.style.display = 'none';
-
-      const slugify = (text) => text
+      const slugify = (text) => String(text || '')
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-');
 
+      const headings = Array.from(container.querySelectorAll('h2, h3'));
       headings.forEach((h) => {
         if (!h.id) h.id = slugify(h.textContent || 'section');
-        const a = document.createElement('a');
-        a.href = '#' + h.id;
-        a.textContent = (h.tagName === 'H3' ? '• ' : '') + (h.textContent || '');
-        a.className = 'block text-gray-700 hover:text-gray-900';
-
-        const wrap = document.createElement('div');
-        wrap.className = h.tagName === 'H3' ? 'ml-4' : '';
-        wrap.appendChild(a);
-        tocList.appendChild(wrap);
       });
     })();
+
+    // Scroll to the "Official links" heading inside the article body
+    function scrollToOfficialLinks() {
+      const container = document.querySelector('.prose');
+      if (!container) return;
+
+      const targets = Array.from(container.querySelectorAll('h2, h3'));
+      const h = targets.find(x => (x.textContent || '').trim().toLowerCase() === 'official links');
+      if (h) h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   </script>
 
-
-
-    <script>
+<script>
       (function () {
         const btn = document.getElementById('copyLinkBtn');
         const status = document.getElementById('copyStatus');
