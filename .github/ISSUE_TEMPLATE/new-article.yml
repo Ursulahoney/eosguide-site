@@ -133,7 +133,6 @@ body:
         - You received a Notice of Data Breach letter from Panda Restaurant Group
         - The letter was about a security incident in March 2023
         - You are a U.S. resident whose personal information was potentially accessed
-      value: ""
     validations:
       required: false
 
@@ -154,7 +153,6 @@ body:
         3. Fill out the claim form — choose documented losses, cash payment, or credit monitoring.
         4. Attach any receipts or documentation if claiming documented losses.
         5. Submit online or postmark a paper form by April 10, 2026.
-      value: ""
     validations:
       required: false
 
@@ -177,7 +175,6 @@ body:
 
         Q: When will I get paid?
         A: Payments are expected after the final approval hearing on April 20, 2026. It may take longer if there are appeals.
-      value: ""
     validations:
       required: false
 
