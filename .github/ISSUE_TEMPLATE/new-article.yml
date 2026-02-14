@@ -202,8 +202,8 @@ body:
   - type: textarea
     id: faqs
     attributes:
-      label: "Frequently asked questions (Q: A: format)"
-      description: "Use Q: and A: prefixes. Each Q/A pair becomes an accordion item. These also appear in Google rich snippets."
+      label: Frequently asked questions
+      description: Use "Q:" and "A:" prefixes on each line. Each pair becomes an accordion item and appears in Google rich snippets.
       placeholder: |
         Q: Do I need a lawyer to file?
         A: No. You can complete the claim form yourself at PRGBreachSettlement.com.
