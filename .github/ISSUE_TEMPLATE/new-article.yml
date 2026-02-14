@@ -1,230 +1,225 @@
-name: "New Article"
-description: "Create a new article for eosguide"
+name: New Article
+description: Publish a new settlement or refund guide to eosguidehub.com
 title: "[Article] "
 labels: ["article"]
 
 body:
 
-  # ─────────────────────────────────────────
-  # BASIC INFO (required for every article)
-  # ─────────────────────────────────────────
+  # ── REQUIRED ────────────────────────────────────────────────────────────
 
   - type: input
     id: title
     attributes:
-      label: "Article title"
-      description: "The full article headline shown on the page and in search results"
-      placeholder: "Panda Restaurant Group Data Breach Settlement: File a Claim by April 10, 2026"
+      label: Article title
+      description: Full headline shown at the top of the article.
+      placeholder: "Panda Restaurant Group Data Breach Settlement – File a Claim by April 10, 2026"
     validations:
       required: true
 
   - type: input
     id: slug
     attributes:
-      label: "URL slug"
-      description: "Used in /articles/your-slug.html — lowercase, hyphens only, no spaces"
-      placeholder: "panda-restaurant-group-data-breach-settlement"
+      label: URL slug
+      description: Lowercase, hyphens only. This becomes the filename and URL.
+      placeholder: panda-restaurant-group-data-breach-settlement
     validations:
       required: true
 
   - type: textarea
     id: blurb
     attributes:
-      label: "Short blurb"
-      description: "1–2 sentences shown on the Articles index page"
-      placeholder: "Panda Restaurant Group agreed to a $2.45 million settlement over a March 2023 data breach. Eligible individuals may file a claim for up to $5,000 in documented losses by April 10, 2026."
+      label: Short blurb
+      description: 1–2 sentence summary shown under the headline and in search previews.
+      placeholder: "Panda Restaurant Group agreed to a $2.45 million settlement over a March 2023 data breach. If you received a breach notice letter, you may be eligible for up to $5,000."
     validations:
       required: true
-
-  - type: input
-    id: deadline
-    attributes:
-      label: "Claim deadline"
-      description: "The date people must file by. Write 'None listed' if unknown."
-      placeholder: "April 10, 2026"
-    validations:
-      required: false
 
   - type: input
     id: last_updated
     attributes:
-      label: "Last updated"
-      description: "Today's date — shown on the article page"
+      label: Last updated
+      description: Date this article was written or last reviewed.
       placeholder: "February 14, 2026"
     validations:
       required: true
 
-  # ─────────────────────────────────────────
-  # SETTLEMENT QUICK FACTS
-  # These populate the summary box at the top of the article.
-  # Leave any field blank if it doesn't apply.
-  # ─────────────────────────────────────────
-
-  - type: input
-    id: settlement_amount
-    attributes:
-      label: "Total settlement fund"
-      description: "The total dollar value of the settlement"
-      placeholder: "$2,450,000"
-    validations:
-      required: false
-
-  - type: input
-    id: max_payment
-    attributes:
-      label: "Maximum payment per person"
-      description: "The most someone can receive"
-      placeholder: "Up to $5,000 (with documentation)"
-    validations:
-      required: false
-
-  - type: input
-    id: nodoc_payment
-    attributes:
-      label: "No-documentation cash payment"
-      description: "Simple cash payment that doesn't require receipts (if applicable)"
-      placeholder: "~$100 (estimated, subject to adjustment)"
-    validations:
-      required: false
-
-  - type: input
-    id: official_website
-    attributes:
-      label: "Official settlement website"
-      description: "Full URL — this is where readers go to file a claim"
-      placeholder: "https://prgbreachsettlement.com"
-    validations:
-      required: false
-
-  # ─────────────────────────────────────────
-  # HERO IMAGE (optional)
-  # ─────────────────────────────────────────
-
-  - type: input
-    id: hero_image
-    attributes:
-      label: "Hero image filename"
-      description: "Filename of an image already uploaded to /assets/articles/"
-      placeholder: "panda-restaurant-settlement.jpg"
-    validations:
-      required: false
-
-  - type: textarea
-    id: hero_credit
-    attributes:
-      label: "Hero image credit (optional)"
-      description: "Photo credit line shown under the image"
-      placeholder: "Photo by Jane Smith on Unsplash"
-    validations:
-      required: false
-
-  # ─────────────────────────────────────────
-  # ELIGIBILITY
-  # Who qualifies? Write as a bulleted list.
-  # Each line starting with - becomes a checkbox in the article.
-  # ─────────────────────────────────────────
-
-  - type: textarea
-    id: eligibility
-    attributes:
-      label: "Who is eligible? (bulleted list)"
-      description: "Write one eligibility requirement per line starting with a dash (-)."
-      placeholder: |
-        - You received a Notice of Data Breach letter from Panda Restaurant Group
-        - The letter was about a security incident in March 2023
-        - You are a U.S. resident whose personal information was potentially accessed
-    validations:
-      required: false
-
-  # ─────────────────────────────────────────
-  # HOW TO FILE
-  # Write numbered steps. Each line starting with a number becomes
-  # a visual step card in the article.
-  # ─────────────────────────────────────────
-
-  - type: textarea
-    id: how_to_file
-    attributes:
-      label: "How to file a claim (numbered steps)"
-      description: "Write one step per line starting with a number and period (1. 2. 3. etc.)"
-      placeholder: |
-        1. Confirm you received a breach notification letter from Panda Restaurant Group dated March 2024.
-        2. Visit www.PRGBreachSettlement.com and click "File a Claim."
-        3. Fill out the claim form — choose documented losses, cash payment, or credit monitoring.
-        4. Attach any receipts or documentation if claiming documented losses.
-        5. Submit online or postmark a paper form by April 10, 2026.
-    validations:
-      required: false
-
-  # ─────────────────────────────────────────
-  # FAQ
-  # Write Q: and A: pairs. These become expandable accordion items.
-  # ─────────────────────────────────────────
-
-  - type: textarea
-    id: faqs
-    attributes:
-      label: "Frequently asked questions (Q: A: format)"
-      description: "Alternate Q: and A: lines. Leave a blank line between each pair."
-      placeholder: |
-        Q: Do I need a lawyer to file?
-        A: No. You can complete the claim form yourself at the official settlement website.
-
-        Q: What if I lost my breach notification letter?
-        A: Call the settlement administrator at 1-866-302-7373 — they can verify your eligibility.
-
-        Q: When will I get paid?
-        A: Payments are expected after the final approval hearing on April 20, 2026. It may take longer if there are appeals.
-    validations:
-      required: false
-
-  # ─────────────────────────────────────────
-  # ARTICLE BODY
-  # The main narrative content. Write in Markdown.
-  # Use ## for section headings and standard Markdown for
-  # bold, bullets, links, tables, etc.
-  # ─────────────────────────────────────────
-
   - type: textarea
     id: article_body
     attributes:
-      label: "Article body (Markdown)"
-      description: "The main narrative content of the article. Use ## for headings. The structured fields above (eligibility, steps, FAQs) are handled automatically — use this for background context and narrative."
+      label: Article body (Markdown)
+      description: |
+        Main narrative content. Use Markdown — ## for H2, **bold**, tables, etc.
+        The structured components below (benefits, steps, FAQs) are generated separately.
       placeholder: |
-        ## What happened?
+        ## What Happened?
 
-        In or around March 2023, an unauthorized third party accessed files belonging to Panda Restaurant Group — the parent company of Panda Express, Panda Inn, and Hibachi-San. Those files contained sensitive personal information including full names, dates of birth, and Social Security numbers.
+        In or around March 2023, an unauthorized third party accessed files belonging to...
 
-        Affected individuals were notified via letter dated March 7, 2024. A class action lawsuit followed. Panda Restaurant Group denies wrongdoing but agreed to settle.
+        ## What Data Was Exposed?
 
-        ## What data was exposed?
-
-        The breach potentially exposed:
-        - Full names
-        - Dates of birth
-        - Social Security numbers
+        The breach may have included full names, dates of birth, and Social Security numbers.
     validations:
       required: true
-
-  # ─────────────────────────────────────────
-  # PUBLISHING OPTIONS
-  # ─────────────────────────────────────────
-
-  - type: checkboxes
-    id: monetization
-    attributes:
-      label: "Monetization"
-      options:
-        - label: "Include monetization block"
-          required: false
 
   - type: dropdown
     id: status
     attributes:
-      label: "Publish status"
-      description: "Draft saves to /articles/drafts/ and does NOT appear on the site. Publish makes it live."
+      label: Publish status
+      description: Draft saves to articles/drafts/. Publish goes live and updates the index.
       options:
-        - "Draft"
-        - "Publish"
+        - Draft
+        - Publish
     validations:
       required: true
+
+  # ── DEADLINES & DATES ────────────────────────────────────────────────────
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Claim deadline
+      description: Last day to file a claim. Shown in the sidebar and article.
+      placeholder: "April 10, 2026"
+
+  - type: input
+    id: optout_deadline
+    attributes:
+      label: Opt-out deadline
+      description: Last day to exclude yourself from the settlement.
+      placeholder: "March 23, 2026"
+
+  - type: input
+    id: hearing_date
+    attributes:
+      label: Final approval hearing date
+      description: When the court will decide whether to approve the settlement.
+      placeholder: "April 20, 2026"
+
+  # ── SETTLEMENT MONEY DETAILS ─────────────────────────────────────────────
+
+  - type: input
+    id: settlement_amount
+    attributes:
+      label: Total settlement fund
+      description: Total dollar value of the settlement.
+      placeholder: "$2,450,000"
+
+  - type: input
+    id: max_payment
+    attributes:
+      label: Maximum payment per person
+      description: Highest possible payout for documented losses.
+      placeholder: "Up to $5,000 (with docs)"
+
+  - type: input
+    id: nodoc_payment
+    attributes:
+      label: No-documentation cash payment
+      description: Simple cash payment that requires no receipts.
+      placeholder: "~$100 estimated"
+
+  - type: input
+    id: ca_payment
+    attributes:
+      label: California statutory payment
+      description: Additional payment for California residents only (if applicable).
+      placeholder: "~$125 estimated"
+
+  - type: input
+    id: credit_monitoring
+    attributes:
+      label: Credit monitoring
+      description: Duration of free credit monitoring offered, if any.
+      placeholder: "2 years"
+
+  # ── CASE DETAILS ─────────────────────────────────────────────────────────
+
+  - type: input
+    id: defendant
+    attributes:
+      label: Defendant / company name
+      description: The company being sued.
+      placeholder: "Panda Restaurant Group, Inc."
+
+  - type: input
+    id: incident_date
+    attributes:
+      label: When did the incident occur?
+      description: Date or approximate date of the breach or event.
+      placeholder: "March 2023"
+
+  - type: input
+    id: court
+    attributes:
+      label: Court & jurisdiction
+      description: Short name of the court handling the case.
+      placeholder: "LA Superior Court, CA"
+
+  - type: input
+    id: official_website
+    attributes:
+      label: Official settlement website
+      description: Full URL to the official claims site.
+      placeholder: "https://www.PRGBreachSettlement.com"
+
+  # ── VISUAL COMPONENTS ────────────────────────────────────────────────────
+
+  - type: input
+    id: hero_image
+    attributes:
+      label: Hero image filename
+      description: Filename only (e.g. panda-settlement.jpg). Upload the image to /assets/articles/ in the repo first.
+      placeholder: panda-settlement.jpg
+
+  - type: input
+    id: hero_credit
+    attributes:
+      label: Hero image credit (optional)
+      description: Photo credit line shown below the image.
+      placeholder: "Photo: Unsplash / John Doe"
+
+  - type: textarea
+    id: eligibility
+    attributes:
+      label: Who is eligible? (bulleted list)
+      description: One bullet per line. These become a green checklist box in the article.
+      placeholder: |
+        - You received a Notice of Data Breach letter from Panda Restaurant Group
+        - The breach occurred in or around March 2023
+        - You are a U.S. resident whose personal data may have been accessed
+
+  - type: textarea
+    id: how_to_file
+    attributes:
+      label: How to file a claim (numbered steps)
+      description: One numbered step per line. These become the green-circle step guide.
+      placeholder: |
+        1. Confirm you received a breach notification letter — this is your proof of eligibility.
+        2. Visit PRGBreachSettlement.com or call 1-866-302-7373 to get the claim form.
+        3. Choose your benefit type and complete the form.
+        4. Submit online or postmark your paper form by April 10, 2026.
+
+  - type: textarea
+    id: faqs
+    attributes:
+      label: Frequently asked questions (Q: A: format)
+      description: Use Q: and A: prefixes. Each Q/A pair becomes an accordion item. These also appear in Google rich snippets.
+      placeholder: |
+        Q: Do I need a lawyer to file?
+        A: No. You can complete the claim form yourself at PRGBreachSettlement.com.
+
+        Q: When will I get paid?
+        A: The Final Approval Hearing is April 20, 2026. Payments follow after that, possibly more than a year if there are appeals.
+
+        Q: What happens if I do nothing?
+        A: You won't receive any payment and you'll give up your right to sue Panda Restaurant Group over this incident.
+
+  # ── MONETIZATION ─────────────────────────────────────────────────────────
+
+  - type: checkboxes
+    id: monetization
+    attributes:
+      label: Monetization
+      description: Check to show an affiliate credit monitoring recommendation block in the article.
+      options:
+        - label: Include monetization block
