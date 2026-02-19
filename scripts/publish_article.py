@@ -282,10 +282,15 @@ def build_sidebar(f: dict) -> str:
     incident_date     = f.get('incident_date', '')
     defendant         = f.get('defendant', '')
     court             = f.get('court', '')
+    case_number       = f.get('case_number', '')
     deadline          = f.get('deadline', '')
     optout_deadline   = f.get('optout_deadline', '')
     hearing_date      = f.get('hearing_date', '')
     official_website  = f.get('official_website', '')
+    admin_phone       = f.get('admin_phone', '')
+    admin_email       = f.get('admin_email', '')
+    attorney_fees     = f.get('attorney_fees', '')
+    service_awards    = f.get('service_awards', '')
 
     # Quick Facts rows
     facts_rows = ''
@@ -331,6 +336,24 @@ def build_sidebar(f: dict) -> str:
         <span class="sidebar-label">Court</span>
         <span class="sidebar-value">{court}</span>
       </div>'''
+    if case_number:
+        facts_rows += f'''
+      <div class="sidebar-row">
+        <span class="sidebar-label">Case Number</span>
+        <span class="sidebar-value">{case_number}</span>
+      </div>'''
+    if attorney_fees:
+        facts_rows += f'''
+      <div class="sidebar-row">
+        <span class="sidebar-label">Attorney Fees</span>
+        <span class="sidebar-value">{attorney_fees}</span>
+      </div>'''
+    if service_awards:
+        facts_rows += f'''
+      <div class="sidebar-row">
+        <span class="sidebar-label">Service Awards</span>
+        <span class="sidebar-value">{service_awards}</span>
+      </div>'''
 
     quick_facts = f'''
     <div class="sidebar-card">
@@ -368,7 +391,12 @@ def build_sidebar(f: dict) -> str:
     # CTA card
     cta_card = ''
     if official_website:
-        display = official_website.replace('https://', '').replace('http://', '').rstrip('/')
+        contact_info = ''
+        if admin_phone:
+            contact_info += f'<p style="font-size:13px;color:var(--text);margin-top:12px;text-align:center;"><strong>Phone:</strong> {admin_phone}</p>'
+        if admin_email:
+            contact_info += f'<p style="font-size:13px;color:var(--text);margin-top:6px;text-align:center;"><strong>Email:</strong> {admin_email}</p>'
+        
         cta_card = f'''
     <div class="sidebar-card">
       <div class="sidebar-card-header">Official Resources</div>
@@ -376,10 +404,106 @@ def build_sidebar(f: dict) -> str:
         <a class="cta-btn" href="{official_website}" target="_blank" rel="noopener noreferrer">File a Claim</a>
         <a class="cta-btn secondary" href="{official_website}" target="_blank" rel="noopener noreferrer">Settlement Website</a>
       </div>
+      {contact_info}
       <p class="sidebar-disclaimer">eosguide is a directory. We don\'t run this settlement. Always verify details at the official site.</p>
     </div>'''
 
     return quick_facts + deadline_card + cta_card
+
+
+# ─────────────────────────────────────────────────────────────────
+# STEP 4B: SEO ENHANCEMENTS
+# ─────────────────────────────────────────────────────────────────
+
+def generate_keywords(title: str, defendant: str, eligible_states: str) -> str:
+    """Generate meta keywords from title, defendant, and states"""
+    keywords = []
+    
+    # Add defendant/company name
+    if defendant:
+        keywords.append(defendant)
+    
+    # Extract key terms from title
+    # Remove common words and deadline dates
+    title_words = title.lower().replace(' settlement', '').replace(' class action', '')
+    title_words = title_words.replace(' deadline', '').replace(' claim', '').replace(' file', '')
+    
+    # Add settlement type indicators
+    if 'data breach' in title.lower():
+        keywords.append('data breach settlement')
+    if 'privacy' in title.lower():
+        keywords.append('privacy settlement')
+    
+    # Add state keywords
+    if eligible_states and eligible_states.lower() != 'nationwide':
+        # Parse state list
+        states = [s.strip() for s in eligible_states.split(',')]
+        keywords.extend(states[:3])  # First 3 states max
+    else:
+        keywords.append('nationwide settlement')
+    
+    # Add generic settlement keywords
+    keywords.extend(['class action', 'claim form', 'settlement payment'])
+    
+    return ', '.join(keywords[:10])  # Max 10 keywords
+
+
+def build_geographic_schema(eligible_states: str, canonical: str) -> str:
+    """Add areaServed schema for local SEO"""
+    if not eligible_states:
+        return ''
+    
+    if eligible_states.lower().strip() == 'nationwide':
+        area_served = '"areaServed": {"@type": "Country", "name": "United States"}'
+    else:
+        # Parse states into list
+        states = [s.strip() for s in eligible_states.split(',')]
+        state_objects = ', '.join(f'{{"@type": "State", "name": "{state}"}}' for state in states)
+        area_served = f'"areaServed": [{state_objects}]'
+    
+    return f'''  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Settlement Information Service",
+    "provider": {{
+      "@type": "Organization",
+      "name": "eosguide"
+    }},
+    {area_served},
+    "url": "{canonical}"
+  }}
+  </script>'''
+
+
+def build_breadcrumb_schema(title: str, canonical: str) -> str:
+    """Add breadcrumb schema for search result display"""
+    return f'''  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://eosguidehub.com/"
+      }},
+      {{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Articles",
+        "item": "https://eosguidehub.com/articles/"
+      }},
+      {{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "{title.replace('"', '&quot;')}",
+        "item": "{canonical}"
+      }}
+    ]
+  }}
+  </script>'''
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -392,6 +516,8 @@ def build_page(f: dict) -> str:
     blurb            = f.get('blurb', '')
     deadline         = f.get('deadline', '')
     last_updated     = f.get('last_updated', '')
+    eligible_states  = f.get('eligible_states', '')
+    defendant        = f.get('defendant', '')
     settlement_amount = f.get('settlement_amount', '')
     max_payment      = f.get('max_payment', '')
     nodoc_payment    = f.get('nodoc_payment', '')
@@ -446,8 +572,11 @@ def build_page(f: dict) -> str:
     og_image  = f"https://eosguidehub.com/assets/articles/{hero_image}" if hero_image else "https://eosguidehub.com/Circular-badge-logo.png"
     encoded_title = title.replace(' ', '%20').replace(':', '%3A')
 
-    # FAQ schema
+    # Generate SEO elements
+    keywords = generate_keywords(title, defendant, eligible_states)
     faq_schema = build_faq_schema(faqs, canonical)
+    geographic_schema = build_geographic_schema(eligible_states, canonical)
+    breadcrumb_schema = build_breadcrumb_schema(title, canonical)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -458,6 +587,7 @@ def build_page(f: dict) -> str:
   <!-- Primary SEO -->
   <title>{title} | eosguide</title>
   <meta name="description" content="{blurb}" />
+  <meta name="keywords" content="{keywords}" />
   <link rel="canonical" href="{canonical}" />
   <link rel="icon" href="/Circular-badge-logo.png" type="image/png" />
 
@@ -488,6 +618,8 @@ def build_page(f: dict) -> str:
   }}
   </script>
   {faq_schema}
+  {geographic_schema}
+  {breadcrumb_schema}
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -866,16 +998,22 @@ def main():
         'optout_deadline':   get_field(raw, 'opt-out deadline'),
         'hearing_date':      get_field(raw, 'final approval hearing date'),
         'last_updated':      get_field(raw, 'last updated'),
+        'eligible_states':   get_field(raw, 'eligible states'),
         'settlement_amount': get_field(raw, 'total settlement fund'),
         'max_payment':       get_field(raw, 'maximum payment per person'),
         'nodoc_payment':     get_field(raw, 'no-documentation cash payment'),
-        'ca_payment':        get_field(raw, 'california statutory payment'),
-        'credit_monitoring': get_field(raw, 'credit monitoring'),
+        'ca_payment':        get_field(raw, 'california statutory payment (if applicable)', 'california statutory payment'),
+        'credit_monitoring': get_field(raw, 'credit monitoring (if applicable)', 'credit monitoring'),
         'official_website':  get_field(raw, 'official settlement website'),
         'defendant':         get_field(raw, 'defendant / company name', 'defendant'),
         'incident_date':     get_field(raw, 'when did the incident occur?', 'incident date'),
         'court':             get_field(raw, 'court & jurisdiction', 'court'),
-        'hero_image':        get_field(raw, 'hero image filename'),
+        'case_number':       get_field(raw, 'case number (optional)', 'case number'),
+        'admin_phone':       get_field(raw, 'administrator phone (optional)', 'administrator phone'),
+        'admin_email':       get_field(raw, 'administrator email (optional)', 'administrator email'),
+        'attorney_fees':     get_field(raw, 'attorney fees (optional)', 'attorney fees'),
+        'service_awards':    get_field(raw, 'service awards (optional)', 'service awards'),
+        'hero_image':        get_field(raw, 'hero image filename (optional)', 'hero image filename'),
         'hero_credit':       get_field(raw, 'hero image credit (optional)', 'hero image credit'),
         'eligibility':       get_field(raw, 'who is eligible? (bulleted list)', 'who is eligible?'),
         'how_to_file':       get_field(raw, 'how to file a claim (numbered steps)', 'how to file a claim'),
