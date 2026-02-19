@@ -5,7 +5,9 @@ labels: ["article"]
 
 body:
 
-  # ── REQUIRED ────────────────────────────────────────────────────────────
+  # ══════════════════════════════════════════════════════════════
+  # BASIC INFO
+  # ══════════════════════════════════════════════════════════════
 
   - type: input
     id: title
@@ -39,9 +41,22 @@ body:
     attributes:
       label: Last updated
       description: Date this article was written or last reviewed.
-      placeholder: "Month DD, YYYY"
+      placeholder: "February 19, 2026"
     validations:
       required: true
+
+  - type: textarea
+    id: eligible_states
+    attributes:
+      label: Eligible states
+      description: "Write 'Nationwide' or list specific states separated by commas. This feeds the state filter on the homepage."
+      placeholder: "Nationwide OR California, New York, Texas, etc."
+    validations:
+      required: true
+
+  # ══════════════════════════════════════════════════════════════
+  # ARTICLE CONTENT
+  # ══════════════════════════════════════════════════════════════
 
   - type: textarea
     id: article_body
@@ -60,123 +75,6 @@ body:
         Details about what was exposed or what the company allegedly did wrong.
     validations:
       required: true
-
-  - type: dropdown
-    id: status
-    attributes:
-      label: Publish status
-      description: Draft saves to articles/drafts/. Publish goes live and updates the index.
-      options:
-        - Draft
-        - Publish
-    validations:
-      required: true
-
-  # ── DEADLINES & DATES ────────────────────────────────────────────────────
-
-  - type: input
-    id: deadline
-    attributes:
-      label: Claim deadline
-      description: Last day to file a claim. Shown in the sidebar and article.
-      placeholder: "Month DD, YYYY"
-
-  - type: input
-    id: optout_deadline
-    attributes:
-      label: Opt-out deadline
-      description: Last day to exclude yourself from the settlement.
-      placeholder: "Month DD, YYYY"
-
-  - type: input
-    id: hearing_date
-    attributes:
-      label: Final approval hearing date
-      description: When the court will decide whether to approve the settlement.
-      placeholder: "Month DD, YYYY"
-
-  # ── SETTLEMENT MONEY DETAILS ─────────────────────────────────────────────
-
-  - type: input
-    id: settlement_amount
-    attributes:
-      label: Total settlement fund
-      description: Total dollar value of the settlement.
-      placeholder: "$0,000,000"
-
-  - type: input
-    id: max_payment
-    attributes:
-      label: Maximum payment per person
-      description: Highest possible payout for documented losses.
-      placeholder: "Up to $X,XXX (with docs)"
-
-  - type: input
-    id: nodoc_payment
-    attributes:
-      label: No-documentation cash payment
-      description: Simple cash payment that requires no receipts.
-      placeholder: "~$XX estimated"
-
-  - type: input
-    id: ca_payment
-    attributes:
-      label: California statutory payment
-      description: Additional payment for California residents only (if applicable).
-      placeholder: "~$XX estimated (CA only)"
-
-  - type: input
-    id: credit_monitoring
-    attributes:
-      label: Credit monitoring
-      description: Duration of free credit monitoring offered, if any.
-      placeholder: "X years"
-
-  # ── CASE DETAILS ─────────────────────────────────────────────────────────
-
-  - type: input
-    id: defendant
-    attributes:
-      label: Defendant / company name
-      description: The company being sued.
-      placeholder: "Company Name, Inc."
-
-  - type: input
-    id: incident_date
-    attributes:
-      label: When did the incident occur?
-      description: Date or approximate date of the breach or event.
-      placeholder: "Month YYYY"
-
-  - type: input
-    id: court
-    attributes:
-      label: Court & jurisdiction
-      description: Short name of the court handling the case.
-      placeholder: "e.g. US District Court, Northern District of CA"
-
-  - type: input
-    id: official_website
-    attributes:
-      label: Official settlement website
-      description: Full URL to the official claims site.
-      placeholder: "https://www.settlementwebsite.com"
-
-  # ── VISUAL COMPONENTS ────────────────────────────────────────────────────
-
-  - type: input
-    id: hero_image
-    attributes:
-      label: Hero image filename
-      description: Filename only (e.g. settlement-hero.jpg). Upload to /assets/articles/ first.
-      placeholder: settlement-hero.jpg
-
-  - type: input
-    id: hero_credit
-    attributes:
-      label: Hero image credit (optional)
-      description: Photo credit line shown below the image.
-      placeholder: "Photo: Unsplash / Photographer Name"
 
   - type: textarea
     id: eligibility
@@ -214,12 +112,166 @@ body:
         Q: What happens if I do nothing?
         A: You will not receive any payment and you may give up your right to sue the defendant over this matter.
 
-  # ── MONETIZATION ─────────────────────────────────────────────────────────
+  # ══════════════════════════════════════════════════════════════
+  # DEADLINES & MONEY
+  # ══════════════════════════════════════════════════════════════
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Claim deadline
+      description: Last day to file a claim. Shown in the sidebar and article.
+      placeholder: "March 30, 2026"
+
+  - type: input
+    id: optout_deadline
+    attributes:
+      label: Opt-out deadline
+      description: Last day to exclude yourself from the settlement.
+      placeholder: "April 2, 2026"
+
+  - type: input
+    id: hearing_date
+    attributes:
+      label: Final approval hearing date
+      description: When the court will decide whether to approve the settlement.
+      placeholder: "June 4, 2026"
+
+  - type: input
+    id: settlement_amount
+    attributes:
+      label: Total settlement fund
+      description: Total dollar value of the settlement.
+      placeholder: "e.g. $2,450,000 or 'Not disclosed'"
+
+  - type: input
+    id: max_payment
+    attributes:
+      label: Maximum payment per person
+      description: Highest possible payout for documented losses.
+      placeholder: "e.g. Up to $5,000 with documentation"
+
+  - type: input
+    id: nodoc_payment
+    attributes:
+      label: No-documentation cash payment
+      description: Simple cash payment that requires no receipts.
+      placeholder: "e.g. ~$100 estimated (pro rata)"
+
+  - type: input
+    id: ca_payment
+    attributes:
+      label: California statutory payment (if applicable)
+      description: Additional payment for California residents only.
+      placeholder: "e.g. ~$125 estimated (CA residents only)"
+
+  - type: input
+    id: credit_monitoring
+    attributes:
+      label: Credit monitoring (if applicable)
+      description: Duration of free credit monitoring offered.
+      placeholder: "e.g. 2 years"
+
+  # ══════════════════════════════════════════════════════════════
+  # CASE DETAILS
+  # ══════════════════════════════════════════════════════════════
+
+  - type: input
+    id: defendant
+    attributes:
+      label: Defendant / company name
+      description: The company being sued.
+      placeholder: "e.g. Company Name, Inc."
+
+  - type: input
+    id: incident_date
+    attributes:
+      label: When did the incident occur?
+      description: Date or approximate date of the breach or event.
+      placeholder: "e.g. March 2023"
+
+  - type: input
+    id: court
+    attributes:
+      label: Court & jurisdiction
+      description: Short name of the court handling the case.
+      placeholder: "e.g. US District Court, Central District of CA"
+
+  - type: input
+    id: case_number
+    attributes:
+      label: Case number (optional)
+      description: Official case number for reference.
+      placeholder: "e.g. Case No. 2:21-cv-09815"
+
+  - type: input
+    id: official_website
+    attributes:
+      label: Official settlement website
+      description: Full URL to the official claims site.
+      placeholder: "https://www.settlementwebsite.com"
+
+  - type: input
+    id: admin_phone
+    attributes:
+      label: Administrator phone (optional)
+      description: Phone number to contact the settlement administrator.
+      placeholder: "e.g. (833) 754-8511"
+
+  - type: input
+    id: admin_email
+    attributes:
+      label: Administrator email (optional)
+      description: Email address to contact the settlement administrator.
+      placeholder: "e.g. [email protected]"
+
+  - type: input
+    id: attorney_fees
+    attributes:
+      label: Attorney fees (optional)
+      description: Disclosed attorney fees if mentioned in settlement.
+      placeholder: "e.g. Up to $980,000"
+
+  - type: input
+    id: service_awards
+    attributes:
+      label: Service awards (optional)
+      description: Payments to class representatives if disclosed.
+      placeholder: "e.g. Up to $7,500 each"
+
+  # ══════════════════════════════════════════════════════════════
+  # OPTIONAL FEATURES
+  # ══════════════════════════════════════════════════════════════
+
+  - type: input
+    id: hero_image
+    attributes:
+      label: Hero image filename (optional)
+      description: Filename only. Upload to /assets/articles/ first.
+      placeholder: settlement-hero.jpg
+
+  - type: input
+    id: hero_credit
+    attributes:
+      label: Hero image credit (optional)
+      description: Photo credit line shown below the image.
+      placeholder: "Photo: Unsplash / Photographer Name"
 
   - type: checkboxes
     id: monetization
     attributes:
       label: Monetization
-      description: Check to show an affiliate credit monitoring recommendation block in the article.
+      description: Check to show an affiliate credit monitoring recommendation block.
       options:
         - label: Include monetization block
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Publish status
+      description: Draft saves to articles/drafts/. Publish goes live and updates the index.
+      options:
+        - Draft
+        - Publish
+    validations:
+      required: true
