@@ -793,7 +793,7 @@ def build_page(f: dict) -> str:
 """
 
 
-def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
+def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, deadline: str = ""):
     index_path = os.path.join("articles", "index.html")
     if not os.path.exists(index_path):
         return
@@ -805,12 +805,14 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
     if marker not in html:
         return
 
+   deadline_str = f"Deadline: {deadline} · " if deadline else ""
     card = f"""
-      <article class="article-card">
-        <h2><a href="/articles/{slug}.html">{title}</a></h2>
-        <p class="meta">Updated {last_updated}</p>
-        <p class="desc">{blurb}</p>
-        <a class="read-more" href="/articles/{slug}.html">Read article</a>
+      <article class="bg-white rounded-2xl shadow-sm p-5">
+        <h2 class="text-xl font-bold text-gray-900 mb-1">
+          <a href="/articles/{slug}.html" class="hover:underline">{title}</a>
+        </h2>
+        <p class="text-sm text-gray-600 mb-2">{deadline_str}Updated {last_updated}</p>
+        <p class="text-gray-700">{blurb}</p>
       </article>
     """
 
@@ -873,7 +875,7 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(page_html)
 
-    update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"])
+    update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"], fields.get("deadline", ""))
     print(f"Published: {out_path}")
 
 
