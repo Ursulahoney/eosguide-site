@@ -684,7 +684,7 @@ def build_page(f: dict) -> str:
       <div class="text-center mb-6">
         <p class="text-gray-300 text-sm font-light">© 2025 eosguide. Information only. We're not affiliated with the programs we link to and we don't give legal, financial, or tax advice.</p>
       </div>
-      <div class="text-sm text-center">
+      <div class="mt-4 text-sm">
         <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
         <span class="text-gray-500 mx-2">•</span>
         <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
