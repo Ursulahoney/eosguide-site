@@ -928,6 +928,7 @@ def main():
         f.write(page_html)
 
     update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"], fields.get("deadline", ""))
+    update_sitemap(slug)
     print(f"Published: {out_path}")
 
 
