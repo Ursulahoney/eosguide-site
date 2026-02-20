@@ -420,16 +420,7 @@ def build_cta_buttons(official_website: str, deadline: str) -> str:
     </div>'''
 
 
-def build_monetization_block(official_website: str) -> str:
-    if not official_website:
-        return ''
-    return f'''
-    <section class="section">
-      <h2 class="section-title">Helpful tools</h2>
-      <p class="muted">
-        This section is a placeholder for future tools and recommendations. For now, always use the official site when filing.
-      </p>
-    </section>'''
+
 
 
 # ─────────────────────────────────────────────────────────────────
