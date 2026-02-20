@@ -804,15 +804,15 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, 
 def main():
     # Prefer ISSUE_BODY, but your workflow writes the body to a file, so support both.
     issue_body = os.environ.get("ISSUE_BODY", "").strip()
-
     if not issue_body:
         path = os.environ.get("ISSUE_BODY_PATH", "").strip()
         if path and os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:
                 issue_body = f.read().strip()
-
     if not issue_body:
         raise SystemExit("Missing ISSUE_BODY (and ISSUE_BODY_PATH was empty/unreadable)")
+
+    issue_body = issue_body.replace('\r\n', '\n').replace('\r', '\n')  # ← ADD THIS LINE
 
     fields = {
         "title": get_field(issue_body, "Article title"),
