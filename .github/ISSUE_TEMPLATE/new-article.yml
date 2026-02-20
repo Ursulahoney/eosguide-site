@@ -22,17 +22,17 @@ body:
     id: slug
     attributes:
       label: URL slug
-      description: Lowercase, hyphens only. This becomes the filename and URL.
-      placeholder: company-name-settlement-year
+      description: Short and URL-friendly. Use hyphens.
+      placeholder: "panda-restaurant-group-data-breach-settlement"
     validations:
       required: true
 
   - type: textarea
     id: blurb
     attributes:
-      label: Short blurb
-      description: 1-2 sentence summary shown under the headline and in search previews.
-      placeholder: "Brief description of what the settlement is about and who may qualify."
+      label: Short blurb (for the /articles list + article intro)
+      description: 1–2 sentences. This is your quick summary and helps SEO.
+      placeholder: "Eligible people may get up to $X if they... Deadline is..."
     validations:
       required: true
 
@@ -45,14 +45,168 @@ body:
     validations:
       required: true
 
-  - type: textarea
+  - type: dropdown
     id: eligible_states
     attributes:
       label: Eligible states
-      description: "Write 'Nationwide' or list specific states separated by commas. This feeds the state filter on the homepage."
-      placeholder: "Nationwide OR California, New York, Texas, etc."
+      description: "Pick Nationwide or the states this applies to. Full state names."
+      multiple: true
+      options:
+        - Nationwide
+        - Alabama
+        - Alaska
+        - Arizona
+        - Arkansas
+        - California
+        - Colorado
+        - Connecticut
+        - Delaware
+        - Florida
+        - Georgia
+        - Hawaii
+        - Idaho
+        - Illinois
+        - Indiana
+        - Iowa
+        - Kansas
+        - Kentucky
+        - Louisiana
+        - Maine
+        - Maryland
+        - Massachusetts
+        - Michigan
+        - Minnesota
+        - Mississippi
+        - Missouri
+        - Montana
+        - Nebraska
+        - Nevada
+        - New Hampshire
+        - New Jersey
+        - New Mexico
+        - New York
+        - North Carolina
+        - North Dakota
+        - Ohio
+        - Oklahoma
+        - Oregon
+        - Pennsylvania
+        - Rhode Island
+        - South Carolina
+        - South Dakota
+        - Tennessee
+        - Texas
+        - Utah
+        - Vermont
+        - Virginia
+        - Washington
+        - West Virginia
+        - Wisconsin
+        - Wyoming
     validations:
       required: true
+
+  # ══════════════════════════════════════════════════════════════
+  # LINKS + MEDIA
+  # ══════════════════════════════════════════════════════════════
+
+  - type: input
+    id: official_website
+    attributes:
+      label: Official settlement website
+      description: The main official URL you want users to click.
+      placeholder: "https://www.example-settlement.com/"
+    validations:
+      required: true
+
+  - type: input
+    id: hero_image
+    attributes:
+      label: Hero image URL (optional)
+      description: Leave blank if you don’t have one.
+      placeholder: "https://eosguidehub.com/assets/articles/your-image.jpg"
+    validations:
+      required: false
+
+  - type: input
+    id: hero_credit
+    attributes:
+      label: Hero image credit (optional)
+      placeholder: "Photo: Example Source"
+    validations:
+      required: false
+
+  # ══════════════════════════════════════════════════════════════
+  # KEY DATES
+  # ══════════════════════════════════════════════════════════════
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Claim deadline (optional)
+      placeholder: "April 10, 2026"
+    validations:
+      required: false
+
+  - type: input
+    id: optout_deadline
+    attributes:
+      label: Opt-out deadline (optional)
+      placeholder: "March 1, 2026"
+    validations:
+      required: false
+
+  - type: input
+    id: hearing_date
+    attributes:
+      label: Final approval hearing (optional)
+      placeholder: "May 12, 2026"
+    validations:
+      required: false
+
+  # ══════════════════════════════════════════════════════════════
+  # BENEFITS
+  # ══════════════════════════════════════════════════════════════
+
+  - type: input
+    id: settlement_amount
+    attributes:
+      label: Total fund (optional)
+      placeholder: "$10,000,000"
+    validations:
+      required: false
+
+  - type: input
+    id: max_payment
+    attributes:
+      label: Max payment per person (optional)
+      placeholder: "Up to $5,000"
+    validations:
+      required: false
+
+  - type: input
+    id: nodoc_payment
+    attributes:
+      label: No-doc amount (optional)
+      placeholder: "$25 (no documentation)"
+    validations:
+      required: false
+
+  - type: input
+    id: ca_payment
+    attributes:
+      label: California-only amount (optional)
+      placeholder: "$100 (CA residents)"
+    validations:
+      required: false
+
+  - type: input
+    id: credit_monitoring
+    attributes:
+      label: Credit monitoring (optional)
+      placeholder: "2 years of credit monitoring"
+    validations:
+      required: false
 
   # ══════════════════════════════════════════════════════════════
   # ARTICLE CONTENT
@@ -61,217 +215,97 @@ body:
   - type: textarea
     id: article_body
     attributes:
-      label: Article body (Markdown)
-      description: |
-        Main narrative content. Use Markdown for headings, bold, tables, etc.
-        The structured components below (eligibility, steps, FAQs) are generated separately.
+      label: Main article body (optional)
+      description: Write in short sections. Use headings if you want.
       placeholder: |
-        ## What Happened?
+        ## What happened
+        ...
 
-        Brief description of the incident or issue that led to the settlement.
-
-        ## What Data or Issues Were Involved?
-
-        Details about what was exposed or what the company allegedly did wrong.
+        ## Who may qualify
+        ...
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: eligibility
     attributes:
-      label: Who is eligible? (bulleted list)
-      description: One bullet per line. These become a checklist in the article.
+      label: Eligibility checklist (optional)
+      description: One item per line.
       placeholder: |
-        - You received a notice letter from the company
-        - You are a U.S. resident
-        - Your personal data may have been affected
+        Received a notice OR meet the criteria on the official site
+        Lived in the U.S. during the class period
+    validations:
+      required: false
 
   - type: textarea
     id: how_to_file
     attributes:
-      label: How to file a claim (numbered steps)
-      description: One numbered step per line. These become the step guide in the article.
+      label: How to file (steps, optional)
+      description: One step per line.
       placeholder: |
-        1. Confirm you are eligible using the criteria above.
-        2. Visit the official settlement website or call the administrator.
-        3. Complete the claim form with the required information.
-        4. Submit online or postmark your paper form by the deadline.
+        Go to the official site
+        Click “Submit Claim”
+        Complete the form and submit
+    validations:
+      required: false
 
   - type: textarea
     id: faqs
     attributes:
-      label: Frequently asked questions
-      description: "Use 'Q:' and 'A:' prefixes on each line. Each pair becomes an accordion item and appears in Google rich snippets."
+      label: FAQs (optional)
+      description: Format like Q: ... then A: ... (repeat)
       placeholder: |
-        Q: Do I need a lawyer to file?
-        A: No. You can complete the claim form yourself at the official settlement website.
+        Q: Who qualifies?
+        A: ...
 
-        Q: When will I get paid?
-        A: Payments are issued after the court grants final approval, which can take a year or more if there are appeals.
-
-        Q: What happens if I do nothing?
-        A: You will not receive any payment and you may give up your right to sue the defendant over this matter.
-
-  # ══════════════════════════════════════════════════════════════
-  # DEADLINES & MONEY
-  # ══════════════════════════════════════════════════════════════
-
-  - type: input
-    id: deadline
-    attributes:
-      label: Claim deadline
-      description: Last day to file a claim. Shown in the sidebar and article.
-      placeholder: "March 30, 2026"
-
-  - type: input
-    id: optout_deadline
-    attributes:
-      label: Opt-out deadline
-      description: Last day to exclude yourself from the settlement.
-      placeholder: "April 2, 2026"
-
-  - type: input
-    id: hearing_date
-    attributes:
-      label: Final approval hearing date
-      description: When the court will decide whether to approve the settlement.
-      placeholder: "June 4, 2026"
-
-  - type: input
-    id: settlement_amount
-    attributes:
-      label: Total settlement fund
-      description: Total dollar value of the settlement.
-      placeholder: "e.g. $2,450,000 or 'Not disclosed'"
-
-  - type: input
-    id: max_payment
-    attributes:
-      label: Maximum payment per person
-      description: Highest possible payout for documented losses.
-      placeholder: "e.g. Up to $5,000 with documentation"
-
-  - type: input
-    id: nodoc_payment
-    attributes:
-      label: No-documentation cash payment
-      description: Simple cash payment that requires no receipts.
-      placeholder: "e.g. ~$100 estimated (pro rata)"
-
-  - type: input
-    id: ca_payment
-    attributes:
-      label: California statutory payment (if applicable)
-      description: Additional payment for California residents only.
-      placeholder: "e.g. ~$125 estimated (CA residents only)"
-
-  - type: input
-    id: credit_monitoring
-    attributes:
-      label: Credit monitoring (if applicable)
-      description: Duration of free credit monitoring offered.
-      placeholder: "e.g. 2 years"
+        Q: What proof do I need?
+        A: ...
+    validations:
+      required: false
 
   # ══════════════════════════════════════════════════════════════
-  # CASE DETAILS
+  # ADMIN + OPTIONAL FIELDS
   # ══════════════════════════════════════════════════════════════
-
-  - type: input
-    id: defendant
-    attributes:
-      label: Defendant / company name
-      description: The company being sued.
-      placeholder: "e.g. Company Name, Inc."
-
-  - type: input
-    id: incident_date
-    attributes:
-      label: When did the incident occur?
-      description: Date or approximate date of the breach or event.
-      placeholder: "e.g. March 2023"
-
-  - type: input
-    id: court
-    attributes:
-      label: Court & jurisdiction
-      description: Short name of the court handling the case.
-      placeholder: "e.g. US District Court, Central District of CA"
-
-  - type: input
-    id: case_number
-    attributes:
-      label: Case number (optional)
-      description: Official case number for reference.
-      placeholder: "e.g. Case No. 2:21-cv-09815"
-
-  - type: input
-    id: official_website
-    attributes:
-      label: Official settlement website
-      description: Full URL to the official claims site.
-      placeholder: "https://www.settlementwebsite.com"
 
   - type: input
     id: admin_phone
     attributes:
       label: Administrator phone (optional)
-      description: Phone number to contact the settlement administrator.
-      placeholder: "e.g. (833) 754-8511"
+      placeholder: "1-800-555-1234"
+    validations:
+      required: false
 
   - type: input
     id: admin_email
     attributes:
       label: Administrator email (optional)
-      description: Email address to contact the settlement administrator.
-      placeholder: "e.g. [email protected]"
+      placeholder: "info@example-settlement.com"
+    validations:
+      required: false
 
   - type: input
     id: attorney_fees
     attributes:
       label: Attorney fees (optional)
-      description: Disclosed attorney fees if mentioned in settlement.
-      placeholder: "e.g. Up to $980,000"
+      placeholder: "Up to $X"
+    validations:
+      required: false
 
   - type: input
     id: service_awards
     attributes:
       label: Service awards (optional)
-      description: Payments to class representatives if disclosed.
-      placeholder: "e.g. Up to $7,500 each"
-
-  # ══════════════════════════════════════════════════════════════
-  # OPTIONAL FEATURES
-  # ══════════════════════════════════════════════════════════════
-
-  - type: input
-    id: hero_image
-    attributes:
-      label: Hero image filename (optional)
-      description: Filename only. Upload to /assets/articles/ first.
-      placeholder: settlement-hero.jpg
-
-  - type: input
-    id: hero_credit
-    attributes:
-      label: Hero image credit (optional)
-      description: Photo credit line shown below the image.
-      placeholder: "Photo: Unsplash / Photographer Name"
-
-  - type: checkboxes
-    id: monetization
-    attributes:
-      label: Monetization
-      description: Check to show an affiliate credit monitoring recommendation block.
-      options:
-        - label: Include monetization block
+      placeholder: "Up to $X"
+    validations:
+      required: false
 
   - type: dropdown
-    id: status
+    id: monetization
     attributes:
-      label: Publish status
-      description: Draft saves to articles/drafts/. Publish goes live and updates the index.
+      label: Monetization block
+      description: Leave Off for now unless you want it.
       options:
-        - Draft
-        - Publish
+        - Off
+        - On
     validations:
-      required: true
+      required: false
