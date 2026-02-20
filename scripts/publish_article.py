@@ -872,7 +872,38 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, 
 
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(html)
+def update_sitemap(slug: str):
+    sitemap_path = "sitemap.xml"
 
+    # If you don't have a sitemap yet, do nothing.
+    if not os.path.exists(sitemap_path):
+        return
+
+    with open(sitemap_path, "r", encoding="utf-8") as f:
+        xml = f.read()
+
+    article_url = f"https://eosguidehub.com/articles/{slug}.html"
+
+    # Don’t add duplicates
+    if article_url in xml:
+        return
+
+    new_entry = f"""
+  <url>
+    <loc>{article_url}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+"""
+
+    # Insert before closing tag
+    if "</urlset>" not in xml:
+        return
+
+    xml = xml.replace("</urlset>", new_entry + "</urlset>")
+
+    with open(sitemap_path, "w", encoding="utf-8") as f:
+        f.write(xml)
 
 def main():
     # Prefer ISSUE_BODY, but your workflow writes the body to a file, so support both.
