@@ -58,33 +58,62 @@ def parse_steps(text: str) -> list[str]:
 
 def parse_faqs(text: str) -> list[tuple[str, str]]:
     """
-    Format:
-    Q: ...
-    A: ...
-    blank line between pairs is OK
+    Accepts repeated pairs like:
+
+    Q: question
+    A: answer
+    Q: question
+    A: answer
+
+    Blank lines are optional. Extra lines after A: are included in the answer
+    until the next Q: is found.
     """
     if not text:
         return []
 
-    blocks = re.split(r"\n\s*\n", text.strip())
     faqs: list[tuple[str, str]] = []
+    q = ""
+    a_lines: list[str] = []
+    mode = None  # "q" or "a"
 
-    for b in blocks:
-        q = ""
-        a = ""
-        for line in b.splitlines():
-            line = line.strip()
-            if line.lower().startswith("q:"):
-                q = line[2:].strip()
-            elif line.lower().startswith("a:"):
-                a = line[2:].strip()
-            else:
-                if a:
-                    a += " " + line
-                elif q:
-                    q += " " + line
-        if q and a:
-            faqs.append((q, a))
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            # keep blank lines inside answers (optional)
+            if mode == "a":
+                a_lines.append("")
+            continue
+
+        low = line.lower()
+
+        if low.startswith("q:"):
+            # save previous pair if complete
+            if q and a_lines:
+                a = " ".join([x for x in a_lines if x != ""]).strip()
+                faqs.append((q.strip(), a))
+            q = line[2:].strip()
+            a_lines = []
+            mode = "q"
+            continue
+
+        if low.startswith("a:"):
+            mode = "a"
+            a_lines.append(line[2:].strip())
+            continue
+
+        # continuation lines
+        if mode == "q":
+            q += " " + line
+        elif mode == "a":
+            a_lines.append(line)
+        else:
+            # if no Q:/A: yet, ignore stray text
+            pass
+
+    # flush last pair
+    if q and a_lines:
+        a = " ".join([x for x in a_lines if x != ""]).strip()
+        faqs.append((q.strip(), a))
 
     return faqs
 
