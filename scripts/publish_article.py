@@ -837,10 +837,16 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
 # ─────────────────────────────────────────────────────────────────
 
 def main():
-    issue_body = os.environ.get("ISSUE_BODY", "")
-    if not issue_body:
-        raise SystemExit("Missing ISSUE_BODY env var")
+   issue_body = os.environ.get("ISSUE_BODY", "").strip()
 
+if not issue_body:
+    path = os.environ.get("ISSUE_BODY_PATH", "").strip()
+    if path and os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            issue_body = f.read().strip()
+
+if not issue_body:
+    raise SystemExit("Missing ISSUE_BODY (and ISSUE_BODY_PATH was empty/unreadable)")
     fields = {
         "title": get_field(issue_body, "Article title"),
         "slug": get_field(issue_body, "URL slug"),
