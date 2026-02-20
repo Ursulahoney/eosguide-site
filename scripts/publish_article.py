@@ -49,6 +49,9 @@ def parse_steps(text: str) -> list[str]:
             continue
         line = re.sub(r"^\d+\)\s*", "", line)
         line = re.sub(r"^[-*]\s*", "", line)
+        # Convert inline markdown links to HTML
+        line = re.sub(r'\[([^\]]+)\]\((mailto:[^\)]+)\)', r'<a href="\2">\1</a>', line)
+        line = re.sub(r'\[([^\]]+)\]\((https?://[^\)]+)\)', r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>', line)
         out.append(line)
     return out
 
@@ -449,344 +452,320 @@ def build_page(f: dict) -> str:
         </section>
         """
 
-    return f"""<!doctype html>
+    deadline_banner = ""
+    if f.get("deadline"):
+        claim_url = f.get("claim_form_url") or official_website
+        deadline_banner = f"""
+        <div class="bg-red-50 border-l-4 border-red-500 p-5 mb-6 rounded-r-xl">
+          <div class="flex items-center mb-2">
+            <svg class="w-5 h-5 text-red-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+            </svg>
+            <span class="font-bold text-red-800">Deadline: {f["deadline"]}</span>
+          </div>
+          {"" if not claim_url else f'<a href="{claim_url}" target="_blank" rel="noopener noreferrer" class="inline-block bg-red-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-red-700 transition text-sm no-underline">File Your Claim Now →</a>'}
+        </div>"""
+
+    share_buttons = f"""
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <p class="text-sm font-semibold text-gray-700 mb-3">Share this:</p>
+          <div class="flex flex-wrap gap-2 text-sm">
+            <button type="button" id="copyLinkBtn"
+              class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-medium">
+              Copy link
+            </button>
+            <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-medium"
+               target="_blank" rel="noopener"
+               href="https://twitter.com/intent/tweet?url={canonical}&text={title}">
+              X / Twitter
+            </a>
+            <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-700 font-medium"
+               target="_blank" rel="noopener"
+               href="https://www.facebook.com/sharer/sharer.php?u={canonical}">
+              Facebook
+            </a>
+          </div>
+          <p id="copyStatus" class="text-xs text-gray-500 mt-2" aria-live="polite"></p>
+        </div>"""
+
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>{title} | eosguidehub</title>
-  <meta name="description" content="{meta_description}" />
-  <link rel="canonical" href="{canonical}" />
+  <title>{title} | eosguide</title>
+  <meta name="description" content="{meta_description}">
+  <link rel="canonical" href="{canonical}">
+  <link rel="icon" href="/Circular-badge-logo.png" type="image/png">
 
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="{title}" />
-  <meta property="og:description" content="{meta_description}" />
-  <meta property="og:url" content="{canonical}" />
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{meta_description}">
+  <meta property="og:url" content="{canonical}">
+  {"" if not hero_image else f'<meta property="og:image" content="{hero_image}">'}
 
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="{title}" />
-  <meta name="twitter:description" content="{meta_description}" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{title}">
+  <meta name="twitter:description" content="{meta_description}">
+
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    :root {{
-      --bg:          #F9F8F5;
-      --surface:     #FFFFFF;
-      --border:      #E8E5DF;
-      --text:        #1C1A17;
-      --muted:       #6B6560;
-      --accent:      #2A6B4A;
-      --accent-2:    #143E2A;
-      --urgent:      #B42318;
-      --shadow:      0 10px 30px rgba(0,0,0,0.06);
-      --radius:      22px;
-    }}
+    /* Article section styles */
+    .section {{ margin: 1.5rem 0; }}
+    .section-title {{ font-size: 1.15rem; font-weight: 800; margin: 0 0 0.75rem; color: #111827; letter-spacing: -0.01em; }}
+    .divider {{ border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }}
 
-    * {{ box-sizing: border-box; }}
+    .table-wrap {{ overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 14px; background: #fafaf9; }}
+    .deadline-table {{ width: 100%; border-collapse: collapse; min-width: 500px; }}
+    .deadline-table th, .deadline-table td {{ padding: 10px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; font-size: 14px; }}
+    .deadline-table th {{ background: #f5f5f4; color: #6b7280; font-weight: 700; }}
+    .date-cell.urgent {{ color: #b91c1c; font-weight: 800; }}
 
-    body {{
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }}
+    .benefit-grid {{ display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 10px; }}
+    .benefit-card {{ background: #fafaf9; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px; }}
+    .benefit-card h3 {{ margin: 0 0 4px; font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }}
+    .benefit-card .big {{ margin: 0; font-size: 1.1rem; font-weight: 800; color: #111827; }}
+    .benefit-card .small {{ margin: 6px 0 0; color: #6b7280; font-size: 0.9rem; }}
 
-    a {{ color: var(--accent); text-decoration: none; }}
-    a:hover {{ text-decoration: underline; }}
+    .glance-card {{ background: #fff; border: 1px solid #e5e7eb; border-radius: 18px; padding: 16px; margin: 16px 0; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }}
+    .glance-grid {{ display: grid; gap: 8px; margin-top: 10px; }}
+    .glance-row {{ display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 12px; border-radius: 12px; background: #fafaf9; border: 1px solid #e5e7eb; }}
+    .glance-label {{ font-weight: 700; color: #6b7280; font-size: 0.88rem; padding-top: 1px; }}
+    .glance-value {{ font-weight: 600; color: #111827; font-size: 0.95rem; overflow-wrap: anywhere; }}
+    .glance-value a {{ color: #2563eb; }}
 
-    .site-header {{
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }}
-    .site-header-inner {{
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }}
-    .logo {{
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      font-size: 18px;
-    }}
-    .logo span {{ color: var(--accent); }}
-    .breadcrumb {{ color: var(--muted); font-size: 14px; }}
+    .bullets {{ padding-left: 1.25rem; }}
+    .bullets li {{ margin: 6px 0; font-size: 0.95rem; color: #374151; }}
+    .steps {{ padding-left: 1.25rem; }}
+    .steps li {{ margin: 8px 0; font-size: 0.95rem; color: #374151; }}
 
-    .layout {{
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 18px 16px 60px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }}
+    .callout {{ border-radius: 14px; padding: 14px 16px; border: 1px solid #e5e7eb; background: #fafaf9; }}
+    .mini-row {{ margin-bottom: 6px; font-size: 0.9rem; color: #374151; }}
 
-    .article {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 16px;
-      box-shadow: var(--shadow);
-    }}
+    .cta-row {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem; }}
+    .btn {{ border: 1px solid #d1d5db; border-radius: 999px; padding: 10px 18px; font-weight: 700; font-size: 0.9rem; background: #fafaf9; color: #111827; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: all 0.2s; }}
+    .btn:hover {{ background: #f3f4f6; text-decoration: none; }}
+    .btn.primary {{ background: #dcfce7; border-color: #86efac; color: #14532d; }}
+    .btn.primary:hover {{ background: #bbf7d0; }}
 
-    .article-meta {{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 6px;
-    }}
+    details.faq {{ border: 1px solid #e5e7eb; border-radius: 14px; padding: 12px 14px; background: #fafaf9; margin: 8px 0; }}
+    details.faq summary {{ cursor: pointer; font-weight: 700; font-size: 0.95rem; color: #111827; list-style: none; display: flex; justify-content: space-between; align-items: center; }}
+    details.faq summary::-webkit-details-marker {{ display: none; }}
+    details.faq summary::after {{ content: '+'; font-size: 1.2rem; color: #6b7280; flex-shrink: 0; margin-left: 8px; }}
+    details[open].faq summary::after {{ content: '−'; }}
+    .faq-a {{ margin-top: 10px; color: #374151; font-size: 0.93rem; line-height: 1.6; padding-top: 10px; border-top: 1px solid #e5e7eb; }}
 
-    .article-title {{
-      margin: 6px 0 10px;
-      font-size: 1.9rem;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-    }}
-
-    .article-deck {{
-      margin: 0 0 10px;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }}
-
-    .divider {{
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 18px 0;
-    }}
-
-    .hero img {{
-      width: 100%;
-      height: auto;
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      display: block;
-    }}
-
-    .section-title {{
-      font-size: 1.2rem;
-      margin: 0 0 10px;
-      letter-spacing: -0.01em;
-    }}
-
-    .table-wrap {{
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: #FBFAF8;
-    }}
-
-    .deadline-table {{
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 620px;
-    }}
-    .deadline-table th, .deadline-table td {{
-      padding: 12px 12px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      vertical-align: top;
-      font-size: 14px;
-    }}
-    .deadline-table th {{
-      background: #F5F2EC;
-      color: var(--muted);
-      font-weight: 800;
-    }}
-    .date-cell.urgent {{
-      color: var(--urgent);
-      font-weight: 900;
-    }}
-
-    .benefit-grid {{
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-top: 10px;
-    }}
-
-    .benefit-card {{
-      background: #FBFAF8;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-    }}
-    .benefit-card h3 {{
-      margin: 0 0 6px;
-      font-size: 1rem;
-      color: var(--muted);
-    }}
-    .benefit-card .big {{
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 800;
-    }}
-    .benefit-card .small {{
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }}
-
-    .bullets li {{ margin: 6px 0; }}
-    .steps li {{ margin: 8px 0; }}
-
-    .cta-row {{
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }}
-    .btn {{
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-weight: 800;
-      background: #FBFAF8;
-      color: var(--text);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }}
-    .btn.primary {{
-      background: rgba(42,107,74,0.12);
-      border-color: rgba(42,107,74,0.30);
-      color: var(--accent-2);
-    }}
-
-    details.faq {{
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 12px 14px;
-      background: #FBFAF8;
-      margin: 10px 0;
-    }}
-    details.faq summary {{
-      cursor: pointer;
-      font-weight: 900;
-    }}
-    .faq-a {{
-      margin-top: 8px;
-      color: var(--text);
-    }}
-
-    .callout {{
-      border-radius: 18px;
-      padding: 14px;
-      border: 1px solid var(--border);
-      background: #FBFAF8;
-      color: var(--text);
-    }}
-    .callout strong {{ display: block; margin-bottom: 4px; }}
-
-    .glance-card {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      margin: 18px 0;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    }}
-    .glance-grid {{
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }}
-    .glance-row {{
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: #FBFAF8;
-      border: 1px solid var(--border);
-    }}
-    .glance-label {{
-      font-weight: 700;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }}
-    .glance-value {{
-      font-weight: 600;
-      color: var(--text);
-      font-size: 0.98rem;
-      overflow-wrap: anywhere;
-    }}
-
-    @media (min-width: 960px) {{
-      .benefit-grid {{
-        grid-template-columns: repeat(2, 1fr);
-      }}
+    @media (min-width: 768px) {{
+      .benefit-grid {{ grid-template-columns: repeat(2, 1fr); }}
+      .glance-row {{ grid-template-columns: 140px 1fr; }}
     }}
   </style>
 </head>
-<body>
 
-<header class="site-header">
-  <div class="site-header-inner">
-    <a class="logo" href="/">eos<span>guide</span></a>
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/articles/">Articles</a> &rsaquo; Opportunity
+<body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50">
+
+  <!-- Header -->
+  <header class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
+    <nav class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 group cursor-pointer">
+        <div class="relative flex-shrink-0">
+          <a href="/" aria-label="Back to eosguide home">
+            <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40">
+          </a>
+        </div>
+        <blockquote class="text-xs sm:text-sm md:text-base font-semibold italic leading-snug text-gray-500 max-w-xs md:max-w-sm text-center md:text-left"
+                    style="font-family: 'DM Sans', 'Montserrat', system-ui, sans-serif;">
+          "We do the searching<br>so you don't have to<br>pretend it's fun."
+        </blockquote>
+      </div>
+      <div class="flex flex-col items-center gap-2 self-center md:self-auto">
+        <button onclick="openNewsletter()"
+                class="flex items-center space-x-2 px-6 py-3 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
+                style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          <span>Get Alerts</span>
+        </button>
+        <a href="/articles/"
+           class="text-sm font-semibold text-purple-600 hover:text-purple-700 px-3 py-1 rounded-full hover:bg-purple-50 flex items-center gap-1 transition">
+          <span>Articles</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
     </nav>
-  </div>
-</header>
+  </header>
 
-<div class="layout">
-  <main class="article" id="main-content">
-    <div class="article-meta">
-      <time class="meta-date" datetime="{last_updated}">Updated {last_updated}</time>
-    </div>
+  <!-- Main content -->
+  <main class="relative z-10 px-4 sm:px-6 lg:px-8 pb-16">
+    <article class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-8" id="main-content">
 
-    <h1 class="article-title">{title}</h1>
-    <p class="article-deck">{blurb}</p>
+      <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        {"" if not f.get("deadline") else f'<div class="text-sm text-gray-700"><span class="font-semibold">Deadline:</span> {f["deadline"]}</div>'}
+        <div class="text-sm text-gray-500"><span class="font-semibold">Last updated:</span> {last_updated}</div>
+      </div>
 
-    {at_a_glance_html}
+      <h1 class="text-3xl sm:text-4xl font-black text-gray-900 mb-3 leading-tight">{title}</h1>
+      <p class="text-gray-600 mb-6 italic text-base leading-relaxed">{blurb}</p>
 
-    {hero_html}
+      {deadline_banner}
 
-    <hr class="divider" />
+      {hero_html}
 
-    {what_happened_section}
+      {at_a_glance_html}
 
-    {benefits_html}
+      <hr class="divider">
 
-    {key_dates_html}
+      {what_happened_section}
 
-    {eligibility_html}
+      {benefits_html}
 
-    {steps_html}
+      {key_dates_html}
 
-    {proof_html}
+      {eligibility_html}
 
-    {payment_section}
+      {steps_html}
 
-    {links_html}
+      {proof_html}
 
-    {contact_html}
+      {payment_section}
 
-    {extra_details_section}
+      {links_html}
 
-    {build_cta_buttons(official_website, f.get("deadline", ""))}
+      {contact_html}
 
-    <hr class="divider" />
+      {extra_details_section}
 
-    {faq_html}
+      {build_cta_buttons(official_website, f.get("deadline", ""))}
 
-    <hr class="divider" />
+      <hr class="divider">
 
-    <div class="callout info">
-      <strong>Use the official website</strong>
-      Always confirm details on the official site. If something feels off, stop and verify before sharing personal info.
-    </div>
+      {faq_html}
 
+      <hr class="divider">
+
+      <div class="callout">
+        <strong class="font-bold text-gray-900 block mb-1">Use the official website</strong>
+        <span class="text-sm text-gray-600">Always confirm details on the official site. If something feels off, stop and verify before sharing personal info.</span>
+      </div>
+
+      <p class="mt-6 text-xs text-gray-500">
+        Info only. Verify details on the official site. Not legal, financial, or tax advice.
+        <a href="/legal/" class="underline">Legal</a>
+      </p>
+
+      {share_buttons}
+
+    </article>
   </main>
-</div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h4 class="font-black text-xl mb-4 bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+            eosguide
+          </h4>
+          <p class="text-gray-400 text-sm font-light">
+            We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.
+          </p>
+        </div>
+      </div>
+      <div class="text-center mb-6">
+        <p class="text-gray-300 text-sm font-light">Have a question, suggestion, or request?</p>
+        <p class="text-gray-200 text-sm font-light">
+          Email: <a href="mailto:hello@eosguidehub.com" class="text-cyan-300 hover:text-cyan-400 underline">hello@eosguidehub.com</a>
+        </p>
+      </div>
+      <div class="text-center mb-6">
+        <p class="text-gray-300 text-sm font-light">© 2025 eosguide. Information only. We're not affiliated with the programs we link to and we don't give legal, financial, or tax advice.</p>
+      </div>
+      <div class="text-sm text-center">
+        <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
+        <span class="text-gray-500 mx-2">•</span>
+        <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
+        <span class="text-gray-500 mx-2">•</span>
+        <a href="/legal/#terms" class="text-cyan-300 hover:text-cyan-400 underline">Terms</a>
+        <span class="text-gray-500 mx-2">•</span>
+        <a href="/legal/#disclaimer" class="text-cyan-300 hover:text-cyan-400 underline">Disclaimer</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Newsletter Modal -->
+  <div id="newsletterModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl">
+      <button onclick="closeNewsletter()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+             style="background: linear-gradient(135deg, #06B6D4 0%, #8B5CF6 50%, #EC4899 100%);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-3xl font-black mb-2">Get alerts</h3>
+        <p class="text-gray-600 font-normal">New settlement and refund updates. No spam.</p>
+      </div>
+      <form action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub" method="post" class="space-y-4">
+        <input type="hidden" name="embed" value="1">
+        <input type="email" name="email" id="emailInput" placeholder="Enter your email" required
+               class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light">
+        <button type="submit"
+                class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300"
+                style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+          Subscribe free
+        </button>
+      </form>
+      <p class="text-xs text-gray-500 text-center mt-4 font-light">Unsubscribe anytime.</p>
+    </div>
+  </div>
+
+  <script>
+    function openNewsletter() {{
+      const modal = document.getElementById('newsletterModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      const email = document.getElementById('emailInput');
+      if (email) setTimeout(() => email.focus(), 50);
+    }}
+    function closeNewsletter() {{
+      const modal = document.getElementById('newsletterModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+    }}
+    document.addEventListener('click', (e) => {{
+      const modal = document.getElementById('newsletterModal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      if (e.target === modal) closeNewsletter();
+    }});
+    document.addEventListener('keydown', (e) => {{
+      if (e.key === 'Escape') closeNewsletter();
+    }});
+
+    // Copy link
+    (function () {{
+      const btn = document.getElementById('copyLinkBtn');
+      const status = document.getElementById('copyStatus');
+      if (!btn) return;
+      btn.addEventListener('click', async () => {{
+        try {{
+          await navigator.clipboard.writeText('{canonical}');
+          status.textContent = 'Link copied.';
+        }} catch (e) {{
+          status.textContent = 'Copy failed. You can copy from the address bar.';
+        }}
+      }});
+    }})();
+  </script>
 
 </body>
 </html>
