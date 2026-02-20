@@ -4,6 +4,7 @@ title: "[Article] "
 labels: ["article"]
 
 body:
+
   - type: input
     id: title
     attributes:
@@ -18,16 +19,16 @@ body:
     attributes:
       label: URL slug
       description: "Short and URL-friendly. Use hyphens."
-      placeholder: "panda-restaurant-group-data-breach-settlement"
+      placeholder: "company-settlement-2026"
     validations:
       required: true
 
   - type: textarea
     id: blurb
     attributes:
-      label: "Short blurb (for the /articles list + article intro)"
-      description: "1–2 sentences. This is your quick summary and helps SEO."
-      placeholder: "Eligible people may get up to $X if they... Deadline is..."
+      label: Short blurb (for article intro and listing page)
+      description: "1–2 sentences. This helps SEO and appears on the articles list."
+      placeholder: "Eligible people may receive compensation if they... Deadline is..."
     validations:
       required: true
 
@@ -35,69 +36,17 @@ body:
     id: last_updated
     attributes:
       label: Last updated
-      description: "Date this article was written or last reviewed."
-      placeholder: "February 19, 2026"
+      description: "Date this article was written or reviewed."
+      placeholder: "February 20, 2026"
     validations:
       required: true
 
-  - type: dropdown
+  - type: textarea
     id: eligible_states
     attributes:
-      label: Eligible states
-      description: "Pick Nationwide or the states this applies to. Full state names."
-      multiple: true
-      options:
-        - Nationwide
-        - Alabama
-        - Alaska
-        - Arizona
-        - Arkansas
-        - California
-        - Colorado
-        - Connecticut
-        - Delaware
-        - Florida
-        - Georgia
-        - Hawaii
-        - Idaho
-        - Illinois
-        - Indiana
-        - Iowa
-        - Kansas
-        - Kentucky
-        - Louisiana
-        - Maine
-        - Maryland
-        - Massachusetts
-        - Michigan
-        - Minnesota
-        - Mississippi
-        - Missouri
-        - Montana
-        - Nebraska
-        - Nevada
-        - New Hampshire
-        - New Jersey
-        - New Mexico
-        - New York
-        - North Carolina
-        - North Dakota
-        - Ohio
-        - Oklahoma
-        - Oregon
-        - Pennsylvania
-        - Rhode Island
-        - South Carolina
-        - South Dakota
-        - Tennessee
-        - Texas
-        - Utah
-        - Vermont
-        - Virginia
-        - Washington
-        - West Virginia
-        - Wisconsin
-        - Wyoming
+      label: Eligible states / location
+      description: "Type 'Nationwide' or list full state names separated by commas."
+      placeholder: "Nationwide\n\nor\n\nCalifornia, Illinois, New York"
     validations:
       required: true
 
@@ -105,7 +54,7 @@ body:
     id: official_website
     attributes:
       label: Official settlement website
-      description: "The main official URL you want users to click."
+      description: "Primary official URL where users file claims."
       placeholder: "https://www.example-settlement.com/"
     validations:
       required: true
@@ -113,24 +62,24 @@ body:
   - type: input
     id: hero_image
     attributes:
-      label: "Hero image URL (optional)"
-      description: "Leave blank if you don’t have one."
-      placeholder: "https://eosguidehub.com/assets/articles/your-image.jpg"
+      label: Hero image URL (optional)
+      description: "Leave blank if not available."
+      placeholder: "https://eosguidehub.com/assets/articles/example.jpg"
     validations:
       required: false
 
   - type: input
     id: hero_credit
     attributes:
-      label: "Hero image credit (optional)"
-      placeholder: "Photo: Example Source"
+      label: Hero image credit (optional)
+      placeholder: "Photo credit: Example Source"
     validations:
       required: false
 
   - type: input
     id: deadline
     attributes:
-      label: "Claim deadline (optional)"
+      label: Claim deadline (optional)
       placeholder: "April 10, 2026"
     validations:
       required: false
@@ -138,7 +87,7 @@ body:
   - type: input
     id: optout_deadline
     attributes:
-      label: "Opt-out deadline (optional)"
+      label: Opt-out deadline (optional)
       placeholder: "March 1, 2026"
     validations:
       required: false
@@ -146,7 +95,7 @@ body:
   - type: input
     id: hearing_date
     attributes:
-      label: "Final approval hearing (optional)"
+      label: Final approval hearing (optional)
       placeholder: "May 12, 2026"
     validations:
       required: false
@@ -154,7 +103,7 @@ body:
   - type: input
     id: settlement_amount
     attributes:
-      label: "Total fund (optional)"
+      label: Total settlement fund (optional)
       placeholder: "$10,000,000"
     validations:
       required: false
@@ -162,7 +111,7 @@ body:
   - type: input
     id: max_payment
     attributes:
-      label: "Max payment per person (optional)"
+      label: Maximum payment per person (optional)
       placeholder: "Up to $5,000"
     validations:
       required: false
@@ -170,23 +119,23 @@ body:
   - type: input
     id: nodoc_payment
     attributes:
-      label: "No-doc amount (optional)"
-      placeholder: "$25 (no documentation)"
+      label: No-document payment amount (optional)
+      placeholder: "$25 without documentation"
     validations:
       required: false
 
   - type: input
     id: ca_payment
     attributes:
-      label: "California-only amount (optional)"
-      placeholder: "$100 (CA residents)"
+      label: California-specific payment (optional)
+      placeholder: "$100 for California residents"
     validations:
       required: false
 
   - type: input
     id: credit_monitoring
     attributes:
-      label: "Credit monitoring (optional)"
+      label: Credit monitoring benefit (optional)
       placeholder: "2 years of credit monitoring"
     validations:
       required: false
@@ -194,8 +143,8 @@ body:
   - type: textarea
     id: article_body
     attributes:
-      label: "Main article body (optional)"
-      description: "Write in short sections. Use headings if you want."
+      label: Main article body (optional)
+      description: "Write in short sections. Markdown headings supported."
       placeholder: |
         ## What happened
         ...
@@ -208,10 +157,10 @@ body:
   - type: textarea
     id: eligibility
     attributes:
-      label: "Eligibility checklist (optional)"
+      label: Eligibility checklist (optional)
       description: "One item per line."
       placeholder: |
-        Received a notice OR meet the criteria on the official site
+        Received a notice OR meet official criteria
         Lived in the U.S. during the class period
     validations:
       required: false
@@ -219,25 +168,25 @@ body:
   - type: textarea
     id: how_to_file
     attributes:
-      label: "How to file (steps, optional)"
+      label: How to file (steps, optional)
       description: "One step per line."
       placeholder: |
         Go to the official site
-        Click “Submit Claim”
-        Complete the form and submit
+        Click 'Submit Claim'
+        Complete the form
     validations:
       required: false
 
   - type: textarea
     id: faqs
     attributes:
-      label: "FAQs (optional)"
-      description: "Format like 'Q:' then 'A:' (repeat)."
+      label: FAQs (optional)
+      description: "Format like Q: ... then A: ..."
       placeholder: |
         Q: Who qualifies?
         A: ...
 
-        Q: What proof do I need?
+        Q: What proof is required?
         A: ...
     validations:
       required: false
@@ -245,23 +194,23 @@ body:
   - type: input
     id: admin_phone
     attributes:
-      label: "Administrator phone (optional)"
-      placeholder: "Phone: 1-800-555-1234"
+      label: Administrator phone (optional)
+      placeholder: "1-800-555-1234"
     validations:
       required: false
 
   - type: input
     id: admin_email
     attributes:
-      label: "Administrator email (optional)"
-      placeholder: "Email: info@example-settlement.com"
+      label: Administrator email (optional)
+      placeholder: "info@example-settlement.com"
     validations:
       required: false
 
   - type: input
     id: attorney_fees
     attributes:
-      label: "Attorney fees (optional)"
+      label: Attorney fees (optional)
       placeholder: "Up to $X"
     validations:
       required: false
@@ -269,18 +218,7 @@ body:
   - type: input
     id: service_awards
     attributes:
-      label: "Service awards (optional)"
+      label: Service awards (optional)
       placeholder: "Up to $X"
-    validations:
-      required: false
-
-    - type: dropdown
-    id: monetization
-    attributes:
-      label: Monetization block
-      description: "Leave this disabled for now unless you want it."
-      options:
-        - "Disabled"
-        - "Enabled"
     validations:
       required: false
