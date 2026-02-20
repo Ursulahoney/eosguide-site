@@ -1,11 +1,10 @@
 import os
 import re
-import json
 import markdown
-from datetime import datetime
+
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 1: ISSUE BODY PARSER
+# ISSUE BODY PARSER
 # ─────────────────────────────────────────────────────────────────
 
 def get_field(body: str, label: str) -> str:
@@ -20,14 +19,27 @@ def get_field(body: str, label: str) -> str:
     pattern = rf"### {re.escape(label)}\n(.*?)(?=\n### |\Z)"
     m = re.search(pattern, body, flags=re.S)
     if not m:
-        return ''
+        return ""
     val = m.group(1).strip()
     if val == "_No response_":
-        return ''
+        return ""
     return val
 
 
-def parse_steps(text: str) -> list:
+def parse_lines(text: str) -> list[str]:
+    if not text:
+        return []
+    out = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        line = re.sub(r"^[-*]\s*", "", line)
+        out.append(line)
+    return out
+
+
+def parse_steps(text: str) -> list[str]:
     if not text:
         return []
     out = []
@@ -41,31 +53,18 @@ def parse_steps(text: str) -> list:
     return out
 
 
-def parse_eligibility(text: str) -> list:
-    if not text:
-        return []
-    out = []
-    for line in text.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        line = re.sub(r"^[-*]\s*", "", line)
-        out.append(line)
-    return out
-
-
-def parse_faqs(text: str) -> list:
+def parse_faqs(text: str) -> list[tuple[str, str]]:
     """
     Format:
     Q: ...
     A: ...
-    (blank line between pairs is OK)
+    blank line between pairs is OK
     """
     if not text:
         return []
 
     blocks = re.split(r"\n\s*\n", text.strip())
-    faqs = []
+    faqs: list[tuple[str, str]] = []
 
     for b in blocks:
         q = ""
@@ -87,98 +86,7 @@ def parse_faqs(text: str) -> list:
     return faqs
 
 
-# ─────────────────────────────────────────────────────────────────
-# STEP 2: HTML SECTION BUILDERS
-# ─────────────────────────────────────────────────────────────────
-
-def build_benefit_cards(max_payment: str, nodoc_payment: str, ca_payment: str, credit_monitoring: str) -> str:
-    cards = ''
-    if max_payment:
-        cards += f'''
-      <div class="benefit-card">
-        <h3>Max payment</h3>
-        <p class="big">{max_payment}</p>
-      </div>'''
-    if nodoc_payment:
-        cards += f'''
-      <div class="benefit-card">
-        <h3>No-doc amount</h3>
-        <p class="big">{nodoc_payment}</p>
-      </div>'''
-    if ca_payment:
-        cards += f'''
-      <div class="benefit-card">
-        <h3>California amount</h3>
-        <p class="big">{ca_payment}</p>
-      </div>'''
-    if credit_monitoring:
-        cards += f'''
-      <div class="benefit-card">
-        <h3>Credit monitoring</h3>
-        <p class="big">{credit_monitoring}</p>
-      </div>'''
-
-    if not cards:
-        return ''
-
-    return f'''
-    <section class="benefit-grid" aria-label="Benefits">
-      {cards}
-    </section>'''
-
-
-def build_deadline_table(deadline: str, optout_deadline: str, hearing_date: str) -> str:
-    if not deadline and not optout_deadline and not hearing_date:
-        return ''
-    rows = ''
-    if deadline:
-        rows += f'''
-        <tr>
-          <td>File a Claim</td>
-          <td class="date-cell urgent">{deadline}</td>
-          <td>Only way to receive money or credit monitoring</td>
-        </tr>'''
-    if optout_deadline:
-        rows += f'''
-        <tr>
-          <td>Opt Out</td>
-          <td class="date-cell">{optout_deadline}</td>
-          <td>Keep your right to sue on your own</td>
-        </tr>'''
-    if hearing_date:
-        rows += f'''
-        <tr>
-          <td>Final Approval Hearing</td>
-          <td class="date-cell">{hearing_date}</td>
-          <td>Judge decides whether to approve the settlement</td>
-        </tr>'''
-
-    return f'''
-    <section class="section">
-      <h2 class="section-title">Key deadlines</h2>
-      <div class="table-wrap">
-        <table class="deadline-table">
-          <thead>
-            <tr>
-              <th>Action</th>
-              <th>Date</th>
-              <th>What it means</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-          </tbody>
-        </table>
-      </div>
-    </section>'''
-
-
-# ─────────────────────────────────────────────────────────────────
-# STEP 3B: AT-A-GLANCE BUILDER
-# ─────────────────────────────────────────────────────────────────
-
 def normalize_states(text: str) -> list[str]:
-    """Accepts 'Nationwide' or a list of states from the issue form (often newline-separated)."""
     if not text:
         return []
     parts = [p.strip() for p in re.split(r"[\n,]+", text) if p.strip() and p.strip() != "_No response_"]
@@ -193,17 +101,36 @@ def normalize_states(text: str) -> list[str]:
     return out
 
 
-def build_at_a_glance(
-    eligible_states: str,
-    deadline: str,
-    optout_deadline: str,
-    hearing_date: str,
-    max_payment: str,
-    nodoc_payment: str,
-    official_website: str
-) -> str:
-    """Top summary card. Only renders rows that have values."""
+def parse_pipe_rows(text: str) -> list[dict]:
+    """
+    For lines like:
+      Label | Value | Notes(optional)
+    Returns: [{"label":..., "value":..., "notes":...}, ...]
+    """
+    if not text:
+        return []
+    rows = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) == 1:
+            # If they didn't use pipes, treat whole line as a label/value blob
+            rows.append({"label": parts[0], "value": "", "notes": ""})
+            continue
+        label = parts[0] if len(parts) >= 1 else ""
+        value = parts[1] if len(parts) >= 2 else ""
+        notes = parts[2] if len(parts) >= 3 else ""
+        rows.append({"label": label, "value": value, "notes": notes})
+    return rows
 
+
+# ─────────────────────────────────────────────────────────────────
+# HTML BUILDERS (ONLY RENDER IF FILLED)
+# ─────────────────────────────────────────────────────────────────
+
+def build_at_a_glance(f: dict) -> str:
     def row(label: str, value_html: str) -> str:
         return f'''
         <div class="glance-row">
@@ -211,189 +138,209 @@ def build_at_a_glance(
           <span class="glance-value">{value_html}</span>
         </div>'''
 
-    rows = ''
+    rows = ""
 
-    states = normalize_states(eligible_states)
+    states = normalize_states(f.get("eligible_states", ""))
     if states:
         rows += row("Applies to", ", ".join(states))
 
-    if deadline:
-        rows += row("Claim deadline", deadline)
+    if f.get("deadline"):
+        rows += row("Main deadline", f["deadline"])
 
-    if optout_deadline:
-        rows += row("Opt-out deadline", optout_deadline)
+    benefit_summary = f.get("benefit_summary", "")
+    if benefit_summary:
+        rows += row("Benefit", benefit_summary)
 
-    if hearing_date:
-        rows += row("Final hearing", hearing_date)
-
-    if max_payment:
-        rows += row("Max benefit", max_payment)
-
-    if nodoc_payment:
-        rows += row("No-doc amount", nodoc_payment)
-
-    if official_website:
-        rows += row(
-            "Official site",
-            f'<a href="{official_website}" target="_blank" rel="noopener noreferrer">{official_website}</a>'
-        )
+    if f.get("official_website"):
+        url = f["official_website"]
+        rows += row("Official site", f'<a href="{url}" target="_blank" rel="noopener noreferrer">{url}</a>')
 
     if not rows:
-        return ''
+        return ""
 
     return f'''
     <section class="glance-card" aria-label="At a glance">
       <h2 class="section-title">At a glance</h2>
-      <div class="glance-grid">
-        {rows}
-      </div>
-    </section>'''
+      <div class="glance-grid">{rows}</div>
+    </section>
+    '''
 
 
-# ─────────────────────────────────────────────────────────────────
-# STEP 4: SIDEBAR BUILDER
-# ─────────────────────────────────────────────────────────────────
+def build_key_dates_table(f: dict) -> str:
+    deadline = f.get("deadline", "")
+    optout = f.get("optout_deadline", "")
+    objection = f.get("objection_deadline", "")
+    hearing = f.get("hearing_date", "")
 
-def build_sidebar(f: dict) -> str:
-    eligible_states   = f.get('eligible_states', '')
-    deadline          = f.get('deadline', '')
-    optout_deadline   = f.get('optout_deadline', '')
-    hearing_date      = f.get('hearing_date', '')
-    official_website  = f.get('official_website', '')
-    settlement_amount = f.get('settlement_amount', '')
-    max_payment       = f.get('max_payment', '')
-    nodoc_payment     = f.get('nodoc_payment', '')
-    ca_payment        = f.get('ca_payment', '')
-    credit_monitoring = f.get('credit_monitoring', '')
-    admin_phone       = f.get('admin_phone', '')
-    admin_email       = f.get('admin_email', '')
-    attorney_fees     = f.get('attorney_fees', '')
-    service_awards    = f.get('service_awards', '')
+    if not any([deadline, optout, objection, hearing]):
+        return ""
 
-    facts_rows = ''
-    if settlement_amount:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Total Fund</span>
-        <span class="sidebar-value accent">{settlement_amount}</span>
-      </div>'''
-    if max_payment:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Max Per Person</span>
-        <span class="sidebar-value">{max_payment}</span>
-      </div>'''
-    if nodoc_payment:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">No-doc Amount</span>
-        <span class="sidebar-value">{nodoc_payment}</span>
-      </div>'''
-    if ca_payment:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">California Amount</span>
-        <span class="sidebar-value">{ca_payment}</span>
-      </div>'''
-    if credit_monitoring:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Credit Monitoring</span>
-        <span class="sidebar-value">{credit_monitoring}</span>
-      </div>'''
-    if eligible_states:
-        states = normalize_states(eligible_states)
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Applies To</span>
-        <span class="sidebar-value">{", ".join(states) if states else eligible_states}</span>
-      </div>'''
+    rows = ""
     if deadline:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Claim Deadline</span>
-        <span class="sidebar-value urgent">{deadline}</span>
-      </div>'''
-    if optout_deadline:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Opt-out Deadline</span>
-        <span class="sidebar-value">{optout_deadline}</span>
-      </div>'''
-    if hearing_date:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Final Hearing</span>
-        <span class="sidebar-value">{hearing_date}</span>
-      </div>'''
-    if official_website:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Official Site</span>
-        <span class="sidebar-value"><a href="{official_website}" target="_blank" rel="noopener noreferrer">Visit</a></span>
-      </div>'''
+        rows += f'''
+        <tr>
+          <td>Submit / Claim</td>
+          <td class="date-cell urgent">{deadline}</td>
+          <td>Last day to submit</td>
+        </tr>'''
+    if optout:
+        rows += f'''
+        <tr>
+          <td>Opt out</td>
+          <td class="date-cell">{optout}</td>
+          <td>Keep your right to sue separately</td>
+        </tr>'''
+    if objection:
+        rows += f'''
+        <tr>
+          <td>Object</td>
+          <td class="date-cell">{objection}</td>
+          <td>Tell the court you disagree</td>
+        </tr>'''
+    if hearing:
+        rows += f'''
+        <tr>
+          <td>Final hearing</td>
+          <td class="date-cell">{hearing}</td>
+          <td>Judge decides whether to approve</td>
+        </tr>'''
 
-    admin_rows = ''
-    if admin_phone:
-        admin_rows += f'<div class="mini-row"><strong>Phone:</strong> {admin_phone}</div>'
-    if admin_email:
-        admin_rows += f'<div class="mini-row"><strong>Email:</strong> {admin_email}</div>'
-
-    fees_rows = ''
-    if attorney_fees:
-        fees_rows += f'<div class="mini-row"><strong>Attorney Fees:</strong> {attorney_fees}</div>'
-    if service_awards:
-        fees_rows += f'<div class="mini-row"><strong>Service Awards:</strong> {service_awards}</div>'
-
-    blocks = ''
-    if facts_rows:
-        blocks += f'''
-    <aside class="sidebar-card">
-      <h2>Quick Facts</h2>
-      {facts_rows}
-    </aside>'''
-    if admin_rows:
-        blocks += f'''
-    <aside class="sidebar-card">
-      <h2>Contact</h2>
-      {admin_rows}
-    </aside>'''
-    if fees_rows:
-        blocks += f'''
-    <aside class="sidebar-card">
-      <h2>Fees</h2>
-      {fees_rows}
-    </aside>'''
-
-    return blocks
-
-
-def build_steps_section(steps: list) -> str:
-    if not steps:
-        return ''
-    items = ''.join([f'<li>{s}</li>' for s in steps])
     return f'''
     <section class="section">
-      <h2 class="section-title">How to file</h2>
-      <ol class="steps">{items}</ol>
-    </section>'''
+      <h2 class="section-title">Key dates</h2>
+      <div class="table-wrap">
+        <table class="deadline-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Date</th>
+              <th>What it means</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+      </div>
+    </section>
+    '''
 
 
-def build_eligibility_section(items: list) -> str:
+def build_benefits_section(f: dict) -> str:
+    rows = parse_pipe_rows(f.get("benefits", ""))
+    if not rows:
+        return ""
+
+    cards = ""
+    for r in rows:
+        label = r.get("label", "")
+        value = r.get("value", "")
+        notes = r.get("notes", "")
+        if not (label or value or notes):
+            continue
+
+        big = value if value else notes if notes else ""
+        small = notes if (value and notes) else ""
+
+        cards += f'''
+        <div class="benefit-card">
+          <h3>{label or "Benefit"}</h3>
+          <p class="big">{big}</p>
+          {f'<p class="small">{small}</p>' if small else ''}
+        </div>
+        '''
+
+    if not cards:
+        return ""
+
+    return f'''
+    <section class="section">
+      <h2 class="section-title">What you can get</h2>
+      <div class="benefit-grid">
+        {cards}
+      </div>
+    </section>
+    '''
+
+
+def build_bullets_section(title: str, items: list[str]) -> str:
     if not items:
-        return ''
-    lis = ''.join([f'<li>{i}</li>' for i in items])
+        return ""
+    lis = "".join([f"<li>{i}</li>" for i in items])
     return f'''
     <section class="section">
-      <h2 class="section-title">Who may qualify</h2>
+      <h2 class="section-title">{title}</h2>
       <ul class="bullets">{lis}</ul>
-    </section>'''
+    </section>
+    '''
 
 
-def build_faq_section(faqs: list) -> str:
+def build_steps_section(title: str, steps: list[str]) -> str:
+    if not steps:
+        return ""
+    lis = "".join([f"<li>{s}</li>" for s in steps])
+    return f'''
+    <section class="section">
+      <h2 class="section-title">{title}</h2>
+      <ol class="steps">{lis}</ol>
+    </section>
+    '''
+
+
+def build_links_section(f: dict) -> str:
+    links = []
+    if f.get("official_website"):
+        links.append(("Official website", f["official_website"]))
+    if f.get("claim_form_url"):
+        links.append(("Claim form", f["claim_form_url"]))
+    if f.get("important_dates_url"):
+        links.append(("Important dates", f["important_dates_url"]))
+    if f.get("faqs_url"):
+        links.append(("FAQs", f["faqs_url"]))
+    if f.get("documents_url"):
+        links.append(("Documents", f["documents_url"]))
+
+    if not links:
+        return ""
+
+    items = ""
+    for label, url in links:
+        items += f'<li><a href="{url}" target="_blank" rel="noopener noreferrer">{label}</a></li>'
+
+    return f'''
+    <section class="section">
+      <h2 class="section-title">Important links</h2>
+      <ul class="bullets">{items}</ul>
+    </section>
+    '''
+
+
+def build_contact_section(f: dict) -> str:
+    phone = f.get("admin_phone", "")
+    email = f.get("admin_email", "")
+    addr = f.get("admin_address", "")
+
+    if not any([phone, email, addr]):
+        return ""
+
+    rows = ""
+    if phone:
+        rows += f"<div class='mini-row'><strong>Phone:</strong> {phone}</div>"
+    if email:
+        rows += f"<div class='mini-row'><strong>Email:</strong> {email}</div>"
+    if addr:
+        rows += f"<div class='mini-row'><strong>Mail:</strong> {addr}</div>"
+
+    return f'''
+    <section class="section">
+      <h2 class="section-title">Contact</h2>
+      <div class="callout">{rows}</div>
+    </section>
+    '''
+
+
+def build_faq_section(faqs: list[tuple[str, str]]) -> str:
     if not faqs:
-        return ''
-    blocks = ''
+        return ""
+    blocks = ""
     for q, a in faqs:
         blocks += f'''
       <details class="faq">
@@ -404,82 +351,109 @@ def build_faq_section(faqs: list) -> str:
     <section class="section">
       <h2 class="section-title">FAQ</h2>
       {blocks}
-    </section>'''
+    </section>
+    '''
 
 
 def build_cta_buttons(official_website: str, deadline: str) -> str:
     if not official_website:
-        return ''
-    deadline_note = f' (deadline: {deadline})' if deadline else ''
+        return ""
+    deadline_note = f" (deadline: {deadline})" if deadline else ""
     return f'''
     <div class="cta-row">
       <a class="btn primary" href="{official_website}" target="_blank" rel="noopener noreferrer">
         Go to official website{deadline_note}
       </a>
       <a class="btn" href="/articles/">Browse more articles</a>
-    </div>'''
-
-
-
+    </div>
+    '''
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 5: MAIN PAGE BUILDER
+# MAIN PAGE BUILDER
 # ─────────────────────────────────────────────────────────────────
 
 def build_page(f: dict) -> str:
-    title            = f.get('title', 'Article')
-    slug             = f.get('slug', 'article')
-    blurb            = f.get('blurb', '')
-    deadline         = f.get('deadline', '')
-    last_updated     = f.get('last_updated', '')
-    eligible_states  = f.get('eligible_states', '')
-    settlement_amount = f.get('settlement_amount', '')
-    max_payment      = f.get('max_payment', '')
-    nodoc_payment    = f.get('nodoc_payment', '')
-    ca_payment       = f.get('ca_payment', '')
-    credit_monitoring = f.get('credit_monitoring', '')
-    official_website = f.get('official_website', '')
-    hero_image       = f.get('hero_image', '')
-    hero_credit      = f.get('hero_credit', '')
-    article_body     = f.get('article_body', '')
-    optout_deadline  = f.get('optout_deadline', '')
-    hearing_date     = f.get('hearing_date', '')
+    title = f.get("title", "Article")
+    slug = f.get("slug", "article")
+    blurb = f.get("blurb", "")
+    last_updated = f.get("last_updated", "")
+    official_website = f.get("official_website", "")
+    hero_image = f.get("hero_image", "")
+    hero_credit = f.get("hero_credit", "")
 
-    eligibility_items = parse_eligibility(f.get('eligibility', ''))
-    steps             = parse_steps(f.get('how_to_file', ''))
-    faqs              = parse_faqs(f.get('faqs', ''))
+    what_happened_md = f.get("what_happened", "")
+    class_period = f.get("class_period", "")
+    payment_timing = f.get("payment_timing", "")
+    extra_details_md = f.get("extra_details", "")
 
-    body_html = markdown.markdown(
-        article_body,
-        extensions=['tables', 'fenced_code']
-    ) if article_body else ''
+    eligibility_items = parse_lines(f.get("eligibility", ""))
+    proof_items = parse_lines(f.get("proof_required", ""))
+    steps = parse_steps(f.get("how_to_file", ""))
+    faqs = parse_faqs(f.get("faqs", ""))
 
-    # Build components
-    benefit_cards     = build_benefit_cards(max_payment, nodoc_payment, ca_payment, credit_monitoring)
-    deadline_table    = build_deadline_table(deadline, optout_deadline, hearing_date)
-    at_a_glance_html  = build_at_a_glance(eligible_states, deadline, optout_deadline, hearing_date, max_payment, nodoc_payment, official_website)
-    eligibility_block = build_eligibility_section(eligibility_items)
-    steps_block       = build_steps_section(steps)
-    faq_block         = build_faq_section(faqs)
-    monetization_block = ''
-    sidebar_html      = build_sidebar(f)
+    # Convert markdown-ish areas
+    what_happened_html = markdown.markdown(what_happened_md) if what_happened_md else ""
+    extra_details_html = markdown.markdown(extra_details_md) if extra_details_md else ""
 
-    hero_html = ''
+    at_a_glance_html = build_at_a_glance(f)
+    key_dates_html = build_key_dates_table(f)
+    benefits_html = build_benefits_section(f)
+    links_html = build_links_section(f)
+    eligibility_html = build_bullets_section("Who may qualify", eligibility_items)
+    steps_html = build_steps_section("How to file", steps)
+    proof_html = build_bullets_section("Proof required", proof_items)
+    contact_html = build_contact_section(f)
+    faq_html = build_faq_section(faqs)
+
+    hero_html = ""
     if hero_image:
-        credit_html = f'<p style="font-size:12px;color:var(--muted);margin-top:6px;">{hero_credit}</p>' if hero_credit else ''
-        hero_html = f'''
+        credit_html = f"<p style='font-size:12px;color:var(--muted);margin-top:6px;'>{hero_credit}</p>" if hero_credit else ""
+        hero_html = f"""
     <figure class="hero">
       <img src="{hero_image}" alt="{title}" loading="lazy" />
       {credit_html}
-    </figure>'''
+    </figure>
+        """
 
+    # Meta
     meta_description = blurb.strip().replace("\n", " ")
     meta_description = meta_description[:155].rstrip()
-
     canonical = f"https://eosguidehub.com/articles/{slug}.html"
 
-    return f'''<!doctype html>
+    # Optional simple sections
+    class_period_html = f"<p><strong>Class period:</strong> {class_period}</p>" if class_period else ""
+    payment_timing_html = f"<p>{payment_timing}</p>" if payment_timing else ""
+
+    what_happened_section = ""
+    if what_happened_html or class_period_html:
+        what_happened_section = f'''
+        <section class="section">
+          <h2 class="section-title">What happened</h2>
+          {class_period_html}
+          {what_happened_html}
+        </section>
+        '''
+
+    extra_details_section = ""
+    if extra_details_html:
+        extra_details_section = f'''
+        <section class="section">
+          <h2 class="section-title">Extra details</h2>
+          {extra_details_html}
+        </section>
+        '''
+
+    payment_section = ""
+    if payment_timing_html:
+        payment_section = f'''
+        <section class="section">
+          <h2 class="section-title">Payment timing</h2>
+          {payment_timing_html}
+        </section>
+        '''
+
+    return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -599,37 +573,10 @@ def build_page(f: dict) -> str:
       display: block;
     }}
 
-    .section {{
-      margin: 0;
-    }}
     .section-title {{
       font-size: 1.2rem;
       margin: 0 0 10px;
       letter-spacing: -0.01em;
-    }}
-
-    .benefit-grid {{
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-top: 18px;
-    }}
-
-    .benefit-card {{
-      background: #FBFAF8;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-    }}
-    .benefit-card h3 {{
-      margin: 0 0 6px;
-      font-size: 1rem;
-      color: var(--muted);
-    }}
-    .benefit-card .big {{
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: 800;
     }}
 
     .table-wrap {{
@@ -659,6 +606,35 @@ def build_page(f: dict) -> str:
     .date-cell.urgent {{
       color: var(--urgent);
       font-weight: 900;
+    }}
+
+    .benefit-grid {{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }}
+
+    .benefit-card {{
+      background: #FBFAF8;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }}
+    .benefit-card h3 {{
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--muted);
+    }}
+    .benefit-card .big {{
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }}
+    .benefit-card .small {{
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
     }}
 
     .bullets li {{ margin: 6px 0; }}
@@ -713,33 +689,7 @@ def build_page(f: dict) -> str:
     }}
     .callout strong {{ display: block; margin-bottom: 4px; }}
 
-    .layout aside {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }}
-    .sidebar-card + .sidebar-card {{ margin-top: 12px; }}
-    .sidebar-card h2 {{
-      margin: 0 0 12px;
-      font-size: 1.05rem;
-    }}
-    .sidebar-row {{
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 0;
-      border-top: 1px solid var(--border);
-    }}
-    .sidebar-row:first-of-type {{ border-top: none; padding-top: 0; }}
-    .sidebar-label {{ color: var(--muted); font-weight: 800; font-size: 13px; }}
-    .sidebar-value {{ font-weight: 900; font-size: 13px; }}
-    .sidebar-value.urgent {{ color: var(--urgent); }}
-    .sidebar-value.accent {{ color: var(--accent); }}
-
-    /* At-a-glance card */
+    /* At-a-glance */
     .glance-card {{
       background: var(--surface);
       border: 1px solid var(--border);
@@ -776,8 +726,7 @@ def build_page(f: dict) -> str:
 
     @media (min-width: 960px) {{
       .layout {{
-        grid-template-columns: 1fr 320px;
-        align-items: start;
+        grid-template-columns: 1fr;
       }}
       .benefit-grid {{
         grid-template-columns: repeat(2, 1fr);
@@ -791,21 +740,18 @@ def build_page(f: dict) -> str:
   <div class="site-header-inner">
     <a class="logo" href="/">eos<span>guide</span></a>
     <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/articles/">Articles</a> &rsaquo; Settlements
+      <a href="/articles/">Articles</a> &rsaquo; Opportunity
     </nav>
   </div>
 </header>
 
 <div class="layout">
-
   <main class="article" id="main-content">
-
     <div class="article-meta">
       <time class="meta-date" datetime="{last_updated}">Updated {last_updated}</time>
     </div>
 
     <h1 class="article-title">{title}</h1>
-
     <p class="article-deck">{blurb}</p>
 
     {at_a_glance_html}
@@ -814,82 +760,80 @@ def build_page(f: dict) -> str:
 
     <hr class="divider" />
 
-    {body_html}
+    {what_happened_section}
 
-    {benefit_cards}
+    {benefits_html}
+
+    {key_dates_html}
+
+    {eligibility_html}
+
+    {steps_html}
+
+    {proof_html}
+
+    {payment_section}
+
+    {links_html}
+
+    {contact_html}
+
+    {extra_details_section}
+
+    {build_cta_buttons(official_website, f.get("deadline", ""))}
 
     <hr class="divider" />
 
-    {deadline_table}
-
-    <hr class="divider" />
-
-    {eligibility_block}
-
-    <hr class="divider" />
-
-    {steps_block}
-
-    {build_cta_buttons(official_website, deadline)}
-
-    <hr class="divider" />
-
-    {faq_block}
-
-    {monetization_block}
+    {faq_html}
 
     <hr class="divider" />
 
     <div class="callout info">
-      <strong>eosguide is a directory, not a law firm</strong>
-      We share public info and plain-language summaries. Always confirm details on the official settlement website.
+      <strong>Use the official website</strong>
+      Always confirm details on the official site. If something feels off, stop and verify before sharing personal info.
     </div>
 
   </main>
-
-  <aside class="sidebar" aria-label="Sidebar">
-    {sidebar_html}
-  </aside>
-
 </div>
 
 </body>
-</html>'''
+</html>
+"""
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 6: UPDATE /articles/index.html LIST
+# UPDATE /articles/index.html LIST
 # ─────────────────────────────────────────────────────────────────
 
 def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
-    index_path = os.path.join('articles', 'index.html')
+    index_path = os.path.join("articles", "index.html")
     if not os.path.exists(index_path):
         return
 
-    with open(index_path, 'r', encoding='utf-8') as f:
+    with open(index_path, "r", encoding="utf-8") as f:
         html = f.read()
 
     marker = "<!-- ARTICLES_LIST_INSERT_HERE -->"
     if marker not in html:
         return
 
-    card = f'''
+    card = f"""
       <article class="article-card">
         <h2><a href="/articles/{slug}.html">{title}</a></h2>
         <p class="meta">Updated {last_updated}</p>
         <p class="desc">{blurb}</p>
         <a class="read-more" href="/articles/{slug}.html">Read article</a>
       </article>
-    '''
+    """
 
     html = html.replace(marker, marker + card)
 
-    with open(index_path, 'w', encoding='utf-8') as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         f.write(html)
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 7: MAIN SCRIPT ENTRY
+# MAIN
 # ─────────────────────────────────────────────────────────────────
 
 def main():
@@ -900,28 +844,33 @@ def main():
     fields = {
         "title": get_field(issue_body, "Article title"),
         "slug": get_field(issue_body, "URL slug"),
-        "blurb": get_field(issue_body, "Short blurb (for the /articles list + article intro)"),
+        "blurb": get_field(issue_body, "Short blurb (used on listing page + near top of article)"),
         "last_updated": get_field(issue_body, "Last updated"),
         "eligible_states": get_field(issue_body, "Eligible states / location"),
-        "official_website": get_field(issue_body, "Official settlement website"),
+        "official_website": get_field(issue_body, "Official website"),
+        "claim_form_url": get_field(issue_body, "Claim form URL (optional)"),
+        "important_dates_url": get_field(issue_body, "Important dates URL (optional)"),
+        "faqs_url": get_field(issue_body, "FAQs URL (optional)"),
+        "documents_url": get_field(issue_body, "Documents URL (optional)"),
         "hero_image": get_field(issue_body, "Hero image URL (optional)"),
         "hero_credit": get_field(issue_body, "Hero image credit (optional)"),
-        "deadline": get_field(issue_body, "Claim deadline (optional)"),
+        "what_happened": get_field(issue_body, "What happened (optional)"),
+        "benefit_summary": get_field(issue_body, "Benefit summary (optional)"),
+        "benefits": get_field(issue_body, "Benefits list (optional)"),
+        "deadline": get_field(issue_body, "Main deadline (optional)"),
         "optout_deadline": get_field(issue_body, "Opt-out deadline (optional)"),
+        "objection_deadline": get_field(issue_body, "Objection deadline (optional)"),
         "hearing_date": get_field(issue_body, "Final approval hearing (optional)"),
-        "settlement_amount": get_field(issue_body, "Total fund (optional)"),
-        "max_payment": get_field(issue_body, "Max payment per person (optional)"),
-        "nodoc_payment": get_field(issue_body, "No-doc amount (optional)"),
-        "ca_payment": get_field(issue_body, "California-only amount (optional)"),
-        "credit_monitoring": get_field(issue_body, "Credit monitoring (optional)"),
-        "article_body": get_field(issue_body, "Main article body (optional)"),
-        "eligibility": get_field(issue_body, "Eligibility checklist (optional)"),
-        "how_to_file": get_field(issue_body, "How to file (steps, optional)"),
-        "faqs": get_field(issue_body, "FAQs (optional)"),
+        "eligibility": get_field(issue_body, "Who may qualify (optional checklist)"),
+        "class_period": get_field(issue_body, "Class period (optional)"),
+        "how_to_file": get_field(issue_body, "How to file (optional steps)"),
+        "proof_required": get_field(issue_body, "Proof required (optional)"),
+        "payment_timing": get_field(issue_body, "Payment timing / method (optional)"),
         "admin_phone": get_field(issue_body, "Administrator phone (optional)"),
         "admin_email": get_field(issue_body, "Administrator email (optional)"),
-        "attorney_fees": get_field(issue_body, "Attorney fees (optional)"),
-        "service_awards": get_field(issue_body, "Service awards (optional)"),
+        "admin_address": get_field(issue_body, "Administrator mailing address (optional)"),
+        "extra_details": get_field(issue_body, "Extra details (optional)"),
+        "faqs": get_field(issue_body, "FAQs (optional)"),
     }
 
     slug = fields.get("slug") or "article"
