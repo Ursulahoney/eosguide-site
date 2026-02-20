@@ -4,16 +4,11 @@ title: "[Article] "
 labels: ["article"]
 
 body:
-
-  # ══════════════════════════════════════════════════════════════
-  # BASIC INFO
-  # ══════════════════════════════════════════════════════════════
-
   - type: input
     id: title
     attributes:
       label: Article title
-      description: Full headline shown at the top of the article.
+      description: "Full headline shown at the top of the article."
       placeholder: "Company Name Settlement – File a Claim by [Deadline]"
     validations:
       required: true
@@ -22,7 +17,7 @@ body:
     id: slug
     attributes:
       label: URL slug
-      description: Short and URL-friendly. Use hyphens.
+      description: "Short and URL-friendly. Use hyphens."
       placeholder: "panda-restaurant-group-data-breach-settlement"
     validations:
       required: true
@@ -30,8 +25,8 @@ body:
   - type: textarea
     id: blurb
     attributes:
-      label: Short blurb (for the /articles list + article intro)
-      description: 1–2 sentences. This is your quick summary and helps SEO.
+      label: "Short blurb (for the /articles list + article intro)"
+      description: "1–2 sentences. This is your quick summary and helps SEO."
       placeholder: "Eligible people may get up to $X if they... Deadline is..."
     validations:
       required: true
@@ -40,7 +35,7 @@ body:
     id: last_updated
     attributes:
       label: Last updated
-      description: Date this article was written or last reviewed.
+      description: "Date this article was written or last reviewed."
       placeholder: "February 19, 2026"
     validations:
       required: true
@@ -106,15 +101,11 @@ body:
     validations:
       required: true
 
-  # ══════════════════════════════════════════════════════════════
-  # LINKS + MEDIA
-  # ══════════════════════════════════════════════════════════════
-
   - type: input
     id: official_website
     attributes:
       label: Official settlement website
-      description: The main official URL you want users to click.
+      description: "The main official URL you want users to click."
       placeholder: "https://www.example-settlement.com/"
     validations:
       required: true
@@ -122,8 +113,8 @@ body:
   - type: input
     id: hero_image
     attributes:
-      label: Hero image URL (optional)
-      description: Leave blank if you don’t have one.
+      label: "Hero image URL (optional)"
+      description: "Leave blank if you don’t have one."
       placeholder: "https://eosguidehub.com/assets/articles/your-image.jpg"
     validations:
       required: false
@@ -131,19 +122,15 @@ body:
   - type: input
     id: hero_credit
     attributes:
-      label: Hero image credit (optional)
+      label: "Hero image credit (optional)"
       placeholder: "Photo: Example Source"
     validations:
       required: false
 
-  # ══════════════════════════════════════════════════════════════
-  # KEY DATES
-  # ══════════════════════════════════════════════════════════════
-
   - type: input
     id: deadline
     attributes:
-      label: Claim deadline (optional)
+      label: "Claim deadline (optional)"
       placeholder: "April 10, 2026"
     validations:
       required: false
@@ -151,7 +138,7 @@ body:
   - type: input
     id: optout_deadline
     attributes:
-      label: Opt-out deadline (optional)
+      label: "Opt-out deadline (optional)"
       placeholder: "March 1, 2026"
     validations:
       required: false
@@ -159,19 +146,15 @@ body:
   - type: input
     id: hearing_date
     attributes:
-      label: Final approval hearing (optional)
+      label: "Final approval hearing (optional)"
       placeholder: "May 12, 2026"
     validations:
       required: false
 
-  # ══════════════════════════════════════════════════════════════
-  # BENEFITS
-  # ══════════════════════════════════════════════════════════════
-
   - type: input
     id: settlement_amount
     attributes:
-      label: Total fund (optional)
+      label: "Total fund (optional)"
       placeholder: "$10,000,000"
     validations:
       required: false
@@ -179,7 +162,7 @@ body:
   - type: input
     id: max_payment
     attributes:
-      label: Max payment per person (optional)
+      label: "Max payment per person (optional)"
       placeholder: "Up to $5,000"
     validations:
       required: false
@@ -187,7 +170,7 @@ body:
   - type: input
     id: nodoc_payment
     attributes:
-      label: No-doc amount (optional)
+      label: "No-doc amount (optional)"
       placeholder: "$25 (no documentation)"
     validations:
       required: false
@@ -195,7 +178,7 @@ body:
   - type: input
     id: ca_payment
     attributes:
-      label: California-only amount (optional)
+      label: "California-only amount (optional)"
       placeholder: "$100 (CA residents)"
     validations:
       required: false
@@ -203,20 +186,16 @@ body:
   - type: input
     id: credit_monitoring
     attributes:
-      label: Credit monitoring (optional)
+      label: "Credit monitoring (optional)"
       placeholder: "2 years of credit monitoring"
     validations:
       required: false
 
-  # ══════════════════════════════════════════════════════════════
-  # ARTICLE CONTENT
-  # ══════════════════════════════════════════════════════════════
-
   - type: textarea
     id: article_body
     attributes:
-      label: Main article body (optional)
-      description: Write in short sections. Use headings if you want.
+      label: "Main article body (optional)"
+      description: "Write in short sections. Use headings if you want."
       placeholder: |
         ## What happened
         ...
@@ -229,8 +208,8 @@ body:
   - type: textarea
     id: eligibility
     attributes:
-      label: Eligibility checklist (optional)
-      description: One item per line.
+      label: "Eligibility checklist (optional)"
+      description: "One item per line."
       placeholder: |
         Received a notice OR meet the criteria on the official site
         Lived in the U.S. during the class period
@@ -240,8 +219,8 @@ body:
   - type: textarea
     id: how_to_file
     attributes:
-      label: How to file (steps, optional)
-      description: One step per line.
+      label: "How to file (steps, optional)"
+      description: "One step per line."
       placeholder: |
         Go to the official site
         Click “Submit Claim”
@@ -252,8 +231,8 @@ body:
   - type: textarea
     id: faqs
     attributes:
-      label: FAQs (optional)
-      description: Format like Q: ... then A: ... (repeat)
+      label: "FAQs (optional)"
+      description: "Format like 'Q:' then 'A:' (repeat)."
       placeholder: |
         Q: Who qualifies?
         A: ...
@@ -263,30 +242,26 @@ body:
     validations:
       required: false
 
-  # ══════════════════════════════════════════════════════════════
-  # ADMIN + OPTIONAL FIELDS
-  # ══════════════════════════════════════════════════════════════
-
   - type: input
     id: admin_phone
     attributes:
-      label: Administrator phone (optional)
-      placeholder: "1-800-555-1234"
+      label: "Administrator phone (optional)"
+      placeholder: "Phone: 1-800-555-1234"
     validations:
       required: false
 
   - type: input
     id: admin_email
     attributes:
-      label: Administrator email (optional)
-      placeholder: "info@example-settlement.com"
+      label: "Administrator email (optional)"
+      placeholder: "Email: info@example-settlement.com"
     validations:
       required: false
 
   - type: input
     id: attorney_fees
     attributes:
-      label: Attorney fees (optional)
+      label: "Attorney fees (optional)"
       placeholder: "Up to $X"
     validations:
       required: false
@@ -294,7 +269,7 @@ body:
   - type: input
     id: service_awards
     attributes:
-      label: Service awards (optional)
+      label: "Service awards (optional)"
       placeholder: "Up to $X"
     validations:
       required: false
@@ -303,7 +278,7 @@ body:
     id: monetization
     attributes:
       label: Monetization block
-      description: Leave Off for now unless you want it.
+      description: "Leave Off for now unless you want it."
       options:
         - Off
         - On
