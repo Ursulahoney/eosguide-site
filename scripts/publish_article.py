@@ -116,7 +116,6 @@ def parse_pipe_rows(text: str) -> list[dict]:
             continue
         parts = [p.strip() for p in line.split("|")]
         if len(parts) == 1:
-            # If they didn't use pipes, treat whole line as a label/value blob
             rows.append({"label": parts[0], "value": "", "notes": ""})
             continue
         label = parts[0] if len(parts) >= 1 else ""
@@ -132,11 +131,11 @@ def parse_pipe_rows(text: str) -> list[dict]:
 
 def build_at_a_glance(f: dict) -> str:
     def row(label: str, value_html: str) -> str:
-        return f'''
+        return f"""
         <div class="glance-row">
           <span class="glance-label">{label}</span>
           <span class="glance-value">{value_html}</span>
-        </div>'''
+        </div>"""
 
     rows = ""
 
@@ -158,12 +157,12 @@ def build_at_a_glance(f: dict) -> str:
     if not rows:
         return ""
 
-    return f'''
+    return f"""
     <section class="glance-card" aria-label="At a glance">
       <h2 class="section-title">At a glance</h2>
       <div class="glance-grid">{rows}</div>
     </section>
-    '''
+    """
 
 
 def build_key_dates_table(f: dict) -> str:
@@ -177,35 +176,35 @@ def build_key_dates_table(f: dict) -> str:
 
     rows = ""
     if deadline:
-        rows += f'''
+        rows += f"""
         <tr>
           <td>Submit / Claim</td>
           <td class="date-cell urgent">{deadline}</td>
           <td>Last day to submit</td>
-        </tr>'''
+        </tr>"""
     if optout:
-        rows += f'''
+        rows += f"""
         <tr>
           <td>Opt out</td>
           <td class="date-cell">{optout}</td>
           <td>Keep your right to sue separately</td>
-        </tr>'''
+        </tr>"""
     if objection:
-        rows += f'''
+        rows += f"""
         <tr>
           <td>Object</td>
           <td class="date-cell">{objection}</td>
           <td>Tell the court you disagree</td>
-        </tr>'''
+        </tr>"""
     if hearing:
-        rows += f'''
+        rows += f"""
         <tr>
           <td>Final hearing</td>
           <td class="date-cell">{hearing}</td>
           <td>Judge decides whether to approve</td>
-        </tr>'''
+        </tr>"""
 
-    return f'''
+    return f"""
     <section class="section">
       <h2 class="section-title">Key dates</h2>
       <div class="table-wrap">
@@ -221,7 +220,7 @@ def build_key_dates_table(f: dict) -> str:
         </table>
       </div>
     </section>
-    '''
+    """
 
 
 def build_benefits_section(f: dict) -> str:
@@ -237,52 +236,52 @@ def build_benefits_section(f: dict) -> str:
         if not (label or value or notes):
             continue
 
-        big = value if value else notes if notes else ""
+        big = value if value else (notes if notes else "")
         small = notes if (value and notes) else ""
 
-        cards += f'''
+        cards += f"""
         <div class="benefit-card">
           <h3>{label or "Benefit"}</h3>
           <p class="big">{big}</p>
           {f'<p class="small">{small}</p>' if small else ''}
         </div>
-        '''
+        """
 
     if not cards:
         return ""
 
-    return f'''
+    return f"""
     <section class="section">
       <h2 class="section-title">What you can get</h2>
       <div class="benefit-grid">
         {cards}
       </div>
     </section>
-    '''
+    """
 
 
 def build_bullets_section(title: str, items: list[str]) -> str:
     if not items:
         return ""
     lis = "".join([f"<li>{i}</li>" for i in items])
-    return f'''
+    return f"""
     <section class="section">
       <h2 class="section-title">{title}</h2>
       <ul class="bullets">{lis}</ul>
     </section>
-    '''
+    """
 
 
 def build_steps_section(title: str, steps: list[str]) -> str:
     if not steps:
         return ""
     lis = "".join([f"<li>{s}</li>" for s in steps])
-    return f'''
+    return f"""
     <section class="section">
       <h2 class="section-title">{title}</h2>
       <ol class="steps">{lis}</ol>
     </section>
-    '''
+    """
 
 
 def build_links_section(f: dict) -> str:
@@ -305,12 +304,12 @@ def build_links_section(f: dict) -> str:
     for label, url in links:
         items += f'<li><a href="{url}" target="_blank" rel="noopener noreferrer">{label}</a></li>'
 
-    return f'''
+    return f"""
     <section class="section">
       <h2 class="section-title">Important links</h2>
       <ul class="bullets">{items}</ul>
     </section>
-    '''
+    """
 
 
 def build_contact_section(f: dict) -> str:
@@ -329,12 +328,12 @@ def build_contact_section(f: dict) -> str:
     if addr:
         rows += f"<div class='mini-row'><strong>Mail:</strong> {addr}</div>"
 
-    return f'''
+    return f"""
     <section class="section">
       <h2 class="section-title">Contact</h2>
       <div class="callout">{rows}</div>
     </section>
-    '''
+    """
 
 
 def build_faq_section(faqs: list[tuple[str, str]]) -> str:
@@ -342,31 +341,31 @@ def build_faq_section(faqs: list[tuple[str, str]]) -> str:
         return ""
     blocks = ""
     for q, a in faqs:
-        blocks += f'''
+        blocks += f"""
       <details class="faq">
         <summary>{q}</summary>
         <div class="faq-a">{a}</div>
-      </details>'''
-    return f'''
+      </details>"""
+    return f"""
     <section class="section">
       <h2 class="section-title">FAQ</h2>
       {blocks}
     </section>
-    '''
+    """
 
 
 def build_cta_buttons(official_website: str, deadline: str) -> str:
     if not official_website:
         return ""
     deadline_note = f" (deadline: {deadline})" if deadline else ""
-    return f'''
+    return f"""
     <div class="cta-row">
       <a class="btn primary" href="{official_website}" target="_blank" rel="noopener noreferrer">
         Go to official website{deadline_note}
       </a>
       <a class="btn" href="/articles/">Browse more articles</a>
     </div>
-    '''
+    """
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -392,7 +391,6 @@ def build_page(f: dict) -> str:
     steps = parse_steps(f.get("how_to_file", ""))
     faqs = parse_faqs(f.get("faqs", ""))
 
-    # Convert markdown-ish areas
     what_happened_html = markdown.markdown(what_happened_md) if what_happened_md else ""
     extra_details_html = markdown.markdown(extra_details_md) if extra_details_md else ""
 
@@ -416,42 +414,40 @@ def build_page(f: dict) -> str:
     </figure>
         """
 
-    # Meta
     meta_description = blurb.strip().replace("\n", " ")
     meta_description = meta_description[:155].rstrip()
     canonical = f"https://eosguidehub.com/articles/{slug}.html"
 
-    # Optional simple sections
     class_period_html = f"<p><strong>Class period:</strong> {class_period}</p>" if class_period else ""
     payment_timing_html = f"<p>{payment_timing}</p>" if payment_timing else ""
 
     what_happened_section = ""
     if what_happened_html or class_period_html:
-        what_happened_section = f'''
+        what_happened_section = f"""
         <section class="section">
           <h2 class="section-title">What happened</h2>
           {class_period_html}
           {what_happened_html}
         </section>
-        '''
+        """
 
     extra_details_section = ""
     if extra_details_html:
-        extra_details_section = f'''
+        extra_details_section = f"""
         <section class="section">
           <h2 class="section-title">Extra details</h2>
           {extra_details_html}
         </section>
-        '''
+        """
 
     payment_section = ""
     if payment_timing_html:
-        payment_section = f'''
+        payment_section = f"""
         <section class="section">
           <h2 class="section-title">Payment timing</h2>
           {payment_timing_html}
         </section>
-        '''
+        """
 
     return f"""<!doctype html>
 <html lang="en">
@@ -689,7 +685,6 @@ def build_page(f: dict) -> str:
     }}
     .callout strong {{ display: block; margin-bottom: 4px; }}
 
-    /* At-a-glance */
     .glance-card {{
       background: var(--surface);
       border: 1px solid var(--border);
@@ -725,9 +720,6 @@ def build_page(f: dict) -> str:
     }}
 
     @media (min-width: 960px) {{
-      .layout {{
-        grid-template-columns: 1fr;
-      }}
       .benefit-grid {{
         grid-template-columns: repeat(2, 1fr);
       }}
@@ -801,10 +793,6 @@ def build_page(f: dict) -> str:
 """
 
 
-# ─────────────────────────────────────────────────────────────────
-# UPDATE /articles/index.html LIST
-# ─────────────────────────────────────────────────────────────────
-
 def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
     index_path = os.path.join("articles", "index.html")
     if not os.path.exists(index_path):
@@ -832,21 +820,19 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
         f.write(html)
 
 
-# ─────────────────────────────────────────────────────────────────
-# MAIN
-# ─────────────────────────────────────────────────────────────────
-
 def main():
-   issue_body = os.environ.get("ISSUE_BODY", "").strip()
+    # Prefer ISSUE_BODY, but your workflow writes the body to a file, so support both.
+    issue_body = os.environ.get("ISSUE_BODY", "").strip()
 
-if not issue_body:
-    path = os.environ.get("ISSUE_BODY_PATH", "").strip()
-    if path and os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            issue_body = f.read().strip()
+    if not issue_body:
+        path = os.environ.get("ISSUE_BODY_PATH", "").strip()
+        if path and os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                issue_body = f.read().strip()
 
-if not issue_body:
-    raise SystemExit("Missing ISSUE_BODY (and ISSUE_BODY_PATH was empty/unreadable)")
+    if not issue_body:
+        raise SystemExit("Missing ISSUE_BODY (and ISSUE_BODY_PATH was empty/unreadable)")
+
     fields = {
         "title": get_field(issue_body, "Article title"),
         "slug": get_field(issue_body, "URL slug"),
