@@ -9,7 +9,7 @@ permissions:
   issues: read
 
 jobs:
-  build_or_publish:
+  publish_article:
     if: contains(github.event.issue.labels.*.name, 'article')
     runs-on: ubuntu-latest
 
@@ -26,28 +26,6 @@ jobs:
               f.write(body)
           PY
 
-      - name: Decide Draft vs Publish from "Publish status" field
-        run: |
-          python - << 'PY'
-          import re
-
-          body = open(".tmp/issue_body.md", "r", encoding="utf-8").read()
-
-          # Issue forms usually render like:
-          # ### Publish status
-          # Draft   (or Publish)
-          m = re.search(r"###\s*Publish status\s*\n+([^\n]+)", body, re.IGNORECASE)
-          status = (m.group(1).strip() if m else "Draft").lower()
-
-          mode = "publish" if status == "publish" else "draft"
-
-          with open(".tmp/mode.txt", "w", encoding="utf-8") as f:
-              f.write(mode)
-
-          print("MODE =", mode)
-          PY
-          echo "MODE=$(cat .tmp/mode.txt)" >> $GITHUB_ENV
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -58,7 +36,7 @@ jobs:
 
       - name: Generate article output
         env:
-          MODE: ${{ env.MODE }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_BODY_PATH: .tmp/issue_body.md
         run: python scripts/publish_article.py
 
@@ -67,12 +45,6 @@ jobs:
           git config user.name "eosguide-bot"
           git config user.email "actions@users.noreply.github.com"
 
-          if [ "${MODE}" = "publish" ]; then
-            git add articles/*.html articles/index.html || true
-            git commit -m "Publish article from issue #${{ github.event.issue.number }}" || exit 0
-          else
-            git add articles/drafts/*.html || true
-            git commit -m "Add/update draft article from issue #${{ github.event.issue.number }}" || exit 0
-          fi
-
+          git add articles/*.html articles/index.html || true
+          git commit -m "Publish article from issue #${{ github.event.issue.number }}" || exit 0
           git push
