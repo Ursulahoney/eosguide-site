@@ -527,31 +527,31 @@ def build_page(f: dict) -> str:
   <meta name="description" content="{meta_description}">
   <link rel="canonical" href="{canonical}">
     <script type="application/ld+json">
-  {{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "{title}",
-    "description": "{meta_description}",
-    "datePublished": "{last_updated}",
-    "dateModified": "{last_updated}",
-    "author": {{
-      "@type": "Organization",
-      "name": "eosguide"
-    }},
-    "publisher": {{
-      "@type": "Organization",
-      "name": "eosguide",
-      "logo": {{
-        "@type": "ImageObject",
-        "url": "https://eosguidehub.com/logo.png"
-      }}
-    }},
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": "{canonical}"
-    }
+{{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{title}",
+  "description": "{meta_description}",
+  "datePublished": "{last_updated}",
+  "dateModified": "{last_updated}",
+  "author": {{
+    "@type": "Organization",
+    "name": "eosguide"
+  }},
+  "publisher": {{
+    "@type": "Organization",
+    "name": "eosguide",
+    "logo": {{
+      "@type": "ImageObject",
+      "url": "https://eosguidehub.com/logo.png"
+    }}
+  }},
+  "mainEntityOfPage": {{
+    "@type": "WebPage",
+    "@id": "{canonical}"
   }}
-  </script>
+}}
+</script>
   <link rel="icon" href="/Circular-badge-logo.png" type="image/png">
 
   <meta property="og:type" content="article">
