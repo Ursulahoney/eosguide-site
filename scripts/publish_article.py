@@ -805,7 +805,7 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, 
     if marker not in html:
         return
 
-   deadline_str = f"Deadline: {deadline} · " if deadline else ""
+    deadline_str = f"Deadline: {deadline} · " if deadline else ""
     card = f"""
       <article class="bg-white rounded-2xl shadow-sm p-5">
         <h2 class="text-xl font-bold text-gray-900 mb-1">
