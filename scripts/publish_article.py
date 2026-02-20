@@ -87,10 +87,6 @@ def parse_faqs(text: str) -> list:
     return faqs
 
 
-def is_monetization_on(val: str) -> bool:
-    return (val or "").strip().lower() == "on"
-
-
 # ─────────────────────────────────────────────────────────────────
 # STEP 2: HTML SECTION BUILDERS
 # ─────────────────────────────────────────────────────────────────
@@ -462,7 +458,6 @@ def build_page(f: dict) -> str:
     eligibility_items = parse_eligibility(f.get('eligibility', ''))
     steps             = parse_steps(f.get('how_to_file', ''))
     faqs              = parse_faqs(f.get('faqs', ''))
-    show_monetization = is_monetization_on(f.get('monetization', ''))
 
     body_html = markdown.markdown(
         article_body,
@@ -476,7 +471,7 @@ def build_page(f: dict) -> str:
     eligibility_block = build_eligibility_section(eligibility_items)
     steps_block       = build_steps_section(steps)
     faq_block         = build_faq_section(faqs)
-    monetization_block = build_monetization_block(official_website) if show_monetization else ''
+    monetization_block = ''
     sidebar_html      = build_sidebar(f)
 
     hero_html = ''
