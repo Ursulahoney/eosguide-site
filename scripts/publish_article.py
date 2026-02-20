@@ -911,7 +911,7 @@ def main():
         "slug": get_field(issue_body, "URL slug"),
         "blurb": get_field(issue_body, "Short blurb (for the /articles list + article intro)"),
         "last_updated": get_field(issue_body, "Last updated"),
-        "eligible_states": get_field(issue_body, "Eligible states"),
+        "eligible_states": get_field(issue_body, "Eligible states / location"),
         "official_website": get_field(issue_body, "Official settlement website"),
         "hero_image": get_field(issue_body, "Hero image URL (optional)"),
         "hero_credit": get_field(issue_body, "Hero image credit (optional)"),
@@ -931,7 +931,6 @@ def main():
         "admin_email": get_field(issue_body, "Administrator email (optional)"),
         "attorney_fees": get_field(issue_body, "Attorney fees (optional)"),
         "service_awards": get_field(issue_body, "Service awards (optional)"),
-        "monetization": get_field(issue_body, "Monetization block"),
     }
 
     slug = fields.get("slug") or "article"
