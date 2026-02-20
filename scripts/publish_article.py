@@ -1,220 +1,134 @@
-#!/usr/bin/env python3
-"""
-publish_article.py
-------------------
-Reads a GitHub issue body and generates a full article HTML file
-for eosguidehub.com. Also updates articles/index.html.
-
-HOW IT WORKS:
-  1. Reads .tmp/issue_body.md (written by the workflow from the issue body)
-  2. Parses all the structured fields from the form
-  3. Builds a full HTML page matching the site's eosguide style
-  4. Writes to articles/{slug}.html (or articles/drafts/{slug}.html for drafts)
-  5. Updates articles/index.html with a new article card (publish only)
-
-DEPENDENCIES:
-  pip install markdown
-"""
-
 import os
 import re
-import sys
+import json
 import markdown
-
-
-# ─────────────────────────────────────────────────────────────────
-# STEP 1: PARSE THE ISSUE BODY
-# ─────────────────────────────────────────────────────────────────
-
-def parse_issue(body: str) -> dict:
-    fields = {}
-    sections = re.split(r'\n###\s+', '\n' + body)
-    for section in sections:
-        if not section.strip():
-            continue
-        lines = section.strip().split('\n')
-        label = lines[0].strip().lower()
-        value = '\n'.join(lines[1:]).strip()
-        fields[label] = value
-    return fields
-
-
-def get_field(fields: dict, *possible_labels: str) -> str:
-    for label in possible_labels:
-        value = fields.get(label.lower(), '').strip()
-        if value and value != '_No response_':
-            return value
-    return ''
-
+from datetime import datetime
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 2: PARSE STRUCTURED COMPONENTS
+# STEP 1: ISSUE BODY PARSER
 # ─────────────────────────────────────────────────────────────────
 
-def parse_eligibility(text: str) -> list:
-    items = []
-    for line in text.strip().split('\n'):
-        line = line.strip().lstrip('-').lstrip('*').strip()
-        if line:
-            items.append(line)
-    return items
+def get_field(body: str, label: str) -> str:
+    """
+    GitHub issue forms render fields like:
+
+    ### Label
+    value
+
+    Capture until next ### or end.
+    """
+    pattern = rf"### {re.escape(label)}\n(.*?)(?=\n### |\Z)"
+    m = re.search(pattern, body, flags=re.S)
+    if not m:
+        return ''
+    val = m.group(1).strip()
+    if val == "_No response_":
+        return ''
+    return val
 
 
 def parse_steps(text: str) -> list:
-    steps = []
-    for line in text.strip().split('\n'):
+    if not text:
+        return []
+    out = []
+    for line in text.splitlines():
         line = line.strip()
-        match = re.match(r'^\d+\.\s+(.+)$', line)
-        if match:
-            steps.append(match.group(1).strip())
-    return steps
+        if not line:
+            continue
+        line = re.sub(r"^\d+\)\s*", "", line)
+        line = re.sub(r"^[-*]\s*", "", line)
+        out.append(line)
+    return out
+
+
+def parse_eligibility(text: str) -> list:
+    if not text:
+        return []
+    out = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        line = re.sub(r"^[-*]\s*", "", line)
+        out.append(line)
+    return out
 
 
 def parse_faqs(text: str) -> list:
+    """
+    Format:
+    Q: ...
+    A: ...
+    (blank line between pairs is OK)
+    """
+    if not text:
+        return []
+
+    blocks = re.split(r"\n\s*\n", text.strip())
     faqs = []
-    current_q = None
-    current_a_lines = []
-    for line in text.strip().split('\n'):
-        line = line.strip()
-        if line.lower().startswith('q:'):
-            if current_q and current_a_lines:
-                faqs.append((current_q, ' '.join(current_a_lines)))
-            current_q = line[2:].strip()
-            current_a_lines = []
-        elif line.lower().startswith('a:') and current_q:
-            current_a_lines = [line[2:].strip()]
-        elif line and current_a_lines is not None:
-            current_a_lines.append(line)
-    if current_q and current_a_lines:
-        faqs.append((current_q, ' '.join(current_a_lines)))
+
+    for b in blocks:
+        q = ""
+        a = ""
+        for line in b.splitlines():
+            line = line.strip()
+            if line.lower().startswith("q:"):
+                q = line[2:].strip()
+            elif line.lower().startswith("a:"):
+                a = line[2:].strip()
+            else:
+                if a:
+                    a += " " + line
+                elif q:
+                    q += " " + line
+        if q and a:
+            faqs.append((q, a))
+
     return faqs
 
 
-def is_monetization_on(text: str) -> bool:
-    return '[x]' in text.lower() or '- [x]' in text.lower()
+def is_monetization_on(val: str) -> bool:
+    return (val or "").strip().lower() == "on"
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 3: HTML COMPONENT BUILDERS
+# STEP 2: HTML SECTION BUILDERS
 # ─────────────────────────────────────────────────────────────────
-
-def build_eligibility_section(items: list) -> str:
-    if not items:
-        return ''
-    rows = ''.join(f'<li>{item}</li>' for item in items)
-    return f'''
-    <h2>Do I Qualify?</h2>
-    <div class="callout info">
-      <strong>You may be eligible if:</strong>
-      <ul style="margin-top:8px;padding-left:20px;list-style:disc;">
-        {rows}
-      </ul>
-    </div>'''
-
-
-def build_steps_section(steps: list) -> str:
-    if not steps:
-        return ''
-    step_html = ''
-    for i, step in enumerate(steps, 1):
-        step_html += f'''
-      <div class="step">
-        <div class="step-num">{i}</div>
-        <div class="step-body"><p>{step}</p></div>
-      </div>'''
-    return f'''
-    <h2>How to File a Claim</h2>
-    <div class="steps">
-      {step_html}
-    </div>'''
-
-
-def build_faq_section(faqs: list) -> str:
-    if not faqs:
-        return ''
-    items = ''
-    for q, a in faqs:
-        items += f'''
-      <details style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text);">{q}</summary>
-        <p style="margin-top:10px;color:var(--muted);">{a}</p>
-      </details>'''
-    return f'''
-    <h2>Frequently Asked Questions</h2>
-    {items}'''
-
-
-def build_faq_schema(faqs: list, canonical: str) -> str:
-    if not faqs:
-        return ''
-    qa_items = ',\n'.join(
-        f'''      {{
-        "@type": "Question",
-        "name": "{q.replace('"', '&quot;')}",
-        "acceptedAnswer": {{
-          "@type": "Answer",
-          "text": "{a.replace('"', '&quot;')}"
-        }}
-      }}'''
-        for q, a in faqs
-    )
-    return f'''  <script type="application/ld+json">
-  {{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-{qa_items}
-    ]
-  }}
-  </script>'''
-
-
-def build_monetization_block(official_website: str) -> str:
-    return '''
-    <div class="callout info" style="margin-top:32px;">
-      <strong>Protect yourself going forward</strong>
-      Consider signing up for a credit monitoring service to stay on top of your personal data.
-      Many services offer free tiers that alert you to new inquiries, account openings, and dark web activity.
-    </div>'''
-
 
 def build_benefit_cards(max_payment: str, nodoc_payment: str, ca_payment: str, credit_monitoring: str) -> str:
     cards = ''
     if max_payment:
         cards += f'''
       <div class="benefit-card">
-        <div class="benefit-label">Documented Losses</div>
-        <div class="benefit-amount">{max_payment}</div>
-        <div class="benefit-desc">Max reimbursement with receipts or supporting documents.</div>
+        <h3>Max payment</h3>
+        <p class="big">{max_payment}</p>
       </div>'''
     if nodoc_payment:
         cards += f'''
       <div class="benefit-card">
-        <div class="benefit-label">Pro Rata Cash</div>
-        <div class="benefit-amount">{nodoc_payment}</div>
-        <div class="benefit-desc">No documentation needed. Amount may adjust based on total claims.</div>
+        <h3>No-doc amount</h3>
+        <p class="big">{nodoc_payment}</p>
       </div>'''
     if ca_payment:
         cards += f'''
       <div class="benefit-card">
-        <div class="benefit-label">CA Statutory (CA only)</div>
-        <div class="benefit-amount">{ca_payment}</div>
-        <div class="benefit-desc">Additional payment for California residents, subject to pro-rata adjustment.</div>
+        <h3>California amount</h3>
+        <p class="big">{ca_payment}</p>
       </div>'''
     if credit_monitoring:
         cards += f'''
       <div class="benefit-card">
-        <div class="benefit-label">Credit Monitoring</div>
-        <div class="benefit-amount">{credit_monitoring}</div>
-        <div class="benefit-desc">Free credit and identity monitoring included with your claim.</div>
+        <h3>Credit monitoring</h3>
+        <p class="big">{credit_monitoring}</p>
       </div>'''
+
     if not cards:
         return ''
+
     return f'''
-    <h2>What Can I Get?</h2>
-    <div class="benefit-grid">
+    <section class="benefit-grid" aria-label="Benefits">
       {cards}
-    </div>'''
+    </section>'''
 
 
 def build_deadline_table(deadline: str, optout_deadline: str, hearing_date: str) -> str:
@@ -231,43 +145,113 @@ def build_deadline_table(deadline: str, optout_deadline: str, hearing_date: str)
     if optout_deadline:
         rows += f'''
         <tr>
-          <td>Opt Out (Exclude Yourself)</td>
+          <td>Opt Out</td>
           <td class="date-cell">{optout_deadline}</td>
-          <td>Preserves your right to sue the defendant separately</td>
-        </tr>'''
-    if optout_deadline:
-        rows += f'''
-        <tr>
-          <td>Submit an Objection</td>
-          <td class="date-cell">{optout_deadline}</td>
-          <td>Tell the court you oppose the settlement terms</td>
+          <td>Keep your right to sue on your own</td>
         </tr>'''
     if hearing_date:
         rows += f'''
         <tr>
           <td>Final Approval Hearing</td>
           <td class="date-cell">{hearing_date}</td>
-          <td>Court decides whether to approve the settlement</td>
+          <td>Judge decides whether to approve the settlement</td>
         </tr>'''
+
     return f'''
-    <h2>Key Deadlines</h2>
-    <table class="deadline-table">
-      <thead>
-        <tr>
-          <th>Action</th>
-          <th>Deadline</th>
-          <th>Why It Matters</th>
-        </tr>
-      </thead>
-      <tbody>
+    <section class="section">
+      <h2 class="section-title">Key deadlines</h2>
+      <div class="table-wrap">
+        <table class="deadline-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Date</th>
+              <th>What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows}
+          </tbody>
+        </table>
+      </div>
+    </section>'''
+
+
+# ─────────────────────────────────────────────────────────────────
+# STEP 3B: AT-A-GLANCE BUILDER
+# ─────────────────────────────────────────────────────────────────
+
+def normalize_states(text: str) -> list[str]:
+    """Accepts 'Nationwide' or a list of states from the issue form (often newline-separated)."""
+    if not text:
+        return []
+    parts = [p.strip() for p in re.split(r"[\n,]+", text) if p.strip() and p.strip() != "_No response_"]
+    if any(p.lower() == "nationwide" for p in parts):
+        return ["Nationwide"]
+    seen = set()
+    out = []
+    for p in parts:
+        if p not in seen:
+            seen.add(p)
+            out.append(p)
+    return out
+
+
+def build_at_a_glance(
+    eligible_states: str,
+    deadline: str,
+    optout_deadline: str,
+    hearing_date: str,
+    max_payment: str,
+    nodoc_payment: str,
+    official_website: str
+) -> str:
+    """Top summary card. Only renders rows that have values."""
+
+    def row(label: str, value_html: str) -> str:
+        return f'''
+        <div class="glance-row">
+          <span class="glance-label">{label}</span>
+          <span class="glance-value">{value_html}</span>
+        </div>'''
+
+    rows = ''
+
+    states = normalize_states(eligible_states)
+    if states:
+        rows += row("Applies to", ", ".join(states))
+
+    if deadline:
+        rows += row("Claim deadline", deadline)
+
+    if optout_deadline:
+        rows += row("Opt-out deadline", optout_deadline)
+
+    if hearing_date:
+        rows += row("Final hearing", hearing_date)
+
+    if max_payment:
+        rows += row("Max benefit", max_payment)
+
+    if nodoc_payment:
+        rows += row("No-doc amount", nodoc_payment)
+
+    if official_website:
+        rows += row(
+            "Official site",
+            f'<a href="{official_website}" target="_blank" rel="noopener noreferrer">{official_website}</a>'
+        )
+
+    if not rows:
+        return ''
+
+    return f'''
+    <section class="glance-card" aria-label="At a glance">
+      <h2 class="section-title">At a glance</h2>
+      <div class="glance-grid">
         {rows}
-      </tbody>
-    </table>
-    <div class="callout warning">
-      <strong>Heads up on timing</strong>
-      Even after the court approves the settlement, actual payments could take a year or more if there are appeals.
-      File your claim before the deadline and then be patient.
-    </div>'''
+      </div>
+    </section>'''
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -275,24 +259,21 @@ def build_deadline_table(deadline: str, optout_deadline: str, hearing_date: str)
 # ─────────────────────────────────────────────────────────────────
 
 def build_sidebar(f: dict) -> str:
-    settlement_amount = f.get('settlement_amount', '')
-    max_payment       = f.get('max_payment', '')
-    nodoc_payment     = f.get('nodoc_payment', '')
-    ca_payment        = f.get('ca_payment', '')
-    incident_date     = f.get('incident_date', '')
-    defendant         = f.get('defendant', '')
-    court             = f.get('court', '')
-    case_number       = f.get('case_number', '')
+    eligible_states   = f.get('eligible_states', '')
     deadline          = f.get('deadline', '')
     optout_deadline   = f.get('optout_deadline', '')
     hearing_date      = f.get('hearing_date', '')
     official_website  = f.get('official_website', '')
+    settlement_amount = f.get('settlement_amount', '')
+    max_payment       = f.get('max_payment', '')
+    nodoc_payment     = f.get('nodoc_payment', '')
+    ca_payment        = f.get('ca_payment', '')
+    credit_monitoring = f.get('credit_monitoring', '')
     admin_phone       = f.get('admin_phone', '')
     admin_email       = f.get('admin_email', '')
     attorney_fees     = f.get('attorney_fees', '')
     service_awards    = f.get('service_awards', '')
 
-    # Quick Facts rows
     facts_rows = ''
     if settlement_amount:
         facts_rows += f'''
@@ -309,205 +290,154 @@ def build_sidebar(f: dict) -> str:
     if nodoc_payment:
         facts_rows += f'''
       <div class="sidebar-row">
-        <span class="sidebar-label">No-Doc Cash</span>
+        <span class="sidebar-label">No-doc Amount</span>
         <span class="sidebar-value">{nodoc_payment}</span>
       </div>'''
     if ca_payment:
         facts_rows += f'''
       <div class="sidebar-row">
-        <span class="sidebar-label">CA Residents</span>
-        <span class="sidebar-value">+{ca_payment} extra</span>
+        <span class="sidebar-label">California Amount</span>
+        <span class="sidebar-value">{ca_payment}</span>
       </div>'''
-    if incident_date:
+    if credit_monitoring:
         facts_rows += f'''
       <div class="sidebar-row">
-        <span class="sidebar-label">Incident Date</span>
-        <span class="sidebar-value">{incident_date}</span>
+        <span class="sidebar-label">Credit Monitoring</span>
+        <span class="sidebar-value">{credit_monitoring}</span>
       </div>'''
-    if defendant:
+    if eligible_states:
+        states = normalize_states(eligible_states)
         facts_rows += f'''
       <div class="sidebar-row">
-        <span class="sidebar-label">Defendant</span>
-        <span class="sidebar-value">{defendant}</span>
+        <span class="sidebar-label">Applies To</span>
+        <span class="sidebar-value">{", ".join(states) if states else eligible_states}</span>
       </div>'''
-    if court:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Court</span>
-        <span class="sidebar-value">{court}</span>
-      </div>'''
-    if case_number:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Case Number</span>
-        <span class="sidebar-value">{case_number}</span>
-      </div>'''
-    if attorney_fees:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Attorney Fees</span>
-        <span class="sidebar-value">{attorney_fees}</span>
-      </div>'''
-    if service_awards:
-        facts_rows += f'''
-      <div class="sidebar-row">
-        <span class="sidebar-label">Service Awards</span>
-        <span class="sidebar-value">{service_awards}</span>
-      </div>'''
-
-    quick_facts = f'''
-    <div class="sidebar-card">
-      <div class="sidebar-card-header green">Quick Facts</div>
-      {facts_rows}
-    </div>''' if facts_rows else ''
-
-    # Deadline card
-    deadline_rows = ''
     if deadline:
-        deadline_rows += f'''
+        facts_rows += f'''
       <div class="sidebar-row">
-        <span class="sidebar-label">File By</span>
-        <span class="sidebar-value amber">{deadline}</span>
+        <span class="sidebar-label">Claim Deadline</span>
+        <span class="sidebar-value urgent">{deadline}</span>
       </div>'''
     if optout_deadline:
-        deadline_rows += f'''
+        facts_rows += f'''
       <div class="sidebar-row">
-        <span class="sidebar-label">Opt-Out By</span>
+        <span class="sidebar-label">Opt-out Deadline</span>
         <span class="sidebar-value">{optout_deadline}</span>
       </div>'''
     if hearing_date:
-        deadline_rows += f'''
+        facts_rows += f'''
       <div class="sidebar-row">
         <span class="sidebar-label">Final Hearing</span>
         <span class="sidebar-value">{hearing_date}</span>
       </div>'''
-
-    deadline_card = f'''
-    <div class="sidebar-card">
-      <div class="sidebar-card-header amber">&#9888; Claim Deadline</div>
-      {deadline_rows}
-    </div>''' if deadline_rows else ''
-
-    # CTA card
-    cta_card = ''
     if official_website:
-        contact_info = ''
-        if admin_phone:
-            contact_info += f'<p style="font-size:13px;color:var(--text);margin-top:12px;text-align:center;"><strong>Phone:</strong> {admin_phone}</p>'
-        if admin_email:
-            contact_info += f'<p style="font-size:13px;color:var(--text);margin-top:6px;text-align:center;"><strong>Email:</strong> {admin_email}</p>'
-        
-        cta_card = f'''
-    <div class="sidebar-card">
-      <div class="sidebar-card-header">Official Resources</div>
-      <div class="sidebar-cta">
-        <a class="cta-btn" href="{official_website}" target="_blank" rel="noopener noreferrer">File a Claim</a>
-        <a class="cta-btn secondary" href="{official_website}" target="_blank" rel="noopener noreferrer">Settlement Website</a>
-      </div>
-      {contact_info}
-      <p class="sidebar-disclaimer">eosguide is a directory. We don\'t run this settlement. Always verify details at the official site.</p>
+        facts_rows += f'''
+      <div class="sidebar-row">
+        <span class="sidebar-label">Official Site</span>
+        <span class="sidebar-value"><a href="{official_website}" target="_blank" rel="noopener noreferrer">Visit</a></span>
+      </div>'''
+
+    admin_rows = ''
+    if admin_phone:
+        admin_rows += f'<div class="mini-row"><strong>Phone:</strong> {admin_phone}</div>'
+    if admin_email:
+        admin_rows += f'<div class="mini-row"><strong>Email:</strong> {admin_email}</div>'
+
+    fees_rows = ''
+    if attorney_fees:
+        fees_rows += f'<div class="mini-row"><strong>Attorney Fees:</strong> {attorney_fees}</div>'
+    if service_awards:
+        fees_rows += f'<div class="mini-row"><strong>Service Awards:</strong> {service_awards}</div>'
+
+    blocks = ''
+    if facts_rows:
+        blocks += f'''
+    <aside class="sidebar-card">
+      <h2>Quick Facts</h2>
+      {facts_rows}
+    </aside>'''
+    if admin_rows:
+        blocks += f'''
+    <aside class="sidebar-card">
+      <h2>Contact</h2>
+      {admin_rows}
+    </aside>'''
+    if fees_rows:
+        blocks += f'''
+    <aside class="sidebar-card">
+      <h2>Fees</h2>
+      {fees_rows}
+    </aside>'''
+
+    return blocks
+
+
+def build_steps_section(steps: list) -> str:
+    if not steps:
+        return ''
+    items = ''.join([f'<li>{s}</li>' for s in steps])
+    return f'''
+    <section class="section">
+      <h2 class="section-title">How to file</h2>
+      <ol class="steps">{items}</ol>
+    </section>'''
+
+
+def build_eligibility_section(items: list) -> str:
+    if not items:
+        return ''
+    lis = ''.join([f'<li>{i}</li>' for i in items])
+    return f'''
+    <section class="section">
+      <h2 class="section-title">Who may qualify</h2>
+      <ul class="bullets">{lis}</ul>
+    </section>'''
+
+
+def build_faq_section(faqs: list) -> str:
+    if not faqs:
+        return ''
+    blocks = ''
+    for q, a in faqs:
+        blocks += f'''
+      <details class="faq">
+        <summary>{q}</summary>
+        <div class="faq-a">{a}</div>
+      </details>'''
+    return f'''
+    <section class="section">
+      <h2 class="section-title">FAQ</h2>
+      {blocks}
+    </section>'''
+
+
+def build_cta_buttons(official_website: str, deadline: str) -> str:
+    if not official_website:
+        return ''
+    deadline_note = f' (deadline: {deadline})' if deadline else ''
+    return f'''
+    <div class="cta-row">
+      <a class="btn primary" href="{official_website}" target="_blank" rel="noopener noreferrer">
+        Go to official website{deadline_note}
+      </a>
+      <a class="btn" href="/articles/">Browse more articles</a>
     </div>'''
 
-    return quick_facts + deadline_card + cta_card
 
-
-# ─────────────────────────────────────────────────────────────────
-# STEP 4B: SEO ENHANCEMENTS
-# ─────────────────────────────────────────────────────────────────
-
-def generate_keywords(title: str, defendant: str, eligible_states: str) -> str:
-    """Generate meta keywords from title, defendant, and states"""
-    keywords = []
-    
-    # Add defendant/company name
-    if defendant:
-        keywords.append(defendant)
-    
-    # Extract key terms from title
-    # Remove common words and deadline dates
-    title_words = title.lower().replace(' settlement', '').replace(' class action', '')
-    title_words = title_words.replace(' deadline', '').replace(' claim', '').replace(' file', '')
-    
-    # Add settlement type indicators
-    if 'data breach' in title.lower():
-        keywords.append('data breach settlement')
-    if 'privacy' in title.lower():
-        keywords.append('privacy settlement')
-    
-    # Add state keywords
-    if eligible_states and eligible_states.lower() != 'nationwide':
-        # Parse state list
-        states = [s.strip() for s in eligible_states.split(',')]
-        keywords.extend(states[:3])  # First 3 states max
-    else:
-        keywords.append('nationwide settlement')
-    
-    # Add generic settlement keywords
-    keywords.extend(['class action', 'claim form', 'settlement payment'])
-    
-    return ', '.join(keywords[:10])  # Max 10 keywords
-
-
-def build_geographic_schema(eligible_states: str, canonical: str) -> str:
-    """Add areaServed schema for local SEO"""
-    if not eligible_states:
+def build_monetization_block(official_website: str) -> str:
+    if not official_website:
         return ''
-    
-    if eligible_states.lower().strip() == 'nationwide':
-        area_served = '"areaServed": {"@type": "Country", "name": "United States"}'
-    else:
-        # Parse states into list
-        states = [s.strip() for s in eligible_states.split(',')]
-        state_objects = ', '.join(f'{{"@type": "State", "name": "{state}"}}' for state in states)
-        area_served = f'"areaServed": [{state_objects}]'
-    
-    return f'''  <script type="application/ld+json">
-  {{
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Settlement Information Service",
-    "provider": {{
-      "@type": "Organization",
-      "name": "eosguide"
-    }},
-    {area_served},
-    "url": "{canonical}"
-  }}
-  </script>'''
-
-
-def build_breadcrumb_schema(title: str, canonical: str) -> str:
-    """Add breadcrumb schema for search result display"""
-    return f'''  <script type="application/ld+json">
-  {{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://eosguidehub.com/"
-      }},
-      {{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Articles",
-        "item": "https://eosguidehub.com/articles/"
-      }},
-      {{
-        "@type": "ListItem",
-        "position": 3,
-        "name": "{title.replace('"', '&quot;')}",
-        "item": "{canonical}"
-      }}
-    ]
-  }}
-  </script>'''
+    return f'''
+    <section class="section">
+      <h2 class="section-title">Helpful tools</h2>
+      <p class="muted">
+        This section is a placeholder for future tools and recommendations. For now, always use the official site when filing.
+      </p>
+    </section>'''
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 5: ASSEMBLE THE FULL PAGE
+# STEP 5: MAIN PAGE BUILDER
 # ─────────────────────────────────────────────────────────────────
 
 def build_page(f: dict) -> str:
@@ -517,7 +447,6 @@ def build_page(f: dict) -> str:
     deadline         = f.get('deadline', '')
     last_updated     = f.get('last_updated', '')
     eligible_states  = f.get('eligible_states', '')
-    defendant        = f.get('defendant', '')
     settlement_amount = f.get('settlement_amount', '')
     max_payment      = f.get('max_payment', '')
     nodoc_payment    = f.get('nodoc_payment', '')
@@ -535,7 +464,6 @@ def build_page(f: dict) -> str:
     faqs              = parse_faqs(f.get('faqs', ''))
     show_monetization = is_monetization_on(f.get('monetization', ''))
 
-    # Convert Markdown body to HTML
     body_html = markdown.markdown(
         article_body,
         extensions=['tables', 'fenced_code']
@@ -544,85 +472,45 @@ def build_page(f: dict) -> str:
     # Build components
     benefit_cards     = build_benefit_cards(max_payment, nodoc_payment, ca_payment, credit_monitoring)
     deadline_table    = build_deadline_table(deadline, optout_deadline, hearing_date)
+    at_a_glance_html  = build_at_a_glance(eligible_states, deadline, optout_deadline, hearing_date, max_payment, nodoc_payment, official_website)
     eligibility_block = build_eligibility_section(eligibility_items)
     steps_block       = build_steps_section(steps)
     faq_block         = build_faq_section(faqs)
     monetization_block = build_monetization_block(official_website) if show_monetization else ''
     sidebar_html      = build_sidebar(f)
 
-    # Hero image
     hero_html = ''
     if hero_image:
         credit_html = f'<p style="font-size:12px;color:var(--muted);margin-top:6px;">{hero_credit}</p>' if hero_credit else ''
         hero_html = f'''
-      <img src="/assets/articles/{hero_image}" alt="{title}"
-           style="width:100%;border-radius:var(--radius);margin-bottom:4px;">
-      {credit_html}'''
+    <figure class="hero">
+      <img src="{hero_image}" alt="{title}" loading="lazy" />
+      {credit_html}
+    </figure>'''
 
-    # CTA buttons in article body
-    cta_buttons = ''
-    if official_website:
-        cta_buttons = f'''
-      <a class="cta-btn" href="{official_website}" target="_blank" rel="noopener noreferrer">
-        &#8594; File a Claim at Official Site
-      </a>'''
+    meta_description = blurb.strip().replace("\n", " ")
+    meta_description = meta_description[:155].rstrip()
 
-    # Canonical and meta
     canonical = f"https://eosguidehub.com/articles/{slug}.html"
-    og_image  = f"https://eosguidehub.com/assets/articles/{hero_image}" if hero_image else "https://eosguidehub.com/Circular-badge-logo.png"
-    encoded_title = title.replace(' ', '%20').replace(':', '%3A')
 
-    # Generate SEO elements
-    keywords = generate_keywords(title, defendant, eligible_states)
-    faq_schema = build_faq_schema(faqs, canonical)
-    geographic_schema = build_geographic_schema(eligible_states, canonical)
-    breadcrumb_schema = build_breadcrumb_schema(title, canonical)
-
-    return f"""<!DOCTYPE html>
+    return f'''<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Primary SEO -->
-  <title>{title} | eosguide</title>
-  <meta name="description" content="{blurb}" />
-  <meta name="keywords" content="{keywords}" />
+  <title>{title} | eosguidehub</title>
+  <meta name="description" content="{meta_description}" />
   <link rel="canonical" href="{canonical}" />
-  <link rel="icon" href="/Circular-badge-logo.png" type="image/png" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="article" />
   <meta property="og:title" content="{title}" />
-  <meta property="og:description" content="{blurb}" />
+  <meta property="og:description" content="{meta_description}" />
   <meta property="og:url" content="{canonical}" />
-  <meta property="og:image" content="{og_image}" />
-  <meta property="og:site_name" content="eosguide" />
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{title}" />
-  <meta name="twitter:description" content="{blurb}" />
-
-  <!-- Article Schema -->
-  <script type="application/ld+json">
-  {{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "{title.replace('"', '&quot;')}",
-    "description": "{blurb.replace('"', '&quot;')}",
-    "dateModified": "{last_updated}",
-    "author": {{"@type": "Organization", "name": "eosguide", "url": "https://eosguidehub.com"}},
-    "publisher": {{"@type": "Organization", "name": "eosguide", "url": "https://eosguidehub.com"}},
-    "mainEntityOfPage": {{"@type": "WebPage", "@id": "{canonical}"}}
-  }}
-  </script>
-  {faq_schema}
-  {geographic_schema}
-  {breadcrumb_schema}
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="twitter:description" content="{meta_description}" />
 
   <style>
     :root {{
@@ -632,225 +520,282 @@ def build_page(f: dict) -> str:
       --text:        #1C1A17;
       --muted:       #6B6560;
       --accent:      #2A6B4A;
-      --accent-soft: #EAF4EE;
-      --amber:       #C8782A;
-      --amber-soft:  #FDF3E7;
-      --radius:      10px;
-      --max-w:       1080px;
+      --accent-2:    #143E2A;
+      --urgent:      #B42318;
+      --shadow:      0 10px 30px rgba(0,0,0,0.06);
+      --radius:      22px;
     }}
 
-    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    * {{ box-sizing: border-box; }}
 
     body {{
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
     }}
 
-    /* Header */
+    a {{ color: var(--accent); text-decoration: none; }}
+    a:hover {{ text-decoration: underline; }}
+
     .site-header {{
-      border-bottom: 1px solid var(--border);
       background: var(--surface);
-      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
     }}
     .site-header-inner {{
-      max-width: var(--max-w);
+      max-width: 1120px;
       margin: 0 auto;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 12px;
-      height: 56px;
     }}
     .logo {{
-      font-family: 'Lora', serif;
-      font-weight: 700;
+      font-weight: 900;
+      letter-spacing: -0.02em;
       font-size: 18px;
-      color: var(--text);
-      text-decoration: none;
     }}
     .logo span {{ color: var(--accent); }}
-    .breadcrumb {{
-      margin-left: auto;
-      font-size: 13px;
-      color: var(--muted);
-    }}
-    .breadcrumb a {{ color: var(--accent); text-decoration: none; }}
+    .breadcrumb {{ color: var(--muted); font-size: 14px; }}
 
-    /* Layout */
     .layout {{
-      max-width: var(--max-w);
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 18px 16px 60px;
       display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 48px;
-      align-items: start;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }}
 
-    /* Article meta */
-    .article-meta {{
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 20px;
-    }}
-    .meta-date {{ font-size: 13px; color: var(--muted); }}
-
-    /* Title */
-    h1.article-title {{
-      font-family: 'Lora', serif;
-      font-size: clamp(26px, 4vw, 38px);
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 16px;
-      letter-spacing: -.02em;
-    }}
-
-    /* Deck */
-    .article-deck {{
-      font-size: 17px;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 28px;
-      border-left: 3px solid var(--accent);
-      padding-left: 16px;
-    }}
-
-    /* Section headings */
-    .article h2 {{
-      font-family: 'Lora', serif;
-      font-size: 22px;
-      font-weight: 600;
-      margin: 40px 0 14px;
-      letter-spacing: -.01em;
-    }}
-    .article h3 {{
-      font-size: 16px;
-      font-weight: 600;
-      margin: 24px 0 8px;
-      color: var(--accent);
-    }}
-    .article p {{ margin-bottom: 16px; }}
-    .article ul, .article ol {{ padding-left: 20px; margin-bottom: 16px; }}
-    .article li {{ margin-bottom: 6px; }}
-    .article a {{ color: var(--accent); text-decoration: underline; }}
-    .article strong {{ font-weight: 600; }}
-    .article table {{ width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14.5px; }}
-    .article th {{ background: var(--bg); padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); }}
-    .article td {{ padding: 12px; border-bottom: 1px solid var(--border); vertical-align: top; }}
-
-    /* Divider */
-    .divider {{ border: none; border-top: 1px solid var(--border); margin: 32px 0; }}
-
-    /* Benefit cards */
-    .benefit-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin: 20px 0;
-    }}
-    .benefit-card {{
+    .article {{
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px;
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
     }}
-    .benefit-label {{ font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }}
-    .benefit-amount {{ font-family: 'Lora', serif; font-size: 26px; font-weight: 700; color: var(--accent); }}
-    .benefit-desc {{ font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }}
 
-    /* Deadline table */
-    .deadline-table {{ width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14.5px; }}
-    .deadline-table th {{ text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 8px 12px; border-bottom: 2px solid var(--border); }}
-    .deadline-table td {{ padding: 12px; border-bottom: 1px solid var(--border); vertical-align: top; }}
-    .deadline-table tr:last-child td {{ border-bottom: none; }}
-    .deadline-table td:first-child {{ font-weight: 500; }}
-    .date-cell {{ font-weight: 600; white-space: nowrap; }}
-    .urgent {{ color: var(--amber); }}
-    .deadline-table tr:hover td {{ background: var(--bg); }}
-
-    /* Steps */
-    .steps {{ margin: 16px 0; }}
-    .step {{ display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }}
-    .step-num {{
-      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
-      background: var(--accent); color: white; font-size: 14px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
+    .article-meta {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 6px;
     }}
-    .step-body {{ flex: 1; }}
-    .step-body strong {{ display: block; margin-bottom: 4px; }}
-    .step-body p {{ margin: 0; }}
 
-    /* Callouts */
+    .article-title {{
+      margin: 6px 0 10px;
+      font-size: 1.9rem;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }}
+
+    .article-deck {{
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }}
+
+    .divider {{
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 18px 0;
+    }}
+
+    .hero img {{
+      width: 100%;
+      height: auto;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      display: block;
+    }}
+
+    .section {{
+      margin: 0;
+    }}
+    .section-title {{
+      font-size: 1.2rem;
+      margin: 0 0 10px;
+      letter-spacing: -0.01em;
+    }}
+
+    .benefit-grid {{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }}
+
+    .benefit-card {{
+      background: #FBFAF8;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }}
+    .benefit-card h3 {{
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--muted);
+    }}
+    .benefit-card .big {{
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }}
+
+    .table-wrap {{
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #FBFAF8;
+    }}
+
+    .deadline-table {{
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }}
+    .deadline-table th, .deadline-table td {{
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }}
+    .deadline-table th {{
+      background: #F5F2EC;
+      color: var(--muted);
+      font-weight: 800;
+    }}
+    .date-cell.urgent {{
+      color: var(--urgent);
+      font-weight: 900;
+    }}
+
+    .bullets li {{ margin: 6px 0; }}
+    .steps li {{ margin: 8px 0; }}
+
+    .cta-row {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }}
+    .btn {{
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      background: #FBFAF8;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }}
+    .btn.primary {{
+      background: rgba(42,107,74,0.12);
+      border-color: rgba(42,107,74,0.30);
+      color: var(--accent-2);
+    }}
+
+    details.faq {{
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px 14px;
+      background: #FBFAF8;
+      margin: 10px 0;
+    }}
+    details.faq summary {{
+      cursor: pointer;
+      font-weight: 900;
+    }}
+    .faq-a {{
+      margin-top: 8px;
+      color: var(--text);
+    }}
+
     .callout {{
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #FBFAF8;
+      color: var(--text);
+    }}
+    .callout strong {{ display: block; margin-bottom: 4px; }}
+
+    .layout aside {{
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 20px;
-      margin: 20px 0;
-      font-size: 14.5px;
-      line-height: 1.6;
+      padding: 14px;
+      box-shadow: var(--shadow);
     }}
-    .callout.info {{ background: var(--accent-soft); border-left: 4px solid var(--accent); }}
-    .callout.warning {{ background: var(--amber-soft); border-left: 4px solid var(--amber); }}
-    .callout strong {{ display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }}
-
-    /* CTA buttons */
-    .cta-btn {{
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--accent); color: white; font-weight: 600; font-size: 15px;
-      padding: 12px 24px; border-radius: var(--radius); text-decoration: none;
-      margin: 8px 8px 8px 0; transition: opacity .15s;
+    .sidebar-card + .sidebar-card {{ margin-top: 12px; }}
+    .sidebar-card h2 {{
+      margin: 0 0 12px;
+      font-size: 1.05rem;
     }}
-    .cta-btn:hover {{ opacity: .88; }}
-    .cta-btn.secondary {{
-      background: var(--surface); color: var(--text);
-      border: 1.5px solid var(--border);
-    }}
-
-    /* Sidebar */
-    .sidebar {{ position: sticky; top: 24px; }}
-    .sidebar-card {{
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden; margin-bottom: 16px;
-    }}
-    .sidebar-card-header {{
-      background: var(--text); color: white; padding: 14px 18px;
-      font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-    }}
-    .sidebar-card-header.green {{ background: var(--accent); }}
-    .sidebar-card-header.amber {{ background: var(--amber); }}
     .sidebar-row {{
-      padding: 14px 18px; border-bottom: 1px solid var(--border);
-      display: flex; flex-direction: column; gap: 2px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
     }}
-    .sidebar-row:last-child {{ border-bottom: none; }}
-    .sidebar-label {{ font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }}
-    .sidebar-value {{ font-size: 15px; font-weight: 500; color: var(--text); }}
-    .sidebar-value.accent {{ color: var(--accent); font-family: 'Lora', serif; font-size: 18px; font-weight: 700; }}
-    .sidebar-value.amber {{ color: var(--amber); font-weight: 700; }}
-    .sidebar-cta {{ padding: 18px; display: flex; flex-direction: column; gap: 8px; }}
-    .sidebar-cta .cta-btn {{ width: 100%; justify-content: center; margin: 0; }}
-    .sidebar-disclaimer {{ font-size: 11.5px; color: var(--muted); text-align: center; padding: 0 18px 14px; line-height: 1.5; }}
+    .sidebar-row:first-of-type {{ border-top: none; padding-top: 0; }}
+    .sidebar-label {{ color: var(--muted); font-weight: 800; font-size: 13px; }}
+    .sidebar-value {{ font-weight: 900; font-size: 13px; }}
+    .sidebar-value.urgent {{ color: var(--urgent); }}
+    .sidebar-value.accent {{ color: var(--accent); }}
 
-    /* Footer */
-    .site-footer {{
-      background: var(--text); color: #ccc;
-      padding: 40px 24px; font-size: 13px; line-height: 1.6;
+    /* At-a-glance card */
+    .glance-card {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      margin: 18px 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
     }}
-    .site-footer-inner {{
-      max-width: var(--max-w); margin: 0 auto;
-      display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between;
+    .glance-grid {{
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
     }}
-    .site-footer a {{ color: #aaa; text-decoration: underline; }}
+    .glance-row {{
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #FBFAF8;
+      border: 1px solid var(--border);
+    }}
+    .glance-label {{
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }}
+    .glance-value {{
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.98rem;
+      overflow-wrap: anywhere;
+    }}
 
-    /* Mobile */
-    @media (max-width: 720px) {{
-      .layout {{ grid-template-columns: 1fr; padding: 24px 16px 60px; gap: 32px; }}
-      .sidebar {{ position: static; }}
-      .benefit-grid {{ grid-template-columns: 1fr 1fr; }}
+    @media (min-width: 960px) {{
+      .layout {{
+        grid-template-columns: 1fr 320px;
+        align-items: start;
+      }}
+      .benefit-grid {{
+        grid-template-columns: repeat(2, 1fr);
+      }}
     }}
   </style>
 </head>
@@ -877,6 +822,8 @@ def build_page(f: dict) -> str:
 
     <p class="article-deck">{blurb}</p>
 
+    {at_a_glance_html}
+
     {hero_html}
 
     <hr class="divider" />
@@ -897,7 +844,7 @@ def build_page(f: dict) -> str:
 
     {steps_block}
 
-    {cta_buttons}
+    {build_cta_buttons(official_website, deadline)}
 
     <hr class="divider" />
 
@@ -909,146 +856,100 @@ def build_page(f: dict) -> str:
 
     <div class="callout info">
       <strong>eosguide is a directory, not a law firm</strong>
-      This article summarizes public information from the official settlement notice.
-      We don't administer this settlement or give legal advice.
-      Always verify details at the official settlement website before filing.
-      Only file a claim if you actually qualify.
+      We share public info and plain-language summaries. Always confirm details on the official settlement website.
     </div>
 
   </main>
 
-  <aside class="sidebar" aria-label="Settlement quick facts">
+  <aside class="sidebar" aria-label="Sidebar">
     {sidebar_html}
   </aside>
 
 </div>
 
-<footer class="site-footer">
-  <div class="site-footer-inner">
-    <div>
-      <strong style="color:white;">eos<span style="color:var(--accent);">guide</span></strong><br />
-      We keep an eye on settlements, refunds, and relief programs so you don't have to.
-    </div>
-    <div>
-      <a href="/legal/">Legal</a> &nbsp;&bull;&nbsp;
-      <a href="/legal/#privacy">Privacy</a> &nbsp;&bull;&nbsp;
-      <a href="/legal/#terms">Terms</a>
-      <br />
-      &copy; 2026 eosguide. Information only. Not legal or financial advice.
-    </div>
-  </div>
-</footer>
-
 </body>
-</html>"""
+</html>'''
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 6: UPDATE THE ARTICLES INDEX PAGE
+# STEP 6: UPDATE /articles/index.html LIST
 # ─────────────────────────────────────────────────────────────────
 
-INSERT_MARKER = '<!-- ARTICLES_LIST_INSERT_HERE -->'
-
-def update_index(slug: str, title: str, deadline: str, last_updated: str, blurb: str) -> None:
-    index_path = 'articles/index.html'
+def update_articles_index(title: str, slug: str, blurb: str, last_updated: str):
+    index_path = os.path.join('articles', 'index.html')
     if not os.path.exists(index_path):
-        print(f"Warning: {index_path} not found — skipping index update.")
         return
 
-    content = open(index_path, 'r', encoding='utf-8').read()
+    with open(index_path, 'r', encoding='utf-8') as f:
+        html = f.read()
 
-    deadline_text = f'Deadline: {deadline} &bull; ' if deadline and deadline.lower() != 'none listed' else ''
-    new_card = f"""
-<article class="bg-white rounded-2xl shadow-sm p-5">
-  <h2 class="text-xl font-bold text-gray-900 mb-1">
-    <a href="/articles/{slug}.html" class="hover:underline">{title}</a>
-  </h2>
-  <p class="text-sm text-gray-600 mb-2">{deadline_text}Updated {last_updated}</p>
-  <p class="text-gray-700">{blurb}</p>
-</article>
-"""
-
-    if f'/articles/{slug}.html' in content:
-        print(f"Article {slug} already in index — skipping.")
+    marker = "<!-- ARTICLES_LIST_INSERT_HERE -->"
+    if marker not in html:
         return
 
-    updated = content.replace(INSERT_MARKER, INSERT_MARKER + new_card)
-    open(index_path, 'w', encoding='utf-8').write(updated)
-    print(f"✓ Added {slug} to articles/index.html")
+    card = f'''
+      <article class="article-card">
+        <h2><a href="/articles/{slug}.html">{title}</a></h2>
+        <p class="meta">Updated {last_updated}</p>
+        <p class="desc">{blurb}</p>
+        <a class="read-more" href="/articles/{slug}.html">Read article</a>
+      </article>
+    '''
+
+    html = html.replace(marker, marker + card)
+
+    with open(index_path, 'w', encoding='utf-8') as f:
+        f.write(html)
 
 
 # ─────────────────────────────────────────────────────────────────
-# STEP 7: MAIN
+# STEP 7: MAIN SCRIPT ENTRY
 # ─────────────────────────────────────────────────────────────────
 
 def main():
-    issue_body_path = os.environ.get('ISSUE_BODY_PATH', '.tmp/issue_body.md')
-    if not os.path.exists(issue_body_path):
-        print(f"Error: Issue body not found at {issue_body_path}")
-        sys.exit(1)
-
-    body = open(issue_body_path, 'r', encoding='utf-8').read()
-    raw = parse_issue(body)
+    issue_body = os.environ.get("ISSUE_BODY", "")
+    if not issue_body:
+        raise SystemExit("Missing ISSUE_BODY env var")
 
     fields = {
-        'title':             get_field(raw, 'article title'),
-        'slug':              get_field(raw, 'url slug'),
-        'blurb':             get_field(raw, 'short blurb'),
-        'deadline':          get_field(raw, 'claim deadline', 'deadline'),
-        'optout_deadline':   get_field(raw, 'opt-out deadline'),
-        'hearing_date':      get_field(raw, 'final approval hearing date'),
-        'last_updated':      get_field(raw, 'last updated'),
-        'eligible_states':   get_field(raw, 'eligible states'),
-        'settlement_amount': get_field(raw, 'total settlement fund'),
-        'max_payment':       get_field(raw, 'maximum payment per person'),
-        'nodoc_payment':     get_field(raw, 'no-documentation cash payment'),
-        'ca_payment':        get_field(raw, 'california statutory payment (if applicable)', 'california statutory payment'),
-        'credit_monitoring': get_field(raw, 'credit monitoring (if applicable)', 'credit monitoring'),
-        'official_website':  get_field(raw, 'official settlement website'),
-        'defendant':         get_field(raw, 'defendant / company name', 'defendant'),
-        'incident_date':     get_field(raw, 'when did the incident occur?', 'incident date'),
-        'court':             get_field(raw, 'court & jurisdiction', 'court'),
-        'case_number':       get_field(raw, 'case number (optional)', 'case number'),
-        'admin_phone':       get_field(raw, 'administrator phone (optional)', 'administrator phone'),
-        'admin_email':       get_field(raw, 'administrator email (optional)', 'administrator email'),
-        'attorney_fees':     get_field(raw, 'attorney fees (optional)', 'attorney fees'),
-        'service_awards':    get_field(raw, 'service awards (optional)', 'service awards'),
-        'hero_image':        get_field(raw, 'hero image filename (optional)', 'hero image filename'),
-        'hero_credit':       get_field(raw, 'hero image credit (optional)', 'hero image credit'),
-        'eligibility':       get_field(raw, 'who is eligible? (bulleted list)', 'who is eligible?'),
-        'how_to_file':       get_field(raw, 'how to file a claim (numbered steps)', 'how to file a claim'),
-        'faqs':              get_field(raw, 'frequently asked questions', 'faqs'),
-        'article_body':      get_field(raw, 'article body (markdown)', 'article body'),
-        'monetization':      get_field(raw, 'monetization'),
-        'status':            get_field(raw, 'publish status'),
+        "title": get_field(issue_body, "Article title"),
+        "slug": get_field(issue_body, "URL slug"),
+        "blurb": get_field(issue_body, "Short blurb (for the /articles list + article intro)"),
+        "last_updated": get_field(issue_body, "Last updated"),
+        "eligible_states": get_field(issue_body, "Eligible states"),
+        "official_website": get_field(issue_body, "Official settlement website"),
+        "hero_image": get_field(issue_body, "Hero image URL (optional)"),
+        "hero_credit": get_field(issue_body, "Hero image credit (optional)"),
+        "deadline": get_field(issue_body, "Claim deadline (optional)"),
+        "optout_deadline": get_field(issue_body, "Opt-out deadline (optional)"),
+        "hearing_date": get_field(issue_body, "Final approval hearing (optional)"),
+        "settlement_amount": get_field(issue_body, "Total fund (optional)"),
+        "max_payment": get_field(issue_body, "Max payment per person (optional)"),
+        "nodoc_payment": get_field(issue_body, "No-doc amount (optional)"),
+        "ca_payment": get_field(issue_body, "California-only amount (optional)"),
+        "credit_monitoring": get_field(issue_body, "Credit monitoring (optional)"),
+        "article_body": get_field(issue_body, "Main article body (optional)"),
+        "eligibility": get_field(issue_body, "Eligibility checklist (optional)"),
+        "how_to_file": get_field(issue_body, "How to file (steps, optional)"),
+        "faqs": get_field(issue_body, "FAQs (optional)"),
+        "admin_phone": get_field(issue_body, "Administrator phone (optional)"),
+        "admin_email": get_field(issue_body, "Administrator email (optional)"),
+        "attorney_fees": get_field(issue_body, "Attorney fees (optional)"),
+        "service_awards": get_field(issue_body, "Service awards (optional)"),
+        "monetization": get_field(issue_body, "Monetization block"),
     }
 
-    if not fields['title'] or not fields['slug']:
-        print("Error: 'Article title' and 'URL slug' are required.")
-        sys.exit(1)
+    slug = fields.get("slug") or "article"
+    out_path = os.path.join("articles", f"{slug}.html")
 
-    mode = os.environ.get('MODE', 'draft').lower()
-    html = build_page(fields)
+    page_html = build_page(fields)
 
-    if mode == 'publish':
-        os.makedirs('articles', exist_ok=True)
-        out_path = f"articles/{fields['slug']}.html"
-    else:
-        os.makedirs('articles/drafts', exist_ok=True)
-        out_path = f"articles/drafts/{fields['slug']}.html"
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(page_html)
 
-    open(out_path, 'w', encoding='utf-8').write(html)
-    print(f"✓ Article written to {out_path}")
-
-    if mode == 'publish':
-        update_index(
-            slug=fields['slug'],
-            title=fields['title'],
-            deadline=fields['deadline'],
-            last_updated=fields['last_updated'],
-            blurb=fields['blurb'],
-        )
+    update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"])
+    print(f"Published: {out_path}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
