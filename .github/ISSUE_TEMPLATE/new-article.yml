@@ -274,13 +274,13 @@ body:
     validations:
       required: false
 
-  - type: dropdown
+    - type: dropdown
     id: monetization
     attributes:
       label: Monetization block
-      description: "Leave Off for now unless you want it."
+      description: "Leave this disabled for now unless you want it."
       options:
-        - Off
-        - On
+        - "Disabled"
+        - "Enabled"
     validations:
       required: false
