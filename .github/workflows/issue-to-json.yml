@@ -5,7 +5,7 @@ on:
     types:
       - opened
       - edited
-      - labeled  # ← ADD THIS LINE!
+      - labeled
 
 permissions:
   contents: write
@@ -16,10 +16,11 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'opportunity')
     runs-on: ubuntu-latest
 
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -30,7 +31,7 @@ jobs:
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: node scripts/issue_to_json.js
-        
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -38,7 +39,7 @@ jobs:
 
       - name: Pre-render homepage cards
         run: python scripts/prerender_homepage.py
-        
+
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
@@ -48,7 +49,24 @@ jobs:
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
-          else
-            git commit -m "Update opportunities from issue #${{ github.event.issue.number }}"
-            git push
+            exit 0
           fi
+
+          git commit -m "Update opportunities from issue #${{ github.event.issue.number }}"
+
+          git fetch origin main
+          git rebase origin/main
+
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Push succeeded."
+              exit 0
+            fi
+            echo "Push failed (attempt $i). Fetching and rebasing, then retrying..."
+            git fetch origin main
+            git rebase origin/main
+            sleep 2
+          done
+
+          echo "Push failed after retries."
+          exit 1
