@@ -1,5 +1,7 @@
 import os
 import re
+import json
+from datetime import datetime
 import markdown
 
 
@@ -422,7 +424,70 @@ def build_page(f: dict) -> str:
     proof_items = parse_lines(f.get("proof_required", ""))
     steps = parse_steps(f.get("how_to_file", ""))
     faqs = parse_faqs(f.get("faqs", ""))
+    # Use ISO dates for schema (keeps Google happier than mixed formats)
+    iso_last_updated = to_iso_date(last_updated)
 
+    # ----------------------------
+    # Structured data (JSON-LD)
+    # ----------------------------
+    breadcrumb_ld = {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://eosguidehub.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Articles", "item": "https://eosguidehub.com/articles/"},
+            {"@type": "ListItem", "position": 3, "name": title, "item": f"https://eosguidehub.com/articles/{slug}.html"},
+        ],
+    }
+
+    article_ld = {
+        "@type": "Article",
+        "headline": title,
+        "description": meta_description if "meta_description" in locals() else blurb.strip().replace("\n", " ")[:155].rstrip(),
+        "datePublished": iso_last_updated,
+        "dateModified": iso_last_updated,
+        "author": {"@type": "Organization", "name": "eosguide"},
+        "publisher": {
+            "@type": "Organization",
+            "name": "eosguide",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://eosguidehub.com/Circular-badge-logo.png"
+            }
+        },
+        "mainEntityOfPage": {"@type": "WebPage", "@id": f"https://eosguidehub.com/articles/{slug}.html"},
+    }
+
+    graph = [breadcrumb_ld, article_ld]
+
+    # Add FAQ structured data only if FAQs exist
+    if faqs:
+        faq_entities = []
+        for q, a in faqs:
+            faq_entities.append({
+                "@type": "Question",
+                "name": q,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": a
+                }
+            })
+
+        faq_ld = {
+            "@type": "FAQPage",
+            "mainEntity": faq_entities
+        }
+        graph.append(faq_ld)
+
+    structured_data = {
+        "@context": "https://schema.org",
+        "@graph": graph
+    }
+
+    structured_data_html = (
+        '<script type="application/ld+json">'
+        + json.dumps(structured_data, ensure_ascii=False)
+        + "</script>"
+    )
     what_happened_html = markdown.markdown(what_happened_md) if what_happened_md else ""
     extra_details_html = markdown.markdown(extra_details_md) if extra_details_md else ""
 
@@ -446,8 +511,7 @@ def build_page(f: dict) -> str:
     </figure>
         """
 
-    meta_description = blurb.strip().replace("\n", " ")
-    meta_description = meta_description[:155].rstrip()
+     meta_description = blurb.strip().replace("\n", " ")[:155].rstrip()
     canonical = f"https://eosguidehub.com/articles/{slug}.html"
 
     class_period_html = f"<p><strong>Class period:</strong> {class_period}</p>" if class_period else ""
@@ -526,32 +590,7 @@ def build_page(f: dict) -> str:
   <title>{title} | eosguide</title>
   <meta name="description" content="{meta_description}">
   <link rel="canonical" href="{canonical}">
-    <script type="application/ld+json">
-{{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "{title}",
-  "description": "{meta_description}",
-  "datePublished": "{last_updated}",
-  "dateModified": "{last_updated}",
-  "author": {{
-    "@type": "Organization",
-    "name": "eosguide"
-  }},
-  "publisher": {{
-    "@type": "Organization",
-    "name": "eosguide",
-    "logo": {{
-      "@type": "ImageObject",
-      "url": "https://eosguidehub.com/logo.png"
-    }}
-  }},
-  "mainEntityOfPage": {{
-    "@type": "WebPage",
-    "@id": "{canonical}"
-  }}
-}}
-</script>
+     {structured_data_html}
   <link rel="icon" href="/Circular-badge-logo.png" type="image/png">
 
   <meta property="og:type" content="article">
