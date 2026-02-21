@@ -60,8 +60,8 @@ function isExpired(deadlineISO) {
   return deadlineISO < todayISO;
 }
 
-function makeId({ url, title, deadline }) {
-  const raw = `${safeStr(url)}|${safeStr(title)}|${safeStr(deadline)}`;
+function makeId({ url, title, deadline, state }) {
+  const raw = `${safeStr(url)}|${safeStr(title)}|${safeStr(deadline)}|${safeStr(state)}`;
   return crypto.createHash("sha1").update(raw).digest("hex").slice(0, 12);
 }
 
@@ -112,7 +112,7 @@ if (!title || !card_description || !url) {
     throw new Error("Missing required field: at least one of details_url or apply_url.");
   }
 const newItem = {
-    id: makeId({ url: official_url, title, deadline }),
+    id: makeId({ url: official_url, title, deadline, state }),
     title,
     category: category || "Other",
     amount: safeStr(amount),
@@ -136,10 +136,21 @@ const newItem = {
   // Keep live JSON clean: drop expired on every run
   existing = existing.filter((x) => !isExpired(safeStr(x.deadline)));
 
-  // Avoid duplicates by id OR url
-  const already = existing.some(
-    (x) => safeStr(x.id) === newItem.id || safeStr(x.url) === newItem.url || safeStr(x.official_url) === newItem.official_url
-  );
+    // Allow one card per state for the same article/official URL.
+  // Only block true duplicates: same article + same state (or same official_url + same state).
+  const already = existing.some((x) => {
+    const sameId = safeStr(x.id) === newItem.id;
+
+    const sameArticleSameState =
+      safeStr(x.url) === safeStr(newItem.url) &&
+      safeStr(x.state).toLowerCase() === safeStr(newItem.state).toLowerCase();
+
+    const sameOfficialSameState =
+      safeStr(x.official_url) === safeStr(newItem.official_url) &&
+      safeStr(x.state).toLowerCase() === safeStr(newItem.state).toLowerCase();
+
+    return sameId || sameArticleSameState || sameOfficialSameState;
+  });
 
   if (!already) existing.unshift(newItem);
 
