@@ -62,6 +62,10 @@ def card_html(opp):
     if url and not url.startswith("/"):
         url = "/" + url
 
+    # Enforce internal article link format: /articles/<slug>.html
+    if url.startswith("/articles/") and not url.endswith(".html"):
+        url = url.rstrip("/") + ".html"
+
     deadline_raw = safe(opp.get("deadline"))
     deadline_display = escape_html(format_deadline(deadline_raw))
 
