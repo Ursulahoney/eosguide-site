@@ -872,7 +872,32 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, 
 
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(html)
-def update_sitemap(slug: str):
+def to_iso_date(date_str: str) -> str:
+    """
+    Converts common date formats to ISO YYYY-MM-DD for sitemap <lastmod>.
+    If parsing fails, uses today's UTC date.
+    """
+    if not date_str:
+        return datetime.utcnow().strftime("%Y-%m-%d")
+
+    s = date_str.strip()
+
+    # Already ISO
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", s):
+        return s
+
+    # Common human-readable formats
+    fmts = ["%B %d, %Y", "%b %d, %Y", "%m/%d/%Y", "%m-%d-%Y"]
+    for fmt in fmts:
+        try:
+            return datetime.strptime(s, fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+
+    return datetime.utcnow().strftime("%Y-%m-%d")
+
+
+def update_sitemap(slug: str, last_updated: str):
     sitemap_path = "sitemap.xml"
 
     # If you don't have a sitemap yet, do nothing.
@@ -888,9 +913,12 @@ def update_sitemap(slug: str):
     if article_url in xml:
         return
 
+    lastmod = to_iso_date(last_updated)
+
     new_entry = f"""
   <url>
     <loc>{article_url}</loc>
+    <lastmod>{lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -959,7 +987,7 @@ def main():
         f.write(page_html)
 
     update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"], fields.get("deadline", ""))
-    update_sitemap(slug)
+    update_sitemap(slug, fields.get("last_updated", ""))
     print(f"Published: {out_path}")
 
 
