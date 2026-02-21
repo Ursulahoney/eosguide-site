@@ -7,7 +7,7 @@
     "deadline": "2026-03-16",
     "difficulty": "Medium",
     "description": "Legacy Health patients in Oregon and Washington may qualify for a $15 cash payment if you used your patient portal between 2019-2024. The class action settlement alleges Legacy Health shared your protected health information with Meta (Facebook) and Google using tracking pixels without consent, violating patient privacy rights. File your claim by March 16, 2026 to receive compensation plus free Medical Shield Complete privacy monitoring (1 year, $1M identity theft insurance).",
-    "url": "https://eosguidehub.com/articles/pixel-legacy-health-settlement",
+    "url": "/articles/pixel-legacy-health-settlement.html",
     "state": "Oregon",
     "value": null,
     "featured": false,
@@ -22,7 +22,7 @@
     "deadline": "2026-03-16",
     "difficulty": "Medium",
     "description": "Legacy Health patients in Oregon and Washington may qualify for a $15 cash payment if you used your patient portal between 2019-2024. The class action settlement alleges Legacy Health shared your protected health information with Meta (Facebook) and Google using tracking pixels without consent, violating patient privacy rights. File your claim by March 16, 2026 to receive compensation plus free Medical Shield Complete privacy monitoring (1 year, $1M identity theft insurance).",
-    "url": "https://eosguidehub.com/articles/pixel-legacy-health-settlement",
+    "url": "/articles/pixel-legacy-health-settlement.html",
     "state": "Washington",
     "value": null,
     "featured": false,
@@ -37,12 +37,12 @@
     "deadline": "2026-03-30",
     "difficulty": "Medium",
     "description": "DoorDash settled with the City of Chicago over allegations that it listed Chicago restaurants on its platform without their consent or contractual agreements, violating a city ordinance requiring written agreements with restaurants. The settlement benefits small Chicago-based restaurants (nine or fewer locations) that were listed on DoorDash or Caviar between August 2019 and November 2025 without a contract. Eligible restaurants can receive up to $2,500 each by submitting an attestation form by the March 30, 2026 deadline.",
-    "url": "https://eosguidehub.com/articles/chicago-doordash-settlement",
+    "url": "/articles/chicago-doordash-settlement.html",
     "state": "Illinois",
     "value": null,
     "featured": false,
-    "details_url": "https://eosguidehub.com/articles/chicago-doordash-settlement",
-    "apply_url": "https://eosguidehub.com/articles/chicago-doordash-settlement"
+    "details_url": "/articles/chicago-doordash-settlement.html",
+    "apply_url": "/articles/chicago-doordash-settlement.html"
   },
   {
     "id": "91d5ae83020c",
@@ -68,12 +68,12 @@
     "deadline": "2026-04-16",
     "difficulty": "Medium",
     "description": "Were your medical records exposed in the July 2024 Gryphon Healthcare data breach? If your Social Security number, health insurance information, or personal health data was compromised in this Texas class action settlement, you may qualify for a cash payment. The cyberattack affected patients whose information was stored by Gryphon Healthcare, a medical billing services provider. Submit your claim by April 16, 2026 to receive compensation for the data security incident.",
-    "url": "https://eosguidehub.com/articles/gryphon-healthcare-data-breach-settlement-2024",
+    "url": "/articles/gryphon-healthcare-data-breach-settlement-2024.html",
     "state": "Nationwide",
     "value": null,
     "featured": false,
-    "details_url": "https://eosguidehub.com/articles/gryphon-healthcare-data-breach-settlement-2024",
-    "apply_url": "https://eosguidehub.com/articles/gryphon-healthcare-data-breach-settlement-2024"
+    "details_url": "/articles/gryphon-healthcare-data-breach-settlement-2024.html",
+    "apply_url": "/articles/gryphon-healthcare-data-breach-settlement-2024.html"
   },
   {
     "id": "4fb5f69fadcc",
@@ -83,11 +83,11 @@
     "deadline": "2026-04-20",
     "difficulty": "Medium",
     "description": "Northwell Health agreed to a class action settlement over the use of tracking pixels on its patient portal. Eligible patients who logged into the FollowMyHealth portal or booked appointments between 2020–2024 may qualify for a $15 cash payment. Claims must be submitted by April 20, 2026.",
-    "url": "https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026",
+    "url": "/articles/northwell-health-pixel-settlement-2026.html",
     "state": "New York",
     "value": null,
     "featured": false,
-    "details_url": "https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026",
-    "apply_url": "https://eosguidehub.com/articles/northwell-health-pixel-settlement-2026"
+    "details_url": "/articles/northwell-health-pixel-settlement-2026.html",
+    "apply_url": "/articles/northwell-health-pixel-settlement-2026.html"
   }
 ]
