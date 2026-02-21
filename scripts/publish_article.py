@@ -511,7 +511,7 @@ def build_page(f: dict) -> str:
     </figure>
         """
 
-     meta_description = blurb.strip().replace("\n", " ")[:155].rstrip()
+    meta_description = blurb.strip().replace("\n", " ")[:155].rstrip()
     canonical = f"https://eosguidehub.com/articles/{slug}.html"
 
     class_period_html = f"<p><strong>Class period:</strong> {class_period}</p>" if class_period else ""
