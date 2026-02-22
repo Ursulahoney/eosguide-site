@@ -762,6 +762,12 @@
 
     function filterCategory(cat) {
       currentCategory = (currentCategory === cat && cat !== 'all') ? 'all' : cat;
+      // Always reset search and state when a pill is clicked — clean slate
+      currentSearch = '';
+      const input = document.getElementById('searchInput');
+      if (input) input.value = '';
+      const sel = document.getElementById('stateSelector');
+      if (sel) sel.value = '';
       renderCategories();
       renderOpportunities();
     }
