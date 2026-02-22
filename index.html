@@ -294,7 +294,7 @@
                 </h2>
 
                 <!-- State Selector -->
-            <div class="flex justify-center mb-4">
+            <div class="flex justify-start mb-0 sm:mb-0">
                 <div class="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-2xl p-2 shadow-lg">
                     <svg class="w-5 h-5 text-purple-600 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -971,11 +971,10 @@ function updateStateDropdownCounts() {
     // These are "quick filters" (not a full category browser).
     grid.innerHTML = categories.map((cat) => `
       <button onclick="filterCategory('${cat.key}')" class="group w-full text-left bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
-        <div class="flex items-center gap-2 mb-2">
+        <div class="flex items-center gap-2">
           <span class="text-lg" aria-hidden="true">${cat.icon}</span>
           <span class="font-bold text-gray-800">${cat.name}</span>
         </div>
-        <p class="text-sm text-gray-500">${cat.description}</p>
       </button>
     `).join('');
   }
