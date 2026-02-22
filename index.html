@@ -208,14 +208,13 @@
       <div class="hidden sm:flex flex-col items-end gap-3 flex-shrink-0">
         <p class="text-sm font-bold italic text-gray-500 text-right leading-relaxed"
            style="font-family:'DM Sans',sans-serif; font-size: clamp(0.85rem, 1.1vw, 1.05rem);">
-          We do the searching<br>so you don't have to<br>pretend it's fun.
+          "We do the searching<br>so you don't have to<br>pretend it's fun."
         </p>
         <div class="flex items-center gap-2">
           <a href="/articles/"
              class="inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-bold border-2 border-purple-200 text-purple-700 hover:bg-purple-50 transition whitespace-nowrap">
             Guide Articles →
           </a>
-          <p></p>
           <button onclick="openNewsletter()"
                   class="inline-flex items-center gap-1.5 px-4 py-2 text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all whitespace-nowrap"
                   style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
@@ -643,9 +642,12 @@
       const catInfo  = document.getElementById('categoryInfo');
       const selState = document.getElementById('stateSelector')?.value || '';
 
+      const q = (currentSearch || '').toLowerCase().trim();
+
       const filtered = opportunities.filter(opp => {
+        // State filter is bypassed whenever a search query is active
         let matchesState = true;
-        if (selState) {
+        if (selState && !q) {
           if (selState === 'Nationwide') {
             matchesState = opp.state === 'Nationwide';
           } else {
@@ -658,7 +660,6 @@
           (currentCategory === 'saved'  ? savedOpportunities.includes(opp.id) : false) ||
           (currentCategory === 'ending' ? (opp.daysLeft < 30 && opp.daysLeft > 0) : false) ||
           opp.category === currentCategory;
-        const q   = (currentSearch || '').toLowerCase().trim();
         const hay = [opp.title, opp.description, opp.category, opp.state, opp.amount, opp.value, opp.difficulty]
           .map(v => (v||'').toLowerCase()).join(' ');
         return matchesState && matchesCat && (!q || hay.includes(q));
