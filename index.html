@@ -190,7 +190,7 @@
       <div class="flex-shrink-0 animate-logo">
         <a href="/" aria-label="Back to eosguide home">
           <img src="/Circular-badge-logo.png" alt="eosguide logo"
-               style="width:clamp(7rem,11vw,9.5rem);height:clamp(7rem,11vw,9.5rem);">
+               style="width:clamp(9rem,13vw,12rem);height:clamp(9rem,13vw,12rem);">
         </a>
       </div>
 
@@ -206,8 +206,8 @@
 
       <!-- Right: tagline + buttons — visible sm+ -->
       <div class="hidden sm:flex flex-col items-end gap-3 flex-shrink-0">
-        <p class="text-xs font-semibold italic text-gray-400 text-right leading-snug"
-           style="font-family:'DM Sans',sans-serif;">
+        <p class="text-sm font-bold italic text-gray-500 text-right leading-relaxed"
+           style="font-family:'DM Sans',sans-serif; font-size: clamp(0.85rem, 1.1vw, 1.05rem);">
           "We do the searching<br>so you don't have to<br>pretend it's fun."
         </p>
         <div class="flex items-center gap-2">
@@ -251,23 +251,26 @@
          FILTER BAND  (pills + state + search in one compact strip)
     ════════════════════════════════════════ -->
     <section class="relative z-10 px-4 py-5 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex flex-col gap-4">
+      <div class="max-w-7xl mx-auto">
 
-        <!-- Row 1: filter pills only -->
-        <div class="pill-strip" id="categoriesGrid">
-          <!-- rendered by JS -->
-        </div>
+        <!-- Single unified control bar: pills | divider | count + search + state -->
+        <div class="flex items-center gap-3 overflow-x-auto scrollbar-none pb-1" style="scrollbar-width:none;">
 
-        <!-- Row 2: count + search + state selector all on one line -->
-        <div class="flex items-center gap-3">
+          <!-- Filter pills -->
+          <div id="categoriesGrid" class="flex items-center gap-2 flex-shrink-0">
+            <!-- rendered by JS -->
+          </div>
+
+          <!-- Vertical divider -->
+          <div class="h-6 w-px bg-gray-300 flex-shrink-0 mx-1"></div>
 
           <!-- Count -->
-          <span class="text-sm font-black text-gray-800 flex-shrink-0 whitespace-nowrap">
+          <span class="text-sm font-black text-gray-700 flex-shrink-0 whitespace-nowrap">
             <span class="text-purple-600" id="oppCount">(0)</span> found
           </span>
 
-          <!-- Search bar — constrained width, not full-bleed -->
-          <div class="relative group w-64 sm:w-80 md:w-96">
+          <!-- Search bar -->
+          <div class="relative group flex-shrink-0" style="width:clamp(11rem,25vw,22rem);">
             <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-full blur-sm opacity-20 group-hover:opacity-35 transition-opacity duration-300"></div>
             <div class="relative bg-white rounded-full shadow-sm flex items-center overflow-hidden border border-gray-200">
               <span id="searchHint"
@@ -289,7 +292,7 @@
             </div>
           </div>
 
-          <!-- State selector pill — right of search -->
+          <!-- State selector -->
           <div class="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 shadow-sm border border-gray-200 flex-shrink-0">
             <svg class="w-3.5 h-3.5 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
