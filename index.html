@@ -46,6 +46,11 @@
         }
     </script>
     <style>
+
+        #searchHint {
+          transition: opacity 0.5s ease-in-out;
+        }
+        
       @keyframes floatSoft {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
@@ -1375,12 +1380,20 @@ function startSearchHintRotation() {
   syncHint();
 
   setInterval(() => {
-    if (document.activeElement === input) return;
-    if ((input.value || '').trim().length > 0) return;
+  if (document.activeElement === input) return;
+  if ((input.value || '').trim().length > 0) return;
 
-    msgIndex = (msgIndex + 1) % searchMessages.length;
+  msgIndex = (msgIndex + 1) % searchMessages.length;
+
+  // Fade out
+  hint.style.opacity = 0;
+
+  setTimeout(() => {
     hint.textContent = searchMessages[msgIndex];
-  }, 4000);
+    hint.style.opacity = 1; // Fade in
+  }, 250);
+
+}, 4000);
 
   input.addEventListener('focus', syncHint);
   input.addEventListener('blur', syncHint);
