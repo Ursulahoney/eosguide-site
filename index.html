@@ -254,7 +254,7 @@
       <div class="max-w-7xl mx-auto">
 
         <!-- Single unified control bar: pills | divider | count + search + state -->
-        <div class="flex items-center gap-3 overflow-x-auto scrollbar-none pb-1" style="scrollbar-width:none;">
+        <div class="flex items-center gap-4 overflow-x-auto pb-1" style="scrollbar-width:none;">
 
           <!-- Filter pills -->
           <div id="categoriesGrid" class="flex items-center gap-2 flex-shrink-0">
@@ -262,20 +262,20 @@
           </div>
 
           <!-- Vertical divider -->
-          <div class="h-6 w-px bg-gray-300 flex-shrink-0 mx-1"></div>
+          <div class="h-6 w-px bg-gray-300 flex-shrink-0"></div>
 
           <!-- Count -->
           <span class="text-sm font-black text-gray-700 flex-shrink-0 whitespace-nowrap">
             <span class="text-purple-600" id="oppCount">(0)</span> found
           </span>
 
-          <!-- Search bar -->
-          <div class="relative group flex-shrink-0" style="width:clamp(11rem,25vw,22rem);">
+          <!-- Search bar — wide enough for longest rotating hint -->
+          <div class="relative group flex-shrink-0" style="width:clamp(18rem,32vw,28rem);">
             <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-full blur-sm opacity-20 group-hover:opacity-35 transition-opacity duration-300"></div>
             <div class="relative bg-white rounded-full shadow-sm flex items-center overflow-hidden border border-gray-200">
               <span id="searchHint"
-                    class="pointer-events-none absolute left-8 right-16 top-1/2 -translate-y-1/2 text-gray-400 text-xs truncate">
-                Type a keyword…
+                    class="pointer-events-none absolute left-9 right-20 top-1/2 -translate-y-1/2 text-gray-400 text-xs whitespace-nowrap">
+                Type a keyword and remember, you're breathtaking!
               </span>
               <svg class="w-3.5 h-3.5 text-gray-400 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
