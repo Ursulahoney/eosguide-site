@@ -397,7 +397,7 @@ def build_cta_buttons(official_website: str, deadline: str) -> str:
       <a class="btn primary" href="{official_website}" target="_blank" rel="noopener noreferrer">
         Go to official website{deadline_note}
       </a>
-      <a class="btn" href="/articles/">Browse more articles</a>
+      <a class="btn" href="/articles/">Browse more guides</a>
     </div>
     """
 
@@ -604,8 +604,16 @@ def build_page(f: dict) -> str:
   <meta name="twitter:description" content="{meta_description}">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
+    body {{ font-family: 'Montserrat', system-ui, -apple-system, sans-serif; font-weight: 400; }}
+    .gradient-text {{ background: linear-gradient(90deg,#0891b2 0%,#7c3aed 50%,#db2777 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }}
+    .gradient-text-light {{ background: linear-gradient(90deg,#67e8f9 0%,#c4b5fd 50%,#f9a8d4 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }}
+    @keyframes floatSoft {{ 0%,100% {{ transform:translateY(0); }} 50% {{ transform:translateY(-4px); }} }}
+    .animate-logo {{ animation: floatSoft 4s ease-in-out infinite; }}
     /* Article section styles */
     .section {{ margin: 1.5rem 0; }}
     .section-title {{ font-size: 1.15rem; font-weight: 800; margin: 0 0 0.75rem; color: #111827; letter-spacing: -0.01em; }}
@@ -661,37 +669,35 @@ def build_page(f: dict) -> str:
 <body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50">
 
   <!-- Header -->
-  <header class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
-    <nav class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 group cursor-pointer">
-        <div class="relative flex-shrink-0">
-          <a href="/" aria-label="Back to eosguide home">
-            <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40">
-          </a>
-        </div>
-        <blockquote class="text-xs sm:text-sm md:text-base font-semibold italic leading-snug text-gray-500 max-w-xs md:max-w-sm text-center md:text-left"
-                    style="font-family: 'DM Sans', 'Montserrat', system-ui, sans-serif;">
-          "We do the searching<br>so you don't have to<br>pretend it's fun."
-        </blockquote>
-      </div>
-      <div class="flex flex-col items-center gap-2 self-center md:self-auto">
-        <button onclick="openNewsletter()"
-                class="flex items-center space-x-2 px-6 py-3 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
-                style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-          </svg>
-          <span>Get Alerts</span>
-        </button>
-        <a href="/articles/"
-           class="text-sm font-semibold text-purple-600 hover:text-purple-700 px-3 py-1 rounded-full hover:bg-purple-50 flex items-center gap-1 transition">
-          <span>Articles</span>
-          <span aria-hidden="true">→</span>
+  <header class="relative z-10 px-4 pt-5 pb-6 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center justify-between gap-4">
+        <a href="/" aria-label="Back to eosguide home" class="flex items-center gap-3 min-w-0">
+          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0">
+          <div class="min-w-0">
+            <p class="text-xl sm:text-2xl font-black leading-none gradient-text">eosguide</p>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
+          </div>
         </a>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="/articles/"
+             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition whitespace-nowrap">
+            ← Guides
+          </a>
+          <button onclick="openNewsletter()"
+                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white shadow-sm hover:shadow-lg transition-all whitespace-nowrap"
+                  style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
+            Get Alerts
+          </button>
+        </div>
+        <div class="flex sm:hidden items-center gap-2">
+          <a href="/articles/" class="text-xs font-bold text-purple-700 px-3 py-1.5 rounded-full border border-purple-200 bg-white/85">← Guides</a>
+          <button onclick="openNewsletter()" class="text-xs font-bold text-white px-3 py-1.5 rounded-full" style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">Alerts</button>
+        </div>
       </div>
-    </nav>
+    </div>
   </header>
+  <hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.12),transparent);margin:0;">
 
   <!-- Main content -->
   <main class="relative z-10 px-4 sm:px-6 lg:px-8 pb-16">
@@ -757,56 +763,28 @@ def build_page(f: dict) -> str:
   </main>
 
   <!-- Footer -->
-<footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-7xl mx-auto">
-
-    <div class="grid md:grid-cols-3 gap-8 mb-8 items-start">
-      
-      <!-- Left: Brand -->
-      <div>
-        <h4 class="font-black text-xl mb-4 bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-          eosguide
-        </h4>
-        <p class="text-gray-400 text-sm font-light">
-          We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.
-        </p>
+  <footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-10 px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 border-t border-white/10 pt-8">
+        <div class="max-w-md">
+          <h4 class="font-black text-2xl gradient-text-light">eosguide</h4>
+          <p class="text-gray-400 text-sm mt-2">A searchable hub for settlement claims and official filing links.</p>
+        </div>
+        <div class="flex flex-col sm:items-end gap-2 text-sm">
+          <a href="mailto:hello@eosguidehub.com" class="text-cyan-300 hover:text-cyan-400 underline">Contact</a>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 sm:justify-end">
+            <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
+            <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
+            <a href="/legal/#terms" class="text-cyan-300 hover:text-cyan-400 underline">Terms</a>
+            <a href="/legal/#disclaimer" class="text-cyan-300 hover:text-cyan-400 underline">Disclaimer</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Center: Contact -->
-      <div class="text-center">
-        <p class="text-gray-300 text-sm font-light">
-          Have a question, suggestion, or request?
-        </p>
-        <p class="text-gray-200 text-sm font-light">
-          Email:
-          <a href="mailto:hello@eosguidehub.com" class="text-cyan-300 hover:text-cyan-400 underline">
-            hello@eosguidehub.com
-          </a>
-        </p>
+      <div class="pt-6">
+        <p class="text-gray-500 text-sm">© 2025 eosguide. Information only. Always verify details on the official site.</p>
       </div>
-
-      <!-- Right: Disclaimer -->
-      <div class="text-center md:text-right">
-        <p class="text-gray-300 text-sm font-light">
-          © 2025 eosguide. Information only. We're not affiliated with the programs we link to and we don't give legal, financial, or tax advice.
-        </p>
-      </div>
-
     </div>
-
-    <!-- Bottom Links -->
-    <div class="mt-4 text-sm flex flex-wrap gap-3 md:justify-start justify-center">
-      <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
-      <span class="text-gray-500">•</span>
-      <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
-      <span class="text-gray-500">•</span>
-      <a href="/legal/#terms" class="text-cyan-300 hover:text-cyan-400 underline">Terms</a>
-      <span class="text-gray-500">•</span>
-      <a href="/legal/#disclaimer" class="text-cyan-300 hover:text-cyan-400 underline">Disclaimer</a>
-    </div>
-
-  </div>
-</footer>
+  </footer>
 
   <!-- Newsletter Modal -->
   <div id="newsletterModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -824,8 +802,8 @@ def build_page(f: dict) -> str:
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
           </svg>
         </div>
-        <h3 class="text-3xl font-black mb-2">Get alerts</h3>
-        <p class="text-gray-600 font-normal">New settlement and refund updates. No spam.</p>
+        <h3 class="text-3xl font-black mb-2">Never Miss Out</h3>
+        <p class="text-gray-600 font-normal">Weekly digest of new settlements. No spam — we have enough of that ourselves.</p>
       </div>
       <form action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub" method="post" class="space-y-4">
         <input type="hidden" name="embed" value="1">
@@ -833,7 +811,7 @@ def build_page(f: dict) -> str:
                class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light">
         <button type="submit"
                 class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300"
-                style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                style="background: linear-gradient(135deg, #06B6D4 0%, #7C3AED 100%);">
           Subscribe free
         </button>
       </form>
@@ -884,7 +862,7 @@ def build_page(f: dict) -> str:
 """
 
 
-def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, deadline: str = ""):
+def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, deadline: str = "", states: str = ""):
     index_path = os.path.join("articles", "index.html")
     if not os.path.exists(index_path):
         return
@@ -896,18 +874,46 @@ def update_articles_index(title: str, slug: str, blurb: str, last_updated: str, 
     if marker not in html:
         return
 
+    # Determine urgency badge
+    urgency_badge = ""
+    if deadline:
+        try:
+            from datetime import datetime, timezone
+            d = datetime.strptime(deadline, "%B %d, %Y").date() if not re.match(r"^\d{4}-\d{2}-\d{2}$", deadline) else datetime.strptime(deadline, "%Y-%m-%d").date()
+            dl = (d - datetime.now(timezone.utc).date()).days
+            if dl <= 7:
+                urgency_badge = f'<span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#ef4444,#ec4899);color:#fff;">🔥 {dl}d left</span>'
+            elif dl <= 30:
+                urgency_badge = f'<span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;">⏰ {dl}d left</span>'
+            elif dl <= 60:
+                urgency_badge = f'<span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;">📅 {dl}d left</span>'
+        except Exception:
+            pass
+
+    # State badge
+    state_list = [s.strip() for s in re.split(r"[\n,]+", states) if s.strip() and s.strip() != "_No response_"] if states else []
+    is_national = not state_list or any(s.lower() == "nationwide" for s in state_list)
+    state_label = "🌐 Nationwide" if is_national else f"📍 {state_list[0]}"
+    state_badge = f'<span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">{state_label}</span>'
+
     deadline_str = f"Deadline: {deadline} · " if deadline else ""
-    card = f"""
-      <article class="bg-white rounded-2xl shadow-sm p-5">
-        <h2 class="text-xl font-bold text-gray-900 mb-1">
-          <a href="/articles/{slug}.html" class="hover:underline">{title}</a>
-        </h2>
-        <p class="text-sm text-gray-600 mb-2">{deadline_str}Updated {last_updated}</p>
-        <p class="text-gray-700">{blurb}</p>
-      </article>
+
+    entry = f"""
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            {state_badge}
+            {urgency_badge}
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/{slug}.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">{title}</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">{deadline_str}Updated {last_updated}</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">{blurb}</p>
+          <a href="/articles/{slug}.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
     """
 
-    html = html.replace(marker, marker + card)
+    html = html.replace(marker, marker + entry)
 
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(html)
@@ -1025,7 +1031,7 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(page_html)
 
-    update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"], fields.get("deadline", ""))
+    update_articles_index(fields["title"], slug, fields["blurb"], fields["last_updated"], fields.get("deadline", ""), fields.get("eligible_states", ""))
     update_sitemap(slug, fields.get("last_updated", ""))
     print(f"Published: {out_path}")
 
