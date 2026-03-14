@@ -163,6 +163,75 @@
       border-radius:0.75rem; box-shadow:0 10px 25px rgba(0,0,0,.15); z-index:9999;
     }
     .skip-link:focus { left:1rem; }
+
+    details.footer-accordion {
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    details.footer-accordion summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    details.footer-accordion summary::-webkit-details-marker { display: none; }
+    details.footer-accordion summary::after {
+      content: '+';
+      color: #a5b4fc;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    details.footer-accordion[open] summary::after { content: '−'; }
+
+
+    .main-accordion + .main-accordion {
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .main-accordion summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.2rem 1.25rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #111827;
+    }
+    .main-accordion summary::-webkit-details-marker { display: none; }
+    .main-accordion summary::after {
+      content: '+';
+      color: #7c3aed;
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .main-accordion[open] summary::after { content: '−'; }
+    .main-accordion-content {
+      padding: 0 1.25rem 1.3rem;
+      color: #4b5563;
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+    .main-accordion-content p + p,
+    .main-accordion-content .faq-item + .faq-item { margin-top: 1rem; }
+    .main-accordion-content ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+    .main-accordion-content li + li { margin-top: 0.6rem; }
+    .main-accordion-content h3 {
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.25rem;
+    }
+
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -182,88 +251,50 @@
   <!-- ════════════════════════════════════════
        HEADER
   ════════════════════════════════════════ -->
-  <header class="relative z-10 px-4 pt-5 pb-4 sm:px-6 lg:px-8">
-
-    <!-- ── MOBILE layout: centered stack ── -->
-    <div class="flex flex-col items-center gap-3 sm:hidden">
-      <div class="animate-logo">
-        <a href="/" aria-label="Back to eosguide home">
-          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-24 h-24">
+  <header class="relative z-10 px-4 pt-5 pb-10 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center justify-between gap-4">
+        <a href="/" aria-label="Back to eosguide home" class="flex items-center gap-3 min-w-0">
+          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-11 h-11 sm:w-12 sm:h-12 animate-logo flex-shrink-0">
+          <div class="min-w-0">
+            <p class="text-xl sm:text-2xl font-black leading-none gradient-text">eosguide</p>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
+          </div>
         </a>
-      </div>
-      <div class="text-center">
-        <h1 class="text-4xl font-black leading-none">
-          <span class="gradient-text">eosguide</span>
-        </h1>
-        <p class="text-xs text-gray-500 mt-1.5 font-normal leading-snug max-w-xs mx-auto">
-          Find open settlement claims, deadlines, and official filing links in one searchable place.
-        </p>
-      </div>
-      <p class="text-sm font-bold italic text-gray-500 text-center leading-relaxed"
-         style="font-family:'DM Sans',sans-serif;">
-        "We do the searching<br>so you don't have to<br>pretend it's fun."
-      </p>
-      <div class="flex items-center gap-2">
-        <a href="/articles/"
-           class="inline-flex items-center gap-1 px-4 py-2 rounded-full text-xs font-bold border-2 border-purple-200 text-purple-700 whitespace-nowrap">
-          Guide Articles →
-        </a>
-        <button onclick="openNewsletter()"
-                class="inline-flex items-center gap-1.5 px-4 py-2 text-white rounded-full text-xs font-bold whitespace-nowrap"
-                style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          Get Alerts
-        </button>
-      </div>
-    </div>
 
-    <!-- ── DESKTOP layout: 3-col grid ── -->
-    <div class="hidden sm:grid grid-cols-[auto_1fr_auto] items-center gap-6 max-w-7xl mx-auto">
-
-      <!-- Left: Logo -->
-      <div class="flex-shrink-0 animate-logo">
-        <a href="/" aria-label="Back to eosguide home">
-          <img src="/Circular-badge-logo.png" alt="eosguide logo"
-               style="width:clamp(9rem,13vw,12rem);height:clamp(9rem,13vw,12rem);">
-        </a>
-      </div>
-
-      <!-- Center: Title + description -->
-      <div class="text-center">
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-none">
-          <span class="gradient-text">eosguide</span>
-        </h1>
-        <p class="text-sm sm:text-base text-gray-500 mt-2 font-normal leading-snug">
-          Find open settlement claims, deadlines, and official filing links in one searchable place.
-        </p>
-      </div>
-
-      <!-- Right: tagline + buttons -->
-      <div class="flex flex-col items-end gap-3 flex-shrink-0">
-        <p class="text-sm font-bold italic text-gray-500 text-right leading-relaxed"
-           style="font-family:'DM Sans',sans-serif; font-size:clamp(0.85rem,1.1vw,1.05rem);">
-          "We do the searching<br>so you don't have to<br>pretend it's fun."
-        </p>
-        <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-2">
           <a href="/articles/"
-             class="inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-bold border-2 border-purple-200 text-purple-700 hover:bg-purple-50 transition whitespace-nowrap">
-            Guide Articles →
+             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition whitespace-nowrap">
+            Read Guide Articles
           </a>
           <button onclick="openNewsletter()"
-                  class="inline-flex items-center gap-1.5 px-4 py-2 text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all whitespace-nowrap"
+                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white shadow-sm hover:shadow-lg transition-all whitespace-nowrap"
                   style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
             Get Alerts
           </button>
         </div>
       </div>
 
+      <div class="mt-12 sm:mt-16 max-w-2xl lg:max-w-3xl">
+        <h1 class="text-[2.35rem] sm:text-[3.35rem] lg:text-[4.25rem] font-black tracking-[-0.04em] text-gray-900 leading-[0.92]">
+          Check for settlements that may apply to you.
+        </h1>
+        <p class="mt-4 text-lg sm:text-xl text-gray-600 leading-snug max-w-2xl" style="font-family:'DM Sans',sans-serif;">
+          A company did something shady. Now we’re here.
+        </p>
+
+        <div class="mt-7 flex flex-col sm:hidden gap-2 max-w-xs">
+          <a href="/articles/"
+             class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition-all">
+            Read Guide Articles
+          </a>
+          <button onclick="openNewsletter()"
+                  class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold text-white shadow-sm"
+                  style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
+            Get Alerts
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -274,7 +305,7 @@
     <!-- ════════════════════════════════════════
          FILTER BAND  (pills + state + search in one compact strip)
     ════════════════════════════════════════ -->
-    <section class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
+    <section id="browse" class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto flex flex-col gap-3">
 
         <!-- Search + state row (desktop) -->
@@ -464,95 +495,105 @@
       </div>
     </div>
 
-    <!-- About / How it works / FAQ / Legal ─────────────── -->
-    <section id="about" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-white/70 backdrop-blur-md">
-      <div class="max-w-4xl mx-auto space-y-4">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">About eosguide</h2>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">eosguide is a calm dashboard for noisy money news. We track class actions, refunds, relief programs, and "you might have money waiting" lists, then sort them into one searchable place.</p>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">You still visit the official sites to read the fine print and apply. We just cut down the time you spend hunting.</p>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed font-light italic">eosguide is an information clearinghouse. We organize and share links to settlements, refunds, and programs but we don't administer them. Always verify details on the official site.</p>
-      </div>
-    </section>
+    <!-- About / How it works / FAQ / Legal -->
+    <section class="relative z-10 px-4 py-10 sm:px-6 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="rounded-[2rem] border border-white/60 bg-white/70 backdrop-blur-sm shadow-[0_10px_40px_rgba(124,58,237,0.08)] overflow-hidden">
+          <details class="main-accordion group" open>
+            <summary><span>About eosguide</span></summary>
+            <div class="main-accordion-content">
+              <p>eosguide is a calm dashboard for noisy money news. We track class actions, refunds, relief programs, and “you might have money waiting” lists, then sort them into one searchable place.</p>
+              <p>You still visit the official sites to read the fine print and apply. We just cut down the time you spend hunting.</p>
+              <p><em>eosguide is an information clearinghouse. We organize and share links to settlements, refunds, and programs but we don’t administer them. Always verify details on the official site.</em></p>
+            </div>
+          </details>
 
-    <section id="how-it-works" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-r from-cyan-50 to-purple-50">
-      <div class="max-w-4xl mx-auto space-y-4">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">How it works</h2>
-        <ol class="list-decimal list-inside text-sm sm:text-base text-gray-700 space-y-2">
-          <li>We collect public information about settlements, refunds, and programs.</li>
-          <li>We tag each opportunity by category, state, and difficulty.</li>
-          <li>You search and skim the cards to find what fits your situation.</li>
-          <li>When you click through, you go straight to the official source.</li>
-        </ol>
-      </div>
-    </section>
+          <details class="main-accordion group">
+            <summary><span>How it works</span></summary>
+            <div class="main-accordion-content">
+              <ol>
+                <li>We collect public information about settlements, refunds, and programs.</li>
+                <li>We tag each opportunity by category, state, and difficulty.</li>
+                <li>You search and skim the cards to find what fits your situation.</li>
+                <li>When you click through, you go straight to the official source.</li>
+              </ol>
+            </div>
+          </details>
 
-    <section id="faq" class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 bg-white/80 backdrop-blur-md">
-      <div class="max-w-4xl mx-auto space-y-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">FAQ</h2>
-        <div class="space-y-4 text-sm sm:text-base text-gray-800">
-          <div>
-            <h3 class="font-semibold mb-1">Do you take a cut of any money I get?</h3>
-            <p class="font-light">No. We never take a cut. If we use affiliate links in the future, we'll label them as sponsored so you can see them clearly.</p>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-1">Are you giving legal or financial advice?</h3>
-            <p class="font-light">No. We organize information so you can see what might apply to you. For legal, financial, or tax decisions, talk with a professional.</p>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-1">Is everything on the site guaranteed or up to date?</h3>
-            <p class="font-light">Programs change and everyone's situation is different. We try to stay current, but you should always confirm dates, rules, and details on the official site.</p>
-          </div>
+          <details class="main-accordion group">
+            <summary><span>FAQ</span></summary>
+            <div class="main-accordion-content">
+              <div class="faq-item">
+                <h3>Do you take a cut of any money I get?</h3>
+                <p>No. We never take a cut. If we use affiliate links in the future, we’ll label them as sponsored so you can see them clearly.</p>
+              </div>
+              <div class="faq-item">
+                <h3>Are you giving legal or financial advice?</h3>
+                <p>No. We organize information so you can see what might apply to you. For legal, financial, or tax decisions, talk with a professional.</p>
+              </div>
+              <div class="faq-item">
+                <h3>Is everything on the site guaranteed or up to date?</h3>
+                <p>Programs change and everyone’s situation is different. We try to stay current, but you should always confirm dates, rules, and details on the official site.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="main-accordion group">
+            <summary><span>Privacy</span></summary>
+            <div class="main-accordion-content">
+              <p>We collect as little information as we reasonably can. Right now that mainly means your email address if you join our alerts and basic usage stats from analytics tools.</p>
+              <p>We use this information to send updates you asked for and to understand which parts of the site are helpful. We don’t sell your data. If you ever want us to stop contacting you, you can unsubscribe or reach out and we’ll remove you.</p>
+            </div>
+          </details>
+
+          <details class="main-accordion group">
+            <summary><span>Terms</span></summary>
+            <div class="main-accordion-content">
+              <p>eosguide is an information tool. We share links and short summaries so you can research opportunities that might fit you. We do not run these programs and we can’t promise that any listing is current, accurate, or right for you.</p>
+              <p>By using this site, you agree that you’ll double-check details on the official site and that eosguide isn’t responsible for any decisions you make, missed deadlines, or outcomes from applying.</p>
+            </div>
+          </details>
+
+          <details class="main-accordion group">
+            <summary><span>Disclaimer</span></summary>
+            <div class="main-accordion-content">
+              <p>Nothing on this site is legal, financial, or tax advice. We’re doing our best to surface helpful information, but your situation is unique.</p>
+              <p>If you have questions about your rights, options, or money, please talk with a qualified professional who can look at your specific case.</p>
+            </div>
+          </details>
         </div>
-      </div>
-    </section>
-
-    <section id="privacy" class="relative z-10 px-4 sm:px-6 lg:px-8 py-10 bg-gray-50">
-      <div class="max-w-4xl mx-auto space-y-3">
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Privacy</h2>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">We collect as little information as we reasonably can. Right now that mainly means your email address if you join our alerts and basic usage stats from analytics tools.</p>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">We use this information to send updates you asked for and to understand which parts of the site are helpful. We don't sell your data. If you ever want us to stop contacting you, you can unsubscribe or reach out and we'll remove you.</p>
-      </div>
-    </section>
-
-    <section id="terms" class="relative z-10 px-4 sm:px-6 lg:px-8 py-10 bg-gray-50">
-      <div class="max-w-4xl mx-auto space-y-3">
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Terms</h2>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">eosguide is an information tool. We share links and short summaries so you can research opportunities that might fit you. We do not run these programs and we can't promise that any listing is current, accurate, or right for you.</p>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">By using this site, you agree that you'll double-check details on the official site and that eosguide isn't responsible for any decisions you make, missed deadlines, or outcomes from applying.</p>
-      </div>
-    </section>
-
-    <section id="disclaimer" class="relative z-10 px-4 sm:px-6 lg:px-8 py-10 bg-gray-50">
-      <div class="max-w-4xl mx-auto space-y-3">
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Disclaimer</h2>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">Nothing on this site is legal, financial, or tax advice. We're doing our best to surface helpful information, but your situation is unique.</p>
-        <p class="text-sm sm:text-base text-gray-700 leading-relaxed">If you have questions about your rights, options, or money, please talk with a qualified professional who can look at your specific case.</p>
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid md:grid-cols-3 gap-8 mb-8">
-        <div>
-          <h4 class="font-black text-xl mb-3 gradient-text-light">eosguide</h4>
-          <p class="text-gray-400 text-sm font-light">We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.</p>
+<footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 border-t border-white/10 pt-8">
+        <div class="max-w-md">
+          <h4 class="font-black text-2xl gradient-text-light">eosguide</h4>
+          <p class="text-gray-400 text-sm mt-2">
+            A searchable hub for settlement claims and official filing links.
+          </p>
         </div>
-        <div class="text-center md:text-left">
-          <p class="text-gray-300 text-sm font-light">Have a question, suggestion, or request?</p>
-          <p class="text-gray-200 text-sm font-light mt-1">Email: <a href="/cdn-cgi/l/email-protection#aec6cbc2c2c1eecbc1ddc9dbc7cacbc6dbcc80cdc1c3" class="text-cyan-300 hover:text-cyan-400 underline"><span class="__cf_email__" data-cfemail="7f171a1313103f1a100c180a161b1a170a1d511c1012">[email&#160;protected]</span></a></p>
-        </div>
-        <div class="text-center md:text-right text-sm flex flex-col gap-1 items-center md:items-end justify-center">
-          <a href="/legal/"            class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
-          <a href="/legal/#privacy"    class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
-          <a href="/legal/#terms"      class="text-cyan-300 hover:text-cyan-400 underline">Terms</a>
-          <a href="/legal/#disclaimer" class="text-cyan-300 hover:text-cyan-400 underline">Disclaimer</a>
+
+        <div class="flex flex-col sm:items-end gap-2 text-sm">
+          <a href="/cdn-cgi/l/email-protection#aec6cbc2c2c1eecbc1ddc9dbc7cacbc6dbcc80cdc1c3" class="text-cyan-300 hover:text-cyan-400 underline">
+            Contact
+          </a>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 sm:justify-end">
+            <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
+            <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
+            <a href="/legal/#terms" class="text-cyan-300 hover:text-cyan-400 underline">Terms</a>
+            <a href="/legal/#disclaimer" class="text-cyan-300 hover:text-cyan-400 underline">Disclaimer</a>
+          </div>
         </div>
       </div>
-      <div class="text-center border-t border-gray-700 pt-6">
-        <p class="text-gray-400 text-sm font-light">© 2025 eosguide. Information only. Not affiliated with the programs we link to and not legal, financial, or tax advice.</p>
+
+      <div class="pt-6">
+        <p class="text-gray-500 text-sm">
+          © 2025 eosguide. Information only. Always verify details on the official site.
+        </p>
       </div>
     </div>
   </footer>
