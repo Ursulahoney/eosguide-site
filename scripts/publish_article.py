@@ -193,7 +193,6 @@ def build_at_a_glance(f: dict) -> str:
 
     return f"""
     <section class="glance-card" aria-label="At a glance">
-      <h2 class="section-title">At a glance</h2>
       <div class="glance-grid">{rows}</div>
     </section>
     """
@@ -212,9 +211,9 @@ def build_key_dates_table(f: dict) -> str:
     if deadline:
         rows += f"""
         <tr>
-          <td>Submit / Claim</td>
+          <td>Claim deadline</td>
           <td class="date-cell urgent">{deadline}</td>
-          <td>Last day to submit</td>
+          <td>Last day to file a claim</td>
         </tr>"""
     if optout:
         rows += f"""
@@ -549,14 +548,14 @@ def build_page(f: dict) -> str:
     if f.get("deadline"):
         claim_url = f.get("claim_form_url") or official_website
         deadline_banner = f"""
-        <div class="bg-red-50 border-l-4 border-red-500 p-5 mb-6 rounded-r-xl">
-          <div class="flex items-center mb-2">
-            <svg class="w-5 h-5 text-red-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <div style="background:#fefce8;border-left:4px solid #f59e0b;border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <svg style="width:18px;height:18px;color:#d97706;flex-shrink:0;" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
             </svg>
-            <span class="font-bold text-red-800">Deadline: {f["deadline"]}</span>
+            <span style="font-weight:700;color:#92400e;font-size:0.9rem;">Deadline: {f["deadline"]}</span>
           </div>
-          {"" if not claim_url else f'<a href="{claim_url}" target="_blank" rel="noopener noreferrer" class="inline-block bg-red-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-red-700 transition text-sm no-underline">File Your Claim Now →</a>'}
+          {"" if not claim_url else f'<a href="{claim_url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:linear-gradient(135deg,#0EA5E9,#7C3AED);color:#fff;padding:9px 20px;border-radius:999px;font-weight:700;font-size:0.875rem;text-decoration:none;">File Your Claim →</a>'}
         </div>"""
 
     share_buttons = f"""
@@ -631,17 +630,17 @@ def build_page(f: dict) -> str:
     .benefit-card .big {{ margin: 0; font-size: 1.1rem; font-weight: 800; color: #111827; }}
     .benefit-card .small {{ margin: 6px 0 0; color: #6b7280; font-size: 0.9rem; }}
 
-    .glance-card {{ background: #fff; border: 1px solid #e5e7eb; border-radius: 18px; padding: 16px; margin: 16px 0; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }}
-    .glance-grid {{ display: grid; gap: 8px; margin-top: 10px; }}
-    .glance-row {{ display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 12px; border-radius: 12px; background: #fafaf9; border: 1px solid #e5e7eb; }}
+    .glance-card {{ background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 18px; padding: 16px; margin: 16px 0; }}
+    .glance-grid {{ display: grid; gap: 8px; }}
+    .glance-row {{ display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 12px; border-radius: 10px; background: #ffffff; border: 1px solid #ede9fe; }}
     .glance-label {{ font-weight: 700; color: #6b7280; font-size: 0.88rem; padding-top: 1px; }}
     .glance-value {{ font-weight: 600; color: #111827; font-size: 0.95rem; overflow-wrap: anywhere; }}
-    .glance-value a {{ color: #2563eb; }}
+    .glance-value a {{ color: #7c3aed; }}
 
     .bullets {{ padding-left: 1.25rem; }}
-    .bullets li {{ margin: 6px 0; font-size: 0.95rem; color: #374151; }}
+    .bullets li {{ margin: 8px 0; font-size: 0.95rem; color: #374151; line-height: 1.5; }}
     .steps {{ padding-left: 1.25rem; }}
-    .steps li {{ margin: 8px 0; font-size: 0.95rem; color: #374151; }}
+    .steps li {{ margin: 10px 0; font-size: 0.95rem; color: #374151; line-height: 1.5; }}
 
     .callout {{ border-radius: 14px; padding: 14px 16px; border: 1px solid #e5e7eb; background: #fafaf9; }}
     .mini-row {{ margin-bottom: 6px; font-size: 0.9rem; color: #374151; }}
@@ -700,7 +699,7 @@ def build_page(f: dict) -> str:
   <hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.12),transparent);margin:0;">
 
   <!-- Main content -->
-  <main class="relative z-10 px-4 sm:px-6 lg:px-8 pb-16">
+  <main class="relative z-10 px-4 sm:px-6 lg:px-8 pb-8">
     <article class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-8" id="main-content">
 
       <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
