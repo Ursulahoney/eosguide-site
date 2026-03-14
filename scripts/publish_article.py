@@ -615,53 +615,53 @@ def build_page(f: dict) -> str:
     .animate-logo {{ animation: floatSoft 4s ease-in-out infinite; }}
     /* Article section styles */
     .section {{ margin: 1.5rem 0; }}
-    .section-title {{ font-size: 1.15rem; font-weight: 800; margin: 0 0 0.75rem; color: #111827; letter-spacing: -0.01em; }}
+    .section-title {{ font-size: 1.15rem; font-weight: 800; margin: 0 0 0.75rem; color: #111827; letter-spacing: -0.01em; border-left: 3px solid #7c3aed; padding-left: 10px; }}
     .section ul {{ padding-left: 1.25rem; margin: 0.5rem 0; }}
-    .section ul li {{ margin: 8px 0; font-size: 0.95rem; color: #374151; line-height: 1.55; }}
+    .section ul li {{ margin: 8px 0; font-size: 0.95rem; color: #1f2937; line-height: 1.55; }}
     .section ol {{ padding-left: 1.25rem; margin: 0.5rem 0; }}
-    .section ol li {{ margin: 10px 0; font-size: 0.95rem; color: #374151; line-height: 1.55; }}
-    .section p {{ margin: 0.5rem 0; font-size: 0.95rem; color: #374151; line-height: 1.6; }}
+    .section ol li {{ margin: 10px 0; font-size: 0.95rem; color: #1f2937; line-height: 1.55; }}
+    .section p {{ margin: 0.5rem 0; font-size: 0.95rem; color: #1f2937; line-height: 1.6; }}
     .divider {{ border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }}
 
     .table-wrap {{ overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 14px; background: #fafaf9; }}
     .deadline-table {{ width: 100%; border-collapse: collapse; min-width: 500px; }}
-    .deadline-table th, .deadline-table td {{ padding: 10px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; font-size: 14px; }}
-    .deadline-table th {{ background: #f5f5f4; color: #6b7280; font-weight: 700; }}
-    .date-cell.urgent {{ color: #b91c1c; font-weight: 800; }}
+    .deadline-table th, .deadline-table td {{ padding: 10px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; font-size: 14px; color: #1f2937; }}
+    .deadline-table th {{ background: #f5f5f4; color: #374151; font-weight: 700; }}
+    .date-cell.urgent {{ color: #0891b2; font-weight: 800; }}
 
     .benefit-grid {{ display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 10px; }}
     .benefit-card {{ background: #fafaf9; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px; }}
-    .benefit-card h3 {{ margin: 0 0 4px; font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }}
+    .benefit-card h3 {{ margin: 0 0 4px; font-size: 0.9rem; color: #374151; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }}
     .benefit-card .big {{ margin: 0; font-size: 1.1rem; font-weight: 800; color: #111827; }}
-    .benefit-card .small {{ margin: 6px 0 0; color: #6b7280; font-size: 0.9rem; }}
+    .benefit-card .small {{ margin: 6px 0 0; color: #4b5563; font-size: 0.9rem; }}
 
     .glance-card {{ background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 18px; padding: 16px; margin: 16px 0; }}
     .glance-grid {{ display: grid; gap: 8px; }}
     .glance-row {{ display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 9px 12px; border-radius: 10px; background: #ffffff; border: 1px solid #ede9fe; }}
-    .glance-label {{ font-weight: 700; color: #6b7280; font-size: 0.88rem; padding-top: 1px; }}
+    .glance-label {{ font-weight: 700; color: #4b5563; font-size: 0.88rem; padding-top: 1px; }}
     .glance-value {{ font-weight: 600; color: #111827; font-size: 0.95rem; overflow-wrap: anywhere; }}
     .glance-value a {{ color: #7c3aed; }}
 
     .bullets {{ padding-left: 1.25rem; }}
-    .bullets li {{ margin: 8px 0; font-size: 0.95rem; color: #374151; line-height: 1.5; }}
+    .bullets li {{ margin: 8px 0; font-size: 0.95rem; color: #1f2937; line-height: 1.5; }}
     .steps {{ padding-left: 1.25rem; }}
-    .steps li {{ margin: 10px 0; font-size: 0.95rem; color: #374151; line-height: 1.5; }}
+    .steps li {{ margin: 10px 0; font-size: 0.95rem; color: #1f2937; line-height: 1.5; }}
 
     .callout {{ border-radius: 14px; padding: 14px 16px; border: 1px solid #e5e7eb; background: #fafaf9; }}
-    .mini-row {{ margin-bottom: 6px; font-size: 0.9rem; color: #374151; }}
+    .mini-row {{ margin-bottom: 6px; font-size: 0.9rem; color: #1f2937; }}
 
     .cta-row {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem; }}
     .btn {{ border: 1px solid #d1d5db; border-radius: 999px; padding: 10px 18px; font-weight: 700; font-size: 0.9rem; background: #fafaf9; color: #111827; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: all 0.2s; }}
     .btn:hover {{ background: #f3f4f6; text-decoration: none; }}
-    .btn.primary {{ background: #dcfce7; border-color: #86efac; color: #14532d; }}
-    .btn.primary:hover {{ background: #bbf7d0; }}
+    .btn.primary {{ background: linear-gradient(135deg,#0EA5E9,#7C3AED); border: none; color: #fff; }}
+    .btn.primary:hover {{ opacity: 0.92; }}
 
     details.faq {{ border: 1px solid #e5e7eb; border-radius: 14px; padding: 12px 14px; background: #fafaf9; margin: 8px 0; }}
     details.faq summary {{ cursor: pointer; font-weight: 700; font-size: 0.95rem; color: #111827; list-style: none; display: flex; justify-content: space-between; align-items: center; }}
     details.faq summary::-webkit-details-marker {{ display: none; }}
-    details.faq summary::after {{ content: '+'; font-size: 1.2rem; color: #6b7280; flex-shrink: 0; margin-left: 8px; }}
+    details.faq summary::after {{ content: '+'; font-size: 1.2rem; color: #7c3aed; flex-shrink: 0; margin-left: 8px; }}
     details[open].faq summary::after {{ content: '−'; }}
-    .faq-a {{ margin-top: 10px; color: #374151; font-size: 0.93rem; line-height: 1.6; padding-top: 10px; border-top: 1px solid #e5e7eb; }}
+    .faq-a {{ margin-top: 10px; color: #1f2937; font-size: 0.93rem; line-height: 1.6; padding-top: 10px; border-top: 1px solid #e5e7eb; }}
 
     @media (min-width: 768px) {{
       .benefit-grid {{ grid-template-columns: repeat(2, 1fr); }}
