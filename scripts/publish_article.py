@@ -616,6 +616,11 @@ def build_page(f: dict) -> str:
     /* Article section styles */
     .section {{ margin: 1.5rem 0; }}
     .section-title {{ font-size: 1.15rem; font-weight: 800; margin: 0 0 0.75rem; color: #111827; letter-spacing: -0.01em; }}
+    .section ul {{ padding-left: 1.25rem; margin: 0.5rem 0; }}
+    .section ul li {{ margin: 8px 0; font-size: 0.95rem; color: #374151; line-height: 1.55; }}
+    .section ol {{ padding-left: 1.25rem; margin: 0.5rem 0; }}
+    .section ol li {{ margin: 10px 0; font-size: 0.95rem; color: #374151; line-height: 1.55; }}
+    .section p {{ margin: 0.5rem 0; font-size: 0.95rem; color: #374151; line-height: 1.6; }}
     .divider {{ border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }}
 
     .table-wrap {{ overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 14px; background: #fafaf9; }}
