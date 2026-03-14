@@ -49,56 +49,78 @@ def format_deadline(deadline_iso):
     return d.strftime("%b %d, %Y")
 
 
+def get_accent(category):
+    c = (category or "").lower()
+    if "class action" in c or "legal" in c or "settlement" in c:
+        return "#0891b2"
+    if "refund" in c or "unclaimed" in c:
+        return "#7c3aed"
+    if "relief" in c or "benefit" in c or "assistance" in c:
+        return "#db2777"
+    if "utility" in c or "energy" in c:
+        return "#0d9488"
+    if "health" in c or "medical" in c or "veteran" in c:
+        return "#4f46e5"
+    if "tax" in c or "property" in c:
+        return "#e11d48"
+    return "#7c3aed"
+
+
+def urgency_badge(dl):
+    if dl is None or dl < 0 or dl > 900:
+        return ""
+    if dl <= 7:
+        return f'<span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#ef4444,#ec4899);color:#fff;margin-bottom:6px;">🔥 {dl}d left</span>'
+    if dl <= 30:
+        return f'<span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;margin-bottom:6px;">⏰ {dl}d left</span>'
+    if dl <= 60:
+        return f'<span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 {dl}d left</span>'
+    return ""
+
+
 def card_html(opp):
     title = escape_html(safe(opp.get("title")))
     desc = escape_html(safe(opp.get("description")))
-    amount = escape_html(safe(opp.get("amount"))) or "—"
-    state = escape_html(safe(opp.get("state"))) or "—"
-    category = escape_html(safe(opp.get("category"))) or "Other"
+    amount = escape_html(safe(opp.get("amount"))) or ""
+    state = escape_html(safe(opp.get("state"))) or "Nationwide"
+    category = safe(opp.get("category")) or "Other"
+    accent = get_accent(category)
 
     url = safe(opp.get("url"))
     if url.startswith("https://eosguidehub.com"):
         url = url.replace("https://eosguidehub.com", "")
     if url and not url.startswith("/"):
         url = "/" + url
-
-    # Enforce internal article link format: /articles/<slug>.html
     if url.startswith("/articles/") and not url.endswith(".html"):
         url = url.rstrip("/") + ".html"
 
     deadline_raw = safe(opp.get("deadline"))
+    d = parse_deadline_iso(deadline_raw)
+    dl = days_left(d)
     deadline_display = escape_html(format_deadline(deadline_raw))
 
-    return f"""
-    <div class="bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-      <div class="flex flex-wrap gap-2 mb-3">
-        <span class="inline-flex items-center px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-700">
-          {category}
-        </span>
-        <span class="inline-flex items-center px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-700">
-          {state}
-        </span>
-      </div>
+    is_national = state.lower() in ("nationwide", "national", "all states", "")
+    state_badge = "🌐 Nationwide" if is_national else f"📍 {state}"
 
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center space-x-1 text-green-600">
-          <span class="font-black text-sm">{amount}</span>
-        </div>
-        <div class="text-sm text-gray-600">
-          <span class="font-semibold">Deadline:</span> {deadline_display}
-        </div>
-      </div>
+    urgency_html = urgency_badge(dl)
+    amount_html = f'<div style="font-size:15px;font-weight:900;color:{accent};margin-bottom:4px;">{escape_html(amount)}</div>' if amount else ""
 
-      <h3 class="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-
-      <p class="text-sm text-gray-600 mb-4">{desc}</p>
-
-      <a href="{escape_html(url)}" class="block w-full text-center px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg transition-all duration-300"
-         style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
-        View Details →
-      </a>
-    </div>
-    """.strip()
+    return f"""<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid {accent};border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">{escape_html(state_badge)}</span>
+  </div>
+  {amount_html}
+  {urgency_html}
+  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">{title}</h4>
+  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">{desc}</p>
+  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
+    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
+    <span style="font-weight:700;color:#374151;">{deadline_display}</span>
+  </div>
+  <a href="{escape_html(url)}" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:{accent};">
+    View Details →
+  </a>
+</article>"""
 
 
 def main():
