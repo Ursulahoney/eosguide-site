@@ -46,10 +46,31 @@
   </script>
 
 <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
 
-  <!-- Optional: helps tables behave better in small screens -->
-  
   <style>
+    body { font-family: 'Montserrat', system-ui, -apple-system, sans-serif; font-weight: 400; }
+    .gradient-text {
+      background: linear-gradient(90deg, #0891b2 0%, #7c3aed 50%, #db2777 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .gradient-text-light {
+      background: linear-gradient(90deg, #67e8f9 0%, #c4b5fd 50%, #f9a8d4 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-4px); }
+    }
+    .animate-logo { animation: floatSoft 4s ease-in-out infinite; }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.93); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .animate-scaleIn { animation: scaleIn 0.28s ease-out; }
     .table-wrap { overflow-x: auto; }
     .table-wrap table { width: 100%; border-collapse: collapse; }
     .table-wrap th, .table-wrap td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
@@ -104,59 +125,36 @@
 <body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50">
 
   <!-- SITE HEADER -->
-    <!-- Header -->
-<header class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
-  <nav class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-    <!-- Logo + tagline -->
-    <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 group cursor-pointer">
-      <!-- Logo with subtle animation -->
-      <div class="relative flex-shrink-0 animate-logo">
-  <a href="/" aria-label="Back to eosguide home">
-    <img src="/Circular-badge-logo.png"
-         alt="eosguide logo"
-         class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40">
-  </a>
-</div>
-
-
-      <!-- Tagline to the right, wrapped into multiple lines -->
-      <blockquote class="text-xs sm:text-sm md:text-base font-semibold italic leading-snug 
-                         text-gray-500 max-w-xs md:max-w-sm text-center md:text-left"
-                  style="font-family: 'DM Sans', 'Montserrat', system-ui, sans-serif;">
-        "We do the searching<br>
-        so you don't have to<br>
-        pretend it's fun."
-      </blockquote>
+  <header class="relative z-10 px-4 pt-5 pb-6 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center justify-between gap-4">
+        <a href="/" aria-label="Back to eosguide home" class="flex items-center gap-3 min-w-0">
+          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0">
+          <div class="min-w-0">
+            <p class="text-xl sm:text-2xl font-black leading-none gradient-text">eosguide</p>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
+          </div>
+        </a>
+        <div class="hidden sm:flex items-center gap-2">
+          <a href="/articles/"
+             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition whitespace-nowrap">
+            ← Guides
+          </a>
+          <button onclick="openNewsletter()"
+                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white shadow-sm hover:shadow-lg transition-all whitespace-nowrap"
+                  style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
+            Get Alerts
+          </button>
+        </div>
+        <!-- Mobile nav -->
+        <div class="flex sm:hidden items-center gap-2">
+          <a href="/articles/" class="text-xs font-bold text-purple-700 px-3 py-1.5 rounded-full border border-purple-200 bg-white/85">← Guides</a>
+          <button onclick="openNewsletter()" class="text-xs font-bold text-white px-3 py-1.5 rounded-full" style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">Alerts</button>
+        </div>
+      </div>
     </div>
-<div class="flex flex-col items-center gap-2 self-center md:self-auto">
-
-  <button onclick="openNewsletter()"
-          class="flex items-center space-x-2 px-6 py-3 
-                 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
-          style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-    </svg>
-    <span>Get Alerts</span>
-  </button>
-
-  <a href="/articles/"
-  class="text-sm font-semibold text-purple-600 hover:text-purple-700
-       px-3 py-1 rounded-full hover:bg-purple-50
-       flex items-center gap-1 transition">
-
-  <span>Articles</span>
-  <span aria-hidden="true">→</span>
-</a>
-
-
-</div>
-
-
-  </nav>
-</header>
+  </header>
+  <hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.12),transparent);margin:0;" class="relative z-10">
 
   <main class="relative z-10 px-4 sm:px-6 lg:px-8 py-12">
   <article class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-8">
@@ -226,7 +224,8 @@
           <h2 class="text-base font-extrabold text-gray-900 m-0">Claim snapshot</h2>
           <button type="button"
             onclick="openNewsletter()"
-            class="px-3 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition">
+            class="px-3 py-2 rounded-2xl text-white text-sm font-semibold transition hover:opacity-90"
+            style="background:linear-gradient(135deg,#06B6D4,#7C3AED);">
             Get Alerts
           </button>
         </div>
@@ -317,9 +316,7 @@
           Copy link
         </button>
 
-        <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition"
-           target="_blank" rel="noopener"
-           href="mailto:?subject={{TITLE}}&body={{CANONICAL_URL}}">
+        <a class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition" target="_blank" rel="noopener" href="/cdn-cgi/l/email-protection#152a6660777f707661286e6e415c415950686833777a716c286e6e56545b5a5b5c5654594a4047596868">
           Email
         </a>
 
@@ -344,7 +341,7 @@
 
     
   
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Add stable IDs to headings so links can jump reliably
     (function () {
       const container = document.querySelector('.prose');
@@ -477,54 +474,28 @@
 
 
   <!-- SITE FOOTER -->
-<footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-7xl mx-auto">
-
-    <div class="grid md:grid-cols-3 gap-8 mb-8">
-
-      <!-- Brand blurb -->
-      <div>
-        <h4 class="font-black text-xl mb-4 bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-          eosguide
-        </h4>
-        <p class="text-gray-400 text-sm font-light">
-          We keep an eye on refunds, relief, and "you might have money out there" programs so you don't have to chase every headline.
-        </p>
+  <footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 border-t border-white/10 pt-8">
+        <div class="max-w-md">
+          <h4 class="font-black text-2xl gradient-text-light">eosguide</h4>
+          <p class="text-gray-400 text-sm mt-2">A searchable hub for settlement claims and official filing links.</p>
+        </div>
+        <div class="flex flex-col sm:items-end gap-2 text-sm">
+          <a href="mailto:hello@eosguidehub.com" class="text-cyan-300 hover:text-cyan-400 underline">Contact</a>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 sm:justify-end">
+            <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
+            <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
+            <a href="/legal/#terms" class="text-cyan-300 hover:text-cyan-400 underline">Terms</a>
+            <a href="/legal/#disclaimer" class="text-cyan-300 hover:text-cyan-400 underline">Disclaimer</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Contact -->
-      <div class="text-center md:text-left">
-        <p class="text-gray-300 text-sm font-light">
-          Have a question, suggestion, or request?
-        </p>
-        <p class="text-gray-200 text-sm font-light">
-          Email:
-          <a href="/cdn-cgi/l/email-protection#274e4941486742485440524e43420944484a"
-             class="text-cyan-300 hover:text-cyan-400 underline">
-            <span class="__cf_email__" data-cfemail="a3cacdc5cce3c6ccd0c4d6cac7c68dc0ccce">
-              [email&#160;protected]
-            </span>
-          </a>
-        </p>
+      <div class="pt-6">
+        <p class="text-gray-500 text-sm">© 2025 eosguide. Information only. Always verify details on the official site.</p>
       </div>
-
-      <!-- Legal -->
-      <div class="text-center md:text-right">
-        <p class="text-gray-300 text-sm font-light">
-          © 2025 eosguide. Information only.
-        </p>
-        <p class="text-gray-400 text-xs font-light mt-1">
-          Not legal, financial, or tax advice.
-        </p>
-        <p class="mt-2 text-sm">
-          <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
-        </p>
-      </div>
-
     </div>
-
-  </div>
-</footer>
+  </footer>
 
 
 
@@ -545,8 +516,8 @@
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
           </svg>
         </div>
-        <h3 class="text-3xl font-black mb-2">Get alerts</h3>
-        <p class="text-gray-600 font-normal">New settlement and refund updates. No spam.</p>
+        <h3 class="text-3xl font-black mb-2">Never Miss Out</h3>
+        <p class="text-gray-600 font-normal">Weekly digest of new settlements. No spam — we have enough of that ourselves.</p>
       </div>
 
       <form action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub"
@@ -563,7 +534,7 @@
 
         <button type="submit"
                 class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300"
-                style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);">
+                style="background: linear-gradient(135deg, #06B6D4 0%, #7C3AED 100%);">
           Subscribe free
         </button>
       </form>
@@ -597,12 +568,4 @@
       if (e.target === modal) closeNewsletter();
     });
 
-    // Close on Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeNewsletter();
-    });
-  </script>
-
-</body>
-</html>
-
+    // Clo
