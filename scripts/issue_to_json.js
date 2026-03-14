@@ -92,42 +92,25 @@ function writeJson(jsonPath, arr) {
   const deadline = toISODateOrEmpty(parseField(body, "Deadline (YYYY-MM-DD)"));
   const article_slug = parseField(body, "Article slug (links to your article)");
   const amount = parseField(body, "Amount");
-  const details_url = parseField(body, "Details URL (info page)");
-  const apply_url = parseField(body, "Apply URL (where user files claim)");
   const card_description = parseField(body, "Card description (shows on site)");
   const featured = parseFeatured(body);
 
   const url = toArticleUrl(article_slug);
 
-  // Keep the official URLs for the article to link out
-  const official_url = safeStr(apply_url) || safeStr(details_url);
-if (!title || !card_description || !url) {
-    throw new Error(
-      "Missing required fields: title, article_slug, card_description."
-    );
+  if (!title || !card_description || !url) {
+    throw new Error("Missing required fields: title, article_slug, card_description.");
   }
 
-  // We still want at least one official URL stored
-  if (!official_url) {
-    throw new Error("Missing required field: at least one of details_url or apply_url.");
-  }
-const newItem = {
-    id: makeId({ url: official_url, title, deadline, state }),
+  const newItem = {
+    id: makeId({ url, title, deadline, state }),
     title,
     category: category || "Other",
     amount: safeStr(amount),
     deadline,
-    difficulty: "Medium",
     description: card_description,
-    url, // internal article link
-    official_url: official_url,
+    url,
     state: state || "Nationwide",
-    value: null,
     featured: !!featured,
-
-    // extra fields (won’t break anything if your UI ignores them)
-    details_url: safeStr(details_url),
-    apply_url: safeStr(apply_url),
   };
 
   const jsonPath = path.join(process.cwd(), "data", "opportunities.json");
@@ -136,20 +119,13 @@ const newItem = {
   // Keep live JSON clean: drop expired on every run
   existing = existing.filter((x) => !isExpired(safeStr(x.deadline)));
 
-    // Allow one card per state for the same article/official URL.
-  // Only block true duplicates: same article + same state (or same official_url + same state).
+  // Only block true duplicates: same article + same state
   const already = existing.some((x) => {
     const sameId = safeStr(x.id) === newItem.id;
-
     const sameArticleSameState =
       safeStr(x.url) === safeStr(newItem.url) &&
       safeStr(x.state).toLowerCase() === safeStr(newItem.state).toLowerCase();
-
-    const sameOfficialSameState =
-      safeStr(x.official_url) === safeStr(newItem.official_url) &&
-      safeStr(x.state).toLowerCase() === safeStr(newItem.state).toLowerCase();
-
-    return sameId || sameArticleSameState || sameOfficialSameState;
+    return sameId || sameArticleSameState;
   });
 
   if (!already) existing.unshift(newItem);
@@ -164,4 +140,3 @@ const newItem = {
   writeJson(jsonPath, existing);
   console.log(`Saved opportunities.json. Total active: ${existing.length}`);
 })();
-
