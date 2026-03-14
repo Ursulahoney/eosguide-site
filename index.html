@@ -690,20 +690,26 @@
 
     function getCardTheme(category) {
       const c = (category || '').toLowerCase();
+      // Cyan family — matches site's cyan gradient anchor
       if (c.includes('class action') || c.includes('legal') || c.includes('settlement'))
-        return { bg:'#FAECE7', border:'#F5C4B3', ctaBg:'#993C1D', ctaText:'#FAECE7', diffEasy:'bg-green-100 text-green-700', chipBg:'rgba(153,60,29,0.08)' };
+        return { bg:'#e0f2fe', border:'#7dd3fc', ctaBg:'#0891b2', ctaText:'#fff' };
+      // Purple family — matches site's purple gradient anchor
       if (c.includes('refund') || c.includes('unclaimed'))
-        return { bg:'#E1F5EE', border:'#9FE1CB', ctaBg:'#0F6E56', ctaText:'#E1F5EE', diffEasy:'bg-green-100 text-green-700', chipBg:'rgba(15,110,86,0.08)' };
-      if (c.includes('relief') || c.includes('benefit') || c.includes('assistance'))
-        return { bg:'#E6F1FB', border:'#B5D4F4', ctaBg:'#185FA5', ctaText:'#E6F1FB', diffEasy:'bg-blue-100 text-blue-700', chipBg:'rgba(24,95,165,0.08)' };
-      if (c.includes('tax') || c.includes('property'))
-        return { bg:'#FAEEDA', border:'#FAC775', ctaBg:'#854F0B', ctaText:'#FAEEDA', diffEasy:'bg-green-100 text-green-700', chipBg:'rgba(133,79,11,0.08)' };
-      if (c.includes('health') || c.includes('medical') || c.includes('veteran'))
-        return { bg:'#EEEDFE', border:'#CECBF6', ctaBg:'#534AB7', ctaText:'#EEEDFE', diffEasy:'bg-green-100 text-green-700', chipBg:'rgba(83,74,183,0.08)' };
+        return { bg:'#ede9fe', border:'#c4b5fd', ctaBg:'#7c3aed', ctaText:'#fff' };
+      // Pink family — matches site's pink gradient anchor
+      if (c.includes('relief') || c.includes('benefit') || c.includes('assistance') || c.includes('social'))
+        return { bg:'#fce7f3', border:'#f9a8d4', ctaBg:'#db2777', ctaText:'#fff' };
+      // Cyan-teal for utilities/energy
       if (c.includes('utility') || c.includes('energy'))
-        return { bg:'#EAF3DE', border:'#C0DD97', ctaBg:'#3B6D11', ctaText:'#EAF3DE', diffEasy:'bg-green-100 text-green-700', chipBg:'rgba(59,109,17,0.08)' };
-      // default: blue
-      return { bg:'#E6F1FB', border:'#B5D4F4', ctaBg:'#185FA5', ctaText:'#E6F1FB', diffEasy:'bg-green-100 text-green-700', chipBg:'rgba(24,95,165,0.08)' };
+        return { bg:'#ccfbf1', border:'#5eead4', ctaBg:'#0d9488', ctaText:'#fff' };
+      // Purple-indigo for health/veterans
+      if (c.includes('health') || c.includes('medical') || c.includes('veteran'))
+        return { bg:'#e0e7ff', border:'#a5b4fc', ctaBg:'#4f46e5', ctaText:'#fff' };
+      // Pink-rose for tax/property
+      if (c.includes('tax') || c.includes('property'))
+        return { bg:'#ffe4e6', border:'#fda4af', ctaBg:'#e11d48', ctaText:'#fff' };
+      // Default: purple
+      return { bg:'#ede9fe', border:'#c4b5fd', ctaBg:'#7c3aed', ctaText:'#fff' };
     }
 
     function renderOpportunities() {
@@ -774,12 +780,13 @@
          style="background:${theme.bg}; border: 1.5px solid ${theme.border};">
   <div class="relative">
 
-    <!-- Top row: category + save -->
+    <!-- Top row: category + state + save -->
     <div class="flex items-center justify-between mb-3">
       <div class="flex flex-wrap gap-1.5">
         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
               style="background:rgba(0,0,0,0.07); color:#374151;">${ci.icon} ${ci.name}</span>
-        ${opp.geography === 'national' ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold" style="background:rgba(0,0,0,0.07); color:#374151;">🌐 Nationwide</span>' : ''}
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold"
+              style="background:rgba(0,0,0,0.07); color:#374151;">${opp.geography === 'national' ? '🌐 Nationwide' : '📍 ' + (opp.state || '')}</span>
       </div>
       <button onclick="toggleSaved('${opp.id}')"
               class="p-1.5 rounded-full transition-colors flex-shrink-0 ml-1.5"
@@ -802,7 +809,7 @@
     <h4 class="text-sm font-bold text-gray-900 mb-2 line-clamp-2 leading-snug">${opp.title}</h4>
 
     <!-- Description -->
-    <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">${opp.description || ''}</p>
+    <p class="text-xs text-gray-600 mb-3 line-clamp-3 leading-relaxed">${opp.description || ''}</p>
 
     <!-- Meta -->
     <dl class="space-y-1.5 mb-4 text-xs border-t pt-3" style="border-color:${theme.border};">
@@ -817,10 +824,6 @@
           opp.difficulty==='Hard' ? 'bg-red-100 text-red-700' :
                                     'bg-yellow-100 text-yellow-700'
         }">${opp.difficulty}</span></dd>
-      </div>
-      <div class="flex justify-between">
-        <dt class="text-gray-500 font-medium">Location</dt>
-        <dd class="font-bold text-gray-800">${opp.state}</dd>
       </div>
     </dl>
 
