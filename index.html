@@ -277,13 +277,10 @@
     <section class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto flex flex-col gap-3">
 
-        <!-- Row 1: filter pills (always visible, scrollable on mobile) -->
+        <!-- Search + state row (desktop) -->
         <div class="flex items-center gap-2 overflow-x-auto pb-1 flex-shrink-0" style="scrollbar-width:none;">
-          <div id="categoriesGrid" class="flex items-center gap-2 flex-shrink-0"></div>
-
           <!-- Divider + count + search + state — inline on sm+, hidden here (shown in row 2 on mobile) -->
           <div class="hidden sm:flex items-center gap-3 flex-shrink-0">
-            <div class="h-6 w-px bg-gray-300 mx-1"></div>
             <span class="text-sm font-black text-gray-700 whitespace-nowrap">
               <span class="text-purple-600" id="oppCount">(0)</span> found
             </span>
@@ -415,17 +412,6 @@
       </div>
     </section>
 
-    <!-- Category info bar (shown when filter active) -->
-    <section id="categoryInfo" class="relative z-10 px-4 pb-2 sm:px-6 lg:px-8 hidden">
-      <div class="max-w-7xl mx-auto">
-        <div class="bg-white/70 backdrop-blur-sm rounded-2xl px-4 py-2.5 border-l-4 border-purple-500 flex items-center gap-2.5">
-          <span id="catIcon" class="text-xl"></span>
-          <span id="catName" class="font-bold text-gray-900 text-sm"></span>
-          <span class="text-gray-400 text-sm">—</span>
-          <span id="catDesc" class="text-sm text-gray-500"></span>
-        </div>
-      </div>
-    </section>
 
     <!-- ════════════════════════════════════════
          OPPORTUNITIES GRID
@@ -671,18 +657,6 @@
       });
     }
 
-    function renderCategories() {
-      const strip = document.getElementById('categoriesGrid');
-      if (!strip) return;
-      strip.innerHTML = categories.map(cat => `
-        <button onclick="filterCategory('${cat.key}')"
-                class="filter-pill${currentCategory === cat.key ? ' active' : ''}">
-          <span aria-hidden="true">${cat.icon}</span>
-          <span>${cat.name}</span>
-        </button>
-      `).join('');
-    }
-
     function toggleSaved(oppId) {
       savedOpportunities = savedOpportunities.includes(oppId)
         ? savedOpportunities.filter(id => id !== oppId)
@@ -841,32 +815,15 @@
       }).join('');
     }
 
-    function filterCategory(cat) {
-      currentCategory = (currentCategory === cat && cat !== 'all') ? 'all' : cat;
-      // Always reset search and state when a pill is clicked — clean slate
-      currentSearch = '';
-      const input = document.getElementById('searchInput');
-      if (input) input.value = '';
-      const sel = document.getElementById('stateSelector');
-      if (sel) sel.value = '';
-      renderCategories();
-      renderOpportunities();
-    }
-
     function filterOpportunities() {
       currentSearch = document.getElementById('searchInput').value || '';
-      if (currentSearch.trim()) currentCategory = 'all';
-      renderCategories();
       renderOpportunities();
     }
 
     function filterOpportunitiesMobile() {
       currentSearch = document.getElementById('searchInputMobile').value || '';
-      // keep desktop input in sync
       const desktopInput = document.getElementById('searchInput');
       if (desktopInput) desktopInput.value = currentSearch;
-      if (currentSearch.trim()) currentCategory = 'all';
-      renderCategories();
       renderOpportunities();
     }
 
@@ -883,12 +840,11 @@
     window.addEventListener('scroll', () => { btt.style.display = window.scrollY > 400 ? 'block' : 'none'; });
     btt.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
 
-    function mobileNavHome()  { filterCategory('all'); window.scrollTo({ top:0, behavior:'smooth' }); }
-    function mobileNavSaved() { filterCategory('saved'); document.getElementById('opportunitiesGrid')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+    function mobileNavHome()  { currentCategory = 'all'; renderOpportunities(); window.scrollTo({ top:0, behavior:'smooth' }); }
+    function mobileNavSaved() { currentCategory = 'saved'; renderOpportunities(); document.getElementById('opportunitiesGrid')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
     function mobileNavInfo()  { document.getElementById('about')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderCategories();
       loadOpportunities();
 
       const msgs = [
