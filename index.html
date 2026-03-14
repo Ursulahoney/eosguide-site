@@ -690,26 +690,19 @@
 
     function getCardTheme(category) {
       const c = (category || '').toLowerCase();
-      // Cyan family — matches site's cyan gradient anchor
       if (c.includes('class action') || c.includes('legal') || c.includes('settlement'))
-        return { bg:'#e0f2fe', border:'#7dd3fc', ctaBg:'#0891b2', ctaText:'#fff' };
-      // Purple family — matches site's purple gradient anchor
+        return { bg:'#f0f9ff', border:'#bae6fd', ctaBg:'#0891b2', ctaText:'#fff' };
       if (c.includes('refund') || c.includes('unclaimed'))
-        return { bg:'#ede9fe', border:'#c4b5fd', ctaBg:'#7c3aed', ctaText:'#fff' };
-      // Pink family — matches site's pink gradient anchor
+        return { bg:'#faf5ff', border:'#ddd6fe', ctaBg:'#7c3aed', ctaText:'#fff' };
       if (c.includes('relief') || c.includes('benefit') || c.includes('assistance') || c.includes('social'))
-        return { bg:'#fce7f3', border:'#f9a8d4', ctaBg:'#db2777', ctaText:'#fff' };
-      // Cyan-teal for utilities/energy
+        return { bg:'#fdf2f8', border:'#fbcfe8', ctaBg:'#db2777', ctaText:'#fff' };
       if (c.includes('utility') || c.includes('energy'))
-        return { bg:'#ccfbf1', border:'#5eead4', ctaBg:'#0d9488', ctaText:'#fff' };
-      // Purple-indigo for health/veterans
+        return { bg:'#f0fdfa', border:'#99f6e4', ctaBg:'#0d9488', ctaText:'#fff' };
       if (c.includes('health') || c.includes('medical') || c.includes('veteran'))
-        return { bg:'#e0e7ff', border:'#a5b4fc', ctaBg:'#4f46e5', ctaText:'#fff' };
-      // Pink-rose for tax/property
+        return { bg:'#eef2ff', border:'#c7d2fe', ctaBg:'#4f46e5', ctaText:'#fff' };
       if (c.includes('tax') || c.includes('property'))
-        return { bg:'#ffe4e6', border:'#fda4af', ctaBg:'#e11d48', ctaText:'#fff' };
-      // Default: purple
-      return { bg:'#ede9fe', border:'#c4b5fd', ctaBg:'#7c3aed', ctaText:'#fff' };
+        return { bg:'#fff1f2', border:'#fecdd3', ctaBg:'#e11d48', ctaText:'#fff' };
+      return { bg:'#faf5ff', border:'#ddd6fe', ctaBg:'#7c3aed', ctaText:'#fff' };
     }
 
     function renderOpportunities() {
@@ -776,21 +769,17 @@
         const urgency = getUrgencyBadge(opp.urgencyDays, opp.daysLeft);
 
         return `
-<article class="animate-fadeInUp ${delay} group rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg relative overflow-hidden"
-         style="background:${theme.bg}; border: 1.5px solid ${theme.border};">
-  <div class="relative">
+<article class="animate-fadeInUp ${delay} rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+         style="background:${theme.bg}; border: 1px solid ${theme.border};">
 
     <!-- Top row: category + state + save -->
     <div class="flex items-center justify-between mb-3">
       <div class="flex flex-wrap gap-1.5">
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
-              style="background:rgba(0,0,0,0.07); color:#374151;">${ci.icon} ${ci.name}</span>
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold"
-              style="background:rgba(0,0,0,0.07); color:#374151;">${opp.geography === 'national' ? '🌐 Nationwide' : '📍 ' + (opp.state || '')}</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-white/70">${ci.icon} ${ci.name}</span>
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-white/70">${opp.geography === 'national' ? '🌐 Nationwide' : '📍 ' + (opp.state || '')}</span>
       </div>
       <button onclick="toggleSaved('${opp.id}')"
-              class="p-1.5 rounded-full transition-colors flex-shrink-0 ml-1.5"
-              style="background:rgba(0,0,0,0.06);"
+              class="p-1.5 rounded-full transition-colors flex-shrink-0 ml-1.5 bg-white/50 hover:bg-white"
               title="${isSaved ? 'Remove from saved' : 'Save for later'}">
         ${isSaved
           ? `<svg class="w-4 h-4" fill="${theme.ctaBg}" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`
@@ -800,26 +789,26 @@
     </div>
 
     <!-- Amount -->
-    ${opp.amount ? `<div class="text-lg font-black mb-1" style="color:${theme.ctaBg};">${opp.amount}</div>` : ''}
+    ${opp.amount ? `<div class="text-base font-black mb-1" style="color:${theme.ctaBg};">${opp.amount}</div>` : ''}
 
     <!-- Urgency badge -->
     ${urgency ? `<div class="mb-2">${urgency}</div>` : ''}
 
     <!-- Title -->
-    <h4 class="text-sm font-bold text-gray-900 mb-2 line-clamp-2 leading-snug">${opp.title}</h4>
+    <h4 class="text-sm font-bold text-gray-900 mb-2 leading-snug">${opp.title}</h4>
 
-    <!-- Description -->
-    <p class="text-xs text-gray-600 mb-3 line-clamp-3 leading-relaxed">${opp.description || ''}</p>
+    <!-- Description — grows to fill available space -->
+    <p class="text-xs text-gray-500 leading-relaxed mb-3 flex-1 overflow-hidden">${opp.description || ''}</p>
 
-    <!-- Meta -->
+    <!-- Meta — always just before CTA -->
     <dl class="space-y-1.5 mb-4 text-xs border-t pt-3" style="border-color:${theme.border};">
       <div class="flex justify-between">
-        <dt class="text-gray-500 font-medium">Deadline</dt>
-        <dd class="font-bold text-gray-800">${formatDeadline(opp.deadline)}</dd>
+        <dt class="text-gray-400 font-medium">Deadline</dt>
+        <dd class="font-bold text-gray-700">${formatDeadline(opp.deadline)}</dd>
       </div>
       <div class="flex justify-between items-center">
-        <dt class="text-gray-500 font-medium">Difficulty</dt>
-        <dd><span class="px-2 py-0.5 rounded-full font-bold ${
+        <dt class="text-gray-400 font-medium">Difficulty</dt>
+        <dd><span class="px-2 py-0.5 rounded-full font-bold text-xs ${
           opp.difficulty==='Easy' ? 'bg-green-100 text-green-700' :
           opp.difficulty==='Hard' ? 'bg-red-100 text-red-700' :
                                     'bg-yellow-100 text-yellow-700'
@@ -827,14 +816,13 @@
       </div>
     </dl>
 
-    <!-- CTA -->
+    <!-- CTA — always at bottom -->
     <a href="${opp.url}" target="_blank" rel="noopener noreferrer"
-       class="block w-full text-center py-2.5 rounded-2xl text-sm font-bold hover:opacity-90 hover:scale-[1.02] transition-all"
+       class="block w-full text-center py-2.5 rounded-2xl text-sm font-bold hover:opacity-90 hover:scale-[1.02] transition-all mt-auto"
        style="background:${theme.ctaBg}; color:${theme.ctaText};">
       View Details →
     </a>
 
-  </div>
 </article>`;
       }).join('');
     }
