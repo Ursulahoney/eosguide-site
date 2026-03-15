@@ -402,6 +402,55 @@ def build_cta_buttons(official_website: str, deadline: str) -> str:
 
 
 # ─────────────────────────────────────────────────────────────────
+# AFFILIATE CTA — only renders on data breach / identity articles
+# ─────────────────────────────────────────────────────────────────
+
+INCOGNI_AFFILIATE_URL = "YOUR_INCOGNI_AFFILIATE_LINK"
+
+DATA_BREACH_KEYWORDS = [
+    "data breach", "data leak", "personal information", "personally identifiable",
+    "identity theft", "identity protection", "data exposure", "pixel tracking",
+    "patient data", "patient portal", "medical records", "health data",
+    "social security", "ssn", "credit card", "financial data", "cyberattack",
+    "ransomware", "hacked", "unauthorized access", "data security",
+    "tracking pixel", "meta pixel", "facebook pixel", "third party tracking",
+]
+
+def build_incogni_cta(f: dict) -> str:
+    """Render an Incogni affiliate block only on data breach / identity articles."""
+    haystack = " ".join([
+        f.get("title", ""),
+        f.get("blurb", ""),
+        f.get("what_happened", ""),
+        f.get("extra_details", ""),
+        f.get("eligible_states", ""),
+    ]).lower()
+
+    if not any(kw in haystack for kw in DATA_BREACH_KEYWORDS):
+        return ""
+
+    return f"""
+    <section class="section" style="margin-top:2rem;">
+      <div style="background:linear-gradient(135deg,#f0f9ff,#f5f3ff);border:1px solid #c7d2fe;border-radius:18px;padding:20px 22px;">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="font-size:28px;flex-shrink:0;line-height:1;">🛡️</div>
+          <div style="min-width:0;">
+            <p style="font-size:13px;font-weight:800;color:#1e1b4b;margin:0 0 4px;">Your data may still be exposed</p>
+            <p style="font-size:13px;color:#4b5563;line-height:1.6;margin:0 0 12px;">Settlements compensate you after the fact — but your personal information may still be circulating on hundreds of data broker sites. Incogni automatically requests removal on your behalf, across 420+ brokers.</p>
+            <a href="{INCOGNI_AFFILIATE_URL}"
+               target="_blank" rel="noopener noreferrer sponsored"
+               style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">
+              Try Incogni →
+            </a>
+            <p style="font-size:11px;color:#9ca3af;margin:8px 0 0;">Affiliate link — we may earn a commission at no cost to you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    """
+
+
+# ─────────────────────────────────────────────────────────────────
 # MAIN PAGE BUILDER
 # ─────────────────────────────────────────────────────────────────
 
@@ -805,6 +854,8 @@ def build_page(f: dict) -> str:
       <hr class="divider">
 
       {faq_html}
+
+      {build_incogni_cta(f)}
 
       <hr class="divider">
 
