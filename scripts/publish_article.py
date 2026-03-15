@@ -708,6 +708,10 @@ def build_page(f: dict) -> str:
           </div>
         </a>
         <div class="hidden sm:flex items-center gap-2">
+          <a href="/"
+             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-gray-200 bg-white/85 text-gray-600 hover:bg-white transition whitespace-nowrap">
+            🏠 Home
+          </a>
           <a href="/articles/"
              class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition whitespace-nowrap">
             ← Guides
@@ -719,6 +723,7 @@ def build_page(f: dict) -> str:
           </button>
         </div>
         <div class="flex sm:hidden items-center gap-2">
+          <a href="/" class="text-xs font-bold text-gray-600 px-3 py-1.5 rounded-full border border-gray-200 bg-white/85">🏠</a>
           <a href="/articles/" class="text-xs font-bold text-purple-700 px-3 py-1.5 rounded-full border border-purple-200 bg-white/85">← Guides</a>
           <button onclick="openNewsletter()" class="text-xs font-bold text-white px-3 py-1.5 rounded-full" style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">Alerts</button>
         </div>
