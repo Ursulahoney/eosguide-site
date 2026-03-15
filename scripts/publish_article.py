@@ -699,14 +699,20 @@ def build_page(f: dict) -> str:
   <!-- Header -->
   <header class="relative z-10 px-4 pt-5 pb-6 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
+
+      <!-- Single row on desktop: logo left, buttons right -->
+      <!-- Two rows on mobile: logo row, then full-width button row -->
       <div class="flex items-center justify-between gap-4">
         <a href="/" aria-label="Back to eosguide home" class="flex items-center gap-3 min-w-0">
-          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0">
+          <!-- Smaller logo on mobile, full size on desktop -->
+          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-8 h-8 sm:w-20 sm:h-20 animate-logo flex-shrink-0">
           <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-black leading-none gradient-text">eosguide</p>
-            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
+            <p class="text-lg sm:text-2xl font-black leading-none gradient-text">eosguide</p>
+            <!-- Subtitle hidden on mobile -->
+            <p class="hidden sm:block text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
           </div>
         </a>
+        <!-- Desktop nav buttons -->
         <div class="hidden sm:flex items-center gap-2">
           <a href="/"
              class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-gray-200 bg-white/85 text-gray-600 hover:bg-white transition whitespace-nowrap">
@@ -722,12 +728,25 @@ def build_page(f: dict) -> str:
             Get Alerts
           </button>
         </div>
-        <div class="flex sm:hidden items-center gap-2">
-          <a href="/" class="text-xs font-bold text-gray-600 px-3 py-1.5 rounded-full border border-gray-200 bg-white/85">🏠</a>
-          <a href="/articles/" class="text-xs font-bold text-purple-700 px-3 py-1.5 rounded-full border border-purple-200 bg-white/85">← Guides</a>
-          <button onclick="openNewsletter()" class="text-xs font-bold text-white px-3 py-1.5 rounded-full" style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">Alerts</button>
-        </div>
       </div>
+
+      <!-- Mobile-only row 2: equal-width nav buttons -->
+      <div class="flex sm:hidden gap-2 mt-3 pb-1">
+        <a href="/"
+           class="flex-1 inline-flex items-center justify-center py-2 rounded-full text-xs font-bold border border-gray-200 bg-white/85 text-gray-600 transition-all">
+          🏠 Home
+        </a>
+        <a href="/articles/"
+           class="flex-1 inline-flex items-center justify-center py-2 rounded-full text-xs font-bold border border-purple-200 bg-white/85 text-purple-700 transition-all">
+          ← Guides
+        </a>
+        <button onclick="openNewsletter()"
+                class="flex-1 inline-flex items-center justify-center py-2 rounded-full text-xs font-bold text-white transition-all"
+                style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
+          Get Alerts
+        </button>
+      </div>
+
     </div>
   </header>
   <hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.12),transparent);margin:0;">
