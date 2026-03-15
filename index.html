@@ -153,6 +153,34 @@
 
     #backToTop { position:fixed; right:1.5rem; bottom:5rem; z-index:40; display:none; }
 
+    /* ── Aurora header ── */
+    .aurora-header {
+      background: linear-gradient(160deg, #0d1b2a 0%, #0e3a4a 40%, #1a1040 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .aurora-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 65%, rgba(6,182,212,0.28) 0%, transparent 55%),
+        radial-gradient(ellipse at 78% 18%, rgba(139,92,246,0.32) 0%, transparent 52%);
+      pointer-events: none;
+    }
+    .aurora-gradient-text {
+      background: linear-gradient(90deg, #67e8f9 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .aurora-h1-gradient {
+      background: linear-gradient(90deg, #67e8f9 0%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .sr-only {
       position:absolute; width:1px; height:1px; padding:0; margin:0;
       overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
@@ -265,46 +293,49 @@
   <!-- ════════════════════════════════════════
        HEADER
   ════════════════════════════════════════ -->
-  <header class="relative z-10 px-4 pt-5 pb-10 sm:px-6 lg:px-8">
-    <div class="max-w-6xl mx-auto">
+  <header class="aurora-header relative z-10 px-4 pt-5 pb-12 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto relative z-10">
       <div class="flex items-center justify-between gap-4">
         <a href="/" aria-label="Back to eosguide home" class="flex items-center gap-3 min-w-0">
-          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0">
+          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0"
+               style="filter:drop-shadow(0 0 14px rgba(6,182,212,0.45));">
           <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-black leading-none gradient-text">eosguide</p>
-            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
+            <p class="text-xl sm:text-2xl font-black leading-none aurora-gradient-text">eosguide</p>
+            <p class="text-[11px] sm:text-xs mt-0.5" style="color:rgba(255,255,255,0.45);">A searchable hub for settlement claims and official filing links.</p>
           </div>
         </a>
 
         <div class="hidden sm:flex items-center gap-2">
           <a href="/articles/"
-             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition whitespace-nowrap">
+             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold transition whitespace-nowrap"
+             style="border:1.5px solid rgba(103,232,249,0.35); background:rgba(6,182,212,0.1); color:#67e8f9;">
             Read Guides
           </a>
           <button onclick="openNewsletter()"
-                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white shadow-sm hover:shadow-lg transition-all whitespace-nowrap"
-                  style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
+                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white hover:opacity-90 transition-all whitespace-nowrap"
+                  style="background:linear-gradient(135deg,#06B6D4,#8B5CF6);">
             Get Alerts
           </button>
         </div>
       </div>
 
       <div class="mt-12 sm:mt-16 max-w-2xl lg:max-w-3xl">
-        <h1 class="text-[2.35rem] sm:text-[3.35rem] lg:text-[4.25rem] font-black tracking-[-0.04em] text-gray-900 leading-[0.92]">
-          Check for settlements that may apply to you.
+        <h1 class="text-[2.35rem] sm:text-[3.35rem] lg:text-[4.25rem] font-black tracking-[-0.04em] leading-[0.95]">
+          <span style="color:#ffffff;">Check for settlements </span><span class="aurora-h1-gradient">that may apply to you.</span>
         </h1>
-        <p class="mt-4 text-lg sm:text-xl text-gray-600 leading-snug max-w-2xl" style="font-family:'DM Sans',sans-serif;">
+        <p class="mt-4 text-lg sm:text-xl leading-snug max-w-2xl" style="color:rgba(255,255,255,0.5); font-family:'DM Sans',sans-serif;">
           A company did something shady. Now we’re here.
         </p>
 
         <div class="mt-7 flex flex-col sm:hidden gap-2 max-w-xs">
           <a href="/articles/"
-             class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition-all">
+             class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold transition-all"
+             style="border:1.5px solid rgba(103,232,249,0.35); background:rgba(6,182,212,0.1); color:#67e8f9;">
             Read Guides
           </a>
           <button onclick="openNewsletter()"
-                  class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold text-white shadow-sm"
-                  style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
+                  class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold text-white"
+                  style="background:linear-gradient(135deg,#06B6D4,#8B5CF6);">
             Get Alerts
           </button>
         </div>
@@ -312,7 +343,7 @@
     </div>
   </header>
 
-  <hr class="header-rule relative z-10">
+  <hr style="border:none; height:1px; background:linear-gradient(90deg, transparent, rgba(103,232,249,0.2), transparent); margin:0;" class="relative z-10">
 
   <main id="main">
 
