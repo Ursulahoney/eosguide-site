@@ -894,7 +894,7 @@ def build_page(f: dict) -> str:
         </div>
       </div>
       <div class="pt-6">
-        <p class="text-gray-500 text-sm">© 2025 eosguide. Information only. Always verify details on the official site.</p>
+        <p class="text-gray-500 text-sm">© 2026 eosguide. Information only. Always verify details on the official site.</p>
       </div>
     </div>
   </footer>
