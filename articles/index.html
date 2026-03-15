@@ -3,37 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>eosguide - Your Money Clearinghouse</title>
-  <meta name="description" content="eosguide is your money clearinghouse. We track class actions, refunds, unclaimed money, and benefit programs in one searchable place so you don't have to hunt for them.">
-  <link rel="canonical" href="https://eosguidehub.com/">
-  <link rel="icon" href="/Circular-badge-logo.png" type="image/png">
-
+  <title>Guides | eosguide</title>
+  <meta name="description" content="Plain-language guides to class action settlements you may qualify for. No hype. Always links to the official source.">
+  <link rel="canonical" href="https://eosguidehub.com/articles/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="eosguide - Your Money Clearinghouse">
-  <meta property="og:description" content="Track settlements, refunds, unclaimed money, and benefit programs in one searchable place.">
-  <meta property="og:url" content="https://eosguidehub.com/">
+  <meta property="og:site_name" content="eosguide">
+  <meta property="og:title" content="Guides | eosguide">
+  <meta property="og:description" content="Plain-language guides to class action settlements you may qualify for.">
+  <meta property="og:url" content="https://eosguidehub.com/articles/">
   <meta property="og:image" content="https://eosguidehub.com/Circular-badge-logo.png">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="eosguide - Your Money Clearinghouse">
-  <meta name="twitter:description" content="Track settlements, refunds, unclaimed money, and benefit programs in one searchable place.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Guides | eosguide">
+  <meta name="twitter:description" content="Plain-language guides to class action settlements you may qualify for.">
   <meta name="twitter:image" content="https://eosguidehub.com/Circular-badge-logo.png">
 
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "eosguide",
-  "url": "https://eosguidehub.com/",
-  "description": "Track settlements, refunds, unclaimed money, and benefit programs in one searchable place."
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://eosguidehub.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://eosguidehub.com/articles/" }
+      ]
+    }
+  ]
 }
   </script>
 
-    <!-- Google tag (gtag.js) -->
+  <link rel="icon" href="/Circular-badge-logo.png" type="image/png">
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-F1BDHTGBW5"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){{dataLayer.push(arguments);}}
+    function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-F1BDHTGBW5');
   </script>
@@ -46,32 +50,21 @@
 
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'],
-          }
-        }
-      }
+      theme: { extend: { fontFamily: { sans: ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'] } } }
     }
   </script>
 
   <style>
-    /* ── Gradient text ── */
+    body { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 400; }
+
     .gradient-text {
       background: linear-gradient(90deg, #0891b2 0%, #7c3aed 50%, #db2777 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .gradient-text-light {
       background: linear-gradient(90deg, #67e8f9 0%, #c4b5fd 50%, #f9a8d4 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    #searchHint { transition: opacity 0.4s ease-in-out; }
 
     @keyframes floatSoft {
       0%, 100% { transform: translateY(0); }
@@ -79,808 +72,378 @@
     }
     .animate-logo { animation: floatSoft 4s ease-in-out infinite; }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
     @keyframes scaleIn {
       from { opacity: 0; transform: scale(0.93); }
       to   { opacity: 1; transform: scale(1); }
     }
-    .animate-fadeInUp { animation: fadeInUp 0.4s ease-out both; }
-    .animate-scaleIn  { animation: scaleIn  0.28s ease-out; }
-    .delay-0   { animation-delay: 0s; }
-    .delay-50  { animation-delay: 0.05s; }
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-150 { animation-delay: 0.15s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-250 { animation-delay: 0.25s; }
-    .delay-300 { animation-delay: 0.3s; }
+    .animate-scaleIn { animation: scaleIn 0.28s ease-out; }
 
-    body {
-      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-      font-weight: 400;
-    }
-
-    .blob { filter: blur(80px); animation: floatBlob 20s ease-in-out infinite; }
-    @keyframes floatBlob {
-      0%, 100% { transform: translate(0,0)        scale(1);    }
-      25%       { transform: translate(20px,-20px) scale(1.1); }
-      50%       { transform: translate(-20px,20px) scale(0.9); }
-      75%       { transform: translate(20px,20px)  scale(1.05);}
-    }
-    .blob-2 { animation-delay: -5s;  animation-duration: 25s; }
-    .blob-3 { animation-delay: -10s; animation-duration: 30s; }
-
-    /* ── Pill filter chips ── */
-    .filter-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.4rem 0.9rem;
-      border-radius: 9999px;
-      font-size: 0.8125rem;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-      border: 2px solid rgba(0,0,0,0.06);
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(8px);
-      color: #374151;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      transition: all 0.18s ease;
-    }
-    .filter-pill:hover {
-      background: #fff;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      transform: translateY(-1px);
-    }
-    .filter-pill.active {
-      background: linear-gradient(135deg, #06B6D4, #7C3AED);
-      color: #fff;
-      border-color: transparent;
-      box-shadow: 0 4px 14px rgba(124,58,237,0.3);
-    }
-
-    /* Horizontal scroll strip */
-    .pill-strip {
-      display: flex;
-      gap: 0.5rem;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      scrollbar-width: none;
-    }
-    .pill-strip::-webkit-scrollbar { display: none; }
-
-    /* Thin divider */
     .header-rule {
-      border: none;
-      height: 1px;
+      border: none; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(124,58,237,0.12), transparent);
-      margin: 0;
     }
 
-    #backToTop { position:fixed; right:1.5rem; bottom:5rem; z-index:40; display:none; }
+    .guide-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-left-width: 4px;
+      border-radius: 1.5rem;
+      padding: 1.25rem 1.4rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .guide-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.07); }
 
-    /* ── Aurora header ── */
-    .aurora-header {
-      background: linear-gradient(160deg, #0d1b2a 0%, #0e3a4a 40%, #1a1040 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .aurora-header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 25% 65%, rgba(6,182,212,0.28) 0%, transparent 55%),
-        radial-gradient(ellipse at 78% 18%, rgba(139,92,246,0.32) 0%, transparent 52%);
-      pointer-events: none;
-    }
-    .aurora-gradient-text {
-      background: linear-gradient(90deg, #67e8f9 0%, #a78bfa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .aurora-h1-gradient {
-      background: linear-gradient(90deg, #67e8f9 0%, #c4b5fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    .badge-hot  { display:inline-flex; align-items:center; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:700; background:linear-gradient(135deg,#ef4444,#ec4899); color:#fff; }
+    .badge-warm { display:inline-flex; align-items:center; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:700; background:linear-gradient(135deg,#f97316,#ef4444); color:#fff; }
+    .badge-soon { display:inline-flex; align-items:center; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#fef9c3; color:#854d0e; }
 
-    .sr-only {
-      position:absolute; width:1px; height:1px; padding:0; margin:0;
-      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
-    }
+    .search-pill { background:#fff; border:1.5px solid #e5e7eb; border-radius:999px; display:flex; align-items:center; overflow:hidden; transition:border-color 0.2s; }
+    .search-pill:focus-within { border-color: #a78bfa; }
 
-    /* ── Toast notification ── */
-    #toast {
-      position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #1f2937; color: #f9fafb; padding: 10px 20px;
-      border-radius: 999px; font-size: 13px; font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease;
-      pointer-events: none; z-index: 60; white-space: nowrap;
-    }
-    #toast.show {
-      opacity: 1; transform: translateX(-50%) translateY(0);
-    }
-
-    .skip-link {
-      position:absolute; left:-9999px; top:1rem;
-      padding:0.75rem 1rem; background:#fff; color:#111827;
-      border-radius:0.75rem; box-shadow:0 10px 25px rgba(0,0,0,.15); z-index:9999;
-    }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .skip-link { position:absolute; left:-9999px; top:1rem; padding:0.75rem 1rem; background:#fff; color:#111827; border-radius:0.75rem; box-shadow:0 10px 25px rgba(0,0,0,.15); z-index:9999; }
     .skip-link:focus { left:1rem; }
-
-    details.footer-accordion {
-      border-top: 1px solid rgba(255,255,255,0.12);
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
-    details.footer-accordion summary {
-      list-style: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    details.footer-accordion summary::-webkit-details-marker { display: none; }
-    details.footer-accordion summary::after {
-      content: '+';
-      color: #a5b4fc;
-      font-size: 1.15rem;
-      line-height: 1;
-    }
-    details.footer-accordion[open] summary::after { content: '−'; }
-
-
-    .main-accordion + .main-accordion {
-      border-top: 1px solid rgba(148, 163, 184, 0.2);
-    }
-    .main-accordion summary {
-      list-style: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 1.2rem 1.25rem;
-      font-weight: 800;
-      font-size: 1.15rem;
-      color: #111827;
-    }
-    .main-accordion summary::-webkit-details-marker { display: none; }
-    .main-accordion summary::after {
-      content: '+';
-      color: #7c3aed;
-      font-size: 1.35rem;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-    .main-accordion[open] summary::after { content: '−'; }
-    .main-accordion-content {
-      padding: 0 1.25rem 1.3rem;
-      color: #4b5563;
-      line-height: 1.8;
-      font-size: 1rem;
-    }
-    .main-accordion-content p + p,
-    .main-accordion-content .faq-item + .faq-item { margin-top: 1rem; }
-    .main-accordion-content ol {
-      margin: 0;
-      padding-left: 1.25rem;
-    }
-    .main-accordion-content li + li { margin-top: 0.6rem; }
-    .main-accordion-content h3 {
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 0.25rem;
-    }
-
+    #backToTop { position:fixed; right:1.5rem; bottom:5rem; z-index:40; display:none; }
   </style>
-
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-cyan-50 via-purple-50 to-pink-50 relative overflow-x-hidden">
 
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- Background blobs -->
-  <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-    <div class="blob absolute w-96 h-96 bg-gradient-to-br from-cyan-300 to-blue-400 rounded-full opacity-20"          style="top:10%;left:5%;"></div>
-    <div class="blob blob-2 absolute w-80 h-80 bg-gradient-to-br from-purple-300 to-fuchsia-400 rounded-full opacity-20" style="top:60%;right:10%;"></div>
-    <div class="blob blob-3 absolute w-72 h-72 bg-gradient-to-br from-pink-300 to-rose-400 rounded-full opacity-20"     style="bottom:5%;left:50%;"></div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       HEADER
-  ════════════════════════════════════════ -->
-  <header class="aurora-header relative z-10 px-4 pt-5 pb-12 sm:px-6 lg:px-8">
-    <div class="max-w-6xl mx-auto relative z-10">
+  <!-- HEADER -->
+  <header class="relative z-10 px-4 pt-5 pb-10 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
       <div class="flex items-center justify-between gap-4">
         <a href="/" aria-label="Back to eosguide home" class="flex items-center gap-3 min-w-0">
-          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0"
-               style="filter:drop-shadow(0 0 14px rgba(6,182,212,0.45));">
+          <img src="/Circular-badge-logo.png" alt="eosguide logo" class="w-16 h-16 sm:w-20 sm:h-20 animate-logo flex-shrink-0">
           <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-black leading-none aurora-gradient-text">eosguide</p>
-            <p class="text-[11px] sm:text-xs mt-0.5" style="color:rgba(255,255,255,0.45);">A searchable hub for settlement claims and official filing links.</p>
+            <p class="text-xl sm:text-2xl font-black leading-none gradient-text">eosguide</p>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">A searchable hub for settlement claims and official filing links.</p>
           </div>
         </a>
-
         <div class="hidden sm:flex items-center gap-2">
-          <a href="/articles/"
-             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold transition whitespace-nowrap"
-             style="border:1.5px solid rgba(103,232,249,0.35); background:rgba(6,182,212,0.1); color:#67e8f9;">
-            Read Guides
+          <a href="/"
+             class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700 hover:bg-white transition whitespace-nowrap">
+            ← Home
           </a>
           <button onclick="openNewsletter()"
-                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white hover:opacity-90 transition-all whitespace-nowrap"
-                  style="background:linear-gradient(135deg,#06B6D4,#8B5CF6);">
+                  class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white shadow-sm hover:shadow-lg transition-all whitespace-nowrap"
+                  style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">
             Get Alerts
           </button>
         </div>
       </div>
 
-      <div class="mt-12 sm:mt-16 max-w-2xl lg:max-w-3xl">
-        <h1 class="text-[2.35rem] sm:text-[3.35rem] lg:text-[4.25rem] font-black tracking-[-0.04em] leading-[0.95]">
-          <span style="color:#ffffff;">Check for settlements </span><span class="aurora-h1-gradient">that may apply to you.</span>
-        </h1>
-        <p class="mt-4 text-lg sm:text-xl leading-snug max-w-2xl" style="color:rgba(255,255,255,0.5); font-family:'DM Sans',sans-serif;">
-          A company did something shady. Now we’re here.
+      <div class="mt-8 sm:mt-10 max-w-xl">
+        <h1 class="text-3xl sm:text-4xl font-black tracking-[-0.03em] text-gray-900 leading-tight">Guides</h1>
+        <p class="mt-2 text-base text-gray-600 leading-snug" style="font-family:'DM Sans',sans-serif;">
+          Plain-language breakdowns of class action settlements — who qualifies, how much, and the deadline. No hype. Always links to the official source.
         </p>
-
-        <div class="mt-7 flex flex-col sm:hidden gap-2 max-w-xs">
-          <a href="/articles/"
-             class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold transition-all"
-             style="border:1.5px solid rgba(103,232,249,0.35); background:rgba(6,182,212,0.1); color:#67e8f9;">
-            Read Guides
-          </a>
-          <button onclick="openNewsletter()"
-                  class="inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-bold text-white"
-                  style="background:linear-gradient(135deg,#06B6D4,#8B5CF6);">
-            Get Alerts
-          </button>
+        <div class="mt-5 flex gap-2 sm:hidden">
+          <a href="/" class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold border border-purple-200 bg-white/85 text-purple-700">← Home</a>
+          <button onclick="openNewsletter()" class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-bold text-white" style="background:linear-gradient(135deg,#0EA5E9,#7C3AED);">Get Alerts</button>
         </div>
       </div>
     </div>
   </header>
 
-  <hr style="border:none; height:1px; background:linear-gradient(90deg, transparent, rgba(103,232,249,0.2), transparent); margin:0;" class="relative z-10">
+  <hr class="header-rule relative z-10">
 
-  <main id="main">
+  <main id="main" class="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
 
-    <!-- ════════════════════════════════════════
-         FILTER BAND  (pills + state + search in one compact strip)
-    ════════════════════════════════════════ -->
-    <section id="browse" class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex flex-col gap-3">
-
-        <!-- Search + state row (desktop) -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 flex-shrink-0" style="scrollbar-width:none;">
-          <!-- Divider + count + search + state — inline on sm+, hidden here (shown in row 2 on mobile) -->
-          <div class="hidden sm:flex items-center gap-3 flex-shrink-0">
-            <span class="text-sm font-black text-gray-700 whitespace-nowrap">
-              <span class="text-purple-600" id="oppCount">(15)</span> found
-            </span>
-            <div class="relative group flex-shrink-0" style="width:clamp(18rem,32vw,28rem);">
-              <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-full blur-sm opacity-20 group-hover:opacity-35 transition-opacity duration-300"></div>
-              <div class="relative bg-white rounded-full shadow-sm flex items-center overflow-hidden border border-gray-200">
-                <span id="searchHint"
-                      class="pointer-events-none absolute left-9 right-20 top-1/2 -translate-y-1/2 text-gray-400 text-xs whitespace-nowrap">
-                  Type a keyword and remember, you're breathtaking!
-                </span>
-                <svg class="w-3.5 h-3.5 text-gray-400 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <label for="searchInput" class="sr-only">Search opportunities</label>
-                <input type="text" id="searchInput" placeholder=""
-                       class="flex-1 px-2 py-2 text-xs focus:outline-none font-light bg-transparent relative z-10 min-w-0">
-                <button type="button" onclick="filterOpportunities()"
-                        class="m-0.5 px-3 py-1.5 text-white rounded-full text-xs font-bold hover:shadow-md hover:scale-105 transition-all flex-shrink-0"
-                        style="background:linear-gradient(135deg,#06B6D4,#7C3AED);">
-                  Search
-                </button>
-              </div>
-            </div>
-            <div class="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 shadow-sm border border-gray-200 flex-shrink-0">
-              <svg class="w-3.5 h-3.5 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              <select id="stateSelector"
-                      class="text-xs font-semibold text-gray-700 bg-transparent border-none outline-none cursor-pointer"
-                      style="max-width:9rem;">
-                <option value="">All States</option>
-                <option value="Nationwide">Nationwide Only</option>
-                <option value="AL">Alabama</option><option value="AK">Alaska</option>
-                <option value="AZ">Arizona</option><option value="AR">Arkansas</option>
-                <option value="CA">California</option><option value="CO">Colorado</option>
-                <option value="CT">Connecticut</option><option value="DE">Delaware</option>
-                <option value="FL">Florida</option><option value="GA">Georgia</option>
-                <option value="HI">Hawaii</option><option value="ID">Idaho</option>
-                <option value="IL">Illinois</option><option value="IN">Indiana</option>
-                <option value="IA">Iowa</option><option value="KS">Kansas</option>
-                <option value="KY">Kentucky</option><option value="LA">Louisiana</option>
-                <option value="ME">Maine</option><option value="MD">Maryland</option>
-                <option value="MA">Massachusetts</option><option value="MI">Michigan</option>
-                <option value="MN">Minnesota</option><option value="MS">Mississippi</option>
-                <option value="MO">Missouri</option><option value="MT">Montana</option>
-                <option value="NE">Nebraska</option><option value="NV">Nevada</option>
-                <option value="NH">New Hampshire</option><option value="NJ">New Jersey</option>
-                <option value="NM">New Mexico</option><option value="NY">New York</option>
-                <option value="NC">North Carolina</option><option value="ND">North Dakota</option>
-                <option value="OH">Ohio</option><option value="OK">Oklahoma</option>
-                <option value="OR">Oregon</option><option value="PA">Pennsylvania</option>
-                <option value="RI">Rhode Island</option><option value="SC">South Carolina</option>
-                <option value="SD">South Dakota</option><option value="TN">Tennessee</option>
-                <option value="TX">Texas</option><option value="UT">Utah</option>
-                <option value="VT">Vermont</option><option value="VA">Virginia</option>
-                <option value="WA">Washington</option><option value="WV">West Virginia</option>
-                <option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
-              </select>
-            </div>
-            <button onclick="currentCategory='saved'; renderOpportunities();"
-                    class="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 shadow-sm border border-gray-200 flex-shrink-0 text-xs font-semibold text-purple-700 hover:bg-white transition-colors whitespace-nowrap">
-              🔖 Saved
-            </button>
-          </div>
-        </div>
-
-        <!-- Row 2: search + state — mobile only, stacked -->
-        <div class="flex flex-col gap-2 sm:hidden">
-          <div class="flex items-center gap-2">
-            <span class="text-sm font-black text-gray-700 whitespace-nowrap flex-shrink-0">
-              <span class="text-purple-600" id="oppCountMobile">(0)</span> found
-            </span>
-            <div class="relative group flex-1">
-              <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 rounded-full blur-sm opacity-20"></div>
-              <div class="relative bg-white rounded-full shadow-sm flex items-center overflow-hidden border border-gray-200">
-                <svg class="w-3.5 h-3.5 text-gray-400 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <input type="text" id="searchInputMobile" placeholder="Search…"
-                       class="flex-1 px-2 py-2.5 text-sm focus:outline-none font-light bg-transparent min-w-0">
-                <button type="button" onclick="filterOpportunitiesMobile()"
-                        class="m-0.5 px-3 py-1.5 text-white rounded-full text-xs font-bold flex-shrink-0"
-                        style="background:linear-gradient(135deg,#06B6D4,#7C3AED);">
-                  Go
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- State selector on its own row, full width feel -->
-          <div class="inline-flex items-center gap-1.5 bg-white/90 rounded-full px-3 py-2 shadow-sm border border-gray-200 self-start">
-            <svg class="w-3.5 h-3.5 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            <select id="stateSelectorMobile"
-                    class="text-xs font-semibold text-gray-700 bg-transparent border-none outline-none cursor-pointer">
-              <option value="">All States</option>
-              <option value="Nationwide">Nationwide Only</option>
-              <option value="AL">Alabama</option><option value="AK">Alaska</option>
-              <option value="AZ">Arizona</option><option value="AR">Arkansas</option>
-              <option value="CA">California</option><option value="CO">Colorado</option>
-              <option value="CT">Connecticut</option><option value="DE">Delaware</option>
-              <option value="FL">Florida</option><option value="GA">Georgia</option>
-              <option value="HI">Hawaii</option><option value="ID">Idaho</option>
-              <option value="IL">Illinois</option><option value="IN">Indiana</option>
-              <option value="IA">Iowa</option><option value="KS">Kansas</option>
-              <option value="KY">Kentucky</option><option value="LA">Louisiana</option>
-              <option value="ME">Maine</option><option value="MD">Maryland</option>
-              <option value="MA">Massachusetts</option><option value="MI">Michigan</option>
-              <option value="MN">Minnesota</option><option value="MS">Mississippi</option>
-              <option value="MO">Missouri</option><option value="MT">Montana</option>
-              <option value="NE">Nebraska</option><option value="NV">Nevada</option>
-              <option value="NH">New Hampshire</option><option value="NJ">New Jersey</option>
-              <option value="NM">New Mexico</option><option value="NY">New York</option>
-              <option value="NC">North Carolina</option><option value="ND">North Dakota</option>
-              <option value="OH">Ohio</option><option value="OK">Oklahoma</option>
-              <option value="OR">Oregon</option><option value="PA">Pennsylvania</option>
-              <option value="RI">Rhode Island</option><option value="SC">South Carolina</option>
-              <option value="SD">South Dakota</option><option value="TN">Tennessee</option>
-              <option value="TX">Texas</option><option value="UT">Utah</option>
-              <option value="VT">Vermont</option><option value="VA">Virginia</option>
-              <option value="WA">Washington</option><option value="WV">West Virginia</option>
-              <option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
-            </select>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- ════════════════════════════════════════
-         OPPORTUNITIES GRID
-    ════════════════════════════════════════ -->
-    <section id="opportunities" class="relative z-10 px-4 py-6 sm:px-6 lg:px-8 mb-20">
-      <div class="max-w-7xl mx-auto">
-        <div id="opportunitiesGrid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        <!-- OPPORTUNITIES:START -->
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Up to $51</div>
-  
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Amazon Prime FTC Settlement – File a Claim for Up to $51</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Amazon settled with the FTC for $2.5 billion over claims it signed people up for Prime without consent and made cancellation a maze. Eligible customers got automatic refunds by December 2025 — but if you didn't, you may still qualify. Check your inbox for a claim notice or visit the settlement site to file.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Not listed</span>
-  </div>
-  <a href="/articles/amazon-prime-ftc-settlement-refund-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">$15 cash payment and one free year of CyEx Medical Shield Complete identity and medical monitoring.</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#ef4444,#ec4899);color:#fff;margin-bottom:6px;">🔥 2d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Legacy Health Patient Portal Data Settlement – File a Claim by March 16, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Legacy Health is settling a class action lawsuit alleging it shared patients' personally identifiable information with Meta (Facebook) and Google without permission — because apparently your medical records weren't private enough. Eligible patients may claim a $15 cash payment and one free year of medical identity monitoring.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Mar 16, 2026</span>
-  </div>
-  <a href="/articles/legacy-health-patient-portal-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Illinois</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">up to $2,500</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;margin-bottom:6px;">⏰ 16d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">City of Chicago v DoorDash, Inc., Caviar LLC</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">DoorDash settled with the City of Chicago over allegations that it listed Chicago restaurants on its platform without their consent or contractual agreements, violating a city ordinance requiring written agreements with restaurants. The settlement benefits small Chicago-based restaurants (nine or fewer locations) that were listed on DoorDash or Caviar between August 2019 and November 2025 without a contract. Eligible restaurants can receive up to $2,500 each by submitting an attestation form by the March 30, 2026 deadline.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Mar 30, 2026</span>
-  </div>
-  <a href="/articles/chicago-doordash-settlement.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Pro rata share of $2,400,000 fund</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;margin-bottom:6px;">⏰ 24d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">G.Skill DRAM Class Action Settlement 2026 – File a Claim by April 7</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">If you bought G.Skill DDR-4 or DDR-5 desktop memory in the U.S. between January 31, 2018 and January 7, 2026, you may be eligible for a cash payment from a $2,400,000 class action settlement. The lawsuit alleged G.Skill misled customers about the advertised speeds of its memory products.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Apr 07, 2026</span>
-  </div>
-  <a href="/articles/gskill-dram-class-action-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 California</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">3-year term life policy at no cost for terminated policies only</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;margin-bottom:6px;">⏰ 27d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Pacific Life PDX Policy Settlement – Act by April 10, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">If you purchased a Pacific Discovery Xelerator (PDX) indexed universal life insurance policy from Pacific Life Insurance Company in California, a class action settlement over allegedly misleading sales illustrations may entitle you to an automatic credit to your policy's accumulated value or free three-year term life insurance coverage.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Apr 10, 2026</span>
-  </div>
-  <a href="/articles/pacific-life-pdx-illustration-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Up to $5,000</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;margin-bottom:6px;">⏰ 27d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Panda Restaurant Group Data Breach Settlement – File by April 10, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">If your personal information was exposed in the March 2023 Panda Restaurant Group data breach, a class action settlement may entitle you to up to $5,000 in reimbursement, a ~$100 cash payment (plus an extra ~$125 for California residents), and two years of credit monitoring.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Apr 10, 2026</span>
-  </div>
-  <a href="/articles/panda-restaurant-group-data-breach-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Up to $5,000</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 33d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Gryphon Healthcare Data Settlement – File by April 16, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Were your medical records exposed in the July 2024 Gryphon Healthcare data breach? If your Social Security number, health insurance information, or personal health data was compromised in this Texas class action settlement, you may qualify for a cash payment. The cyberattack affected patients whose information was stored by Gryphon Healthcare, a medical billing services provider. Submit your claim by April 16, 2026 to receive compensation for the data security incident.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Apr 16, 2026</span>
-  </div>
-  <a href="/articles/gryphon-healthcare-data-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">$15 and one year subscription to Privacy Monitoring.</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 37d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Northwell Health Pixel Settlement 2026 – $15 Cash Payment for Eligible Patients</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Northwell Health agreed to a class action settlement over the use of tracking pixels on its patient portal. Eligible patients who logged into the FollowMyHealth portal or booked appointments between 2020–2024 may qualify for a $15 cash payment. Claims must be submitted by April 20, 2026.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Apr 20, 2026</span>
-  </div>
-  <a href="/articles/northwell-health-pixel-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Up to $10,000 or Pro Rata share</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 44d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">PharMerica Data Breach Settlement – File by April 27, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">If your personal or medical information was swept up in the 2023 PharMerica ransomware attack — courtesy of a cybercriminal gang that apparently named themselves &quot;Money Message&quot; — a $5.275 million class action settlement may entitle you to up to $10,000 in reimbursement, a pro rata cash payment, and free credit monitoring.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Apr 27, 2026</span>
-  </div>
-  <a href="/articles/pharmerica-data-breach-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Arizona</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Varies</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 52d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">PHH Mortgage class action settlement</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible people do not need to file a claim. If your address changed, update it so your check does not wander off and build a new life somewhere else.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">May 05, 2026</span>
-  </div>
-  <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 California</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Varies</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 52d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">PHH Mortgage class action settlement</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible people do not need to file a claim. If your address changed, update it so your check does not wander off and build a new life somewhere else.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">May 05, 2026</span>
-  </div>
-  <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Varies</div>
-  <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#fef9c3;color:#854d0e;margin-bottom:6px;">📅 52d left</span>
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">PHH Mortgage class action settlement</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible people do not need to file a claim. If your address changed, update it so your check does not wander off and build a new life somewhere else.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">May 05, 2026</span>
-  </div>
-  <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Pro-rata share of $5M fund</div>
-  
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Sprouts Farmers Market FACTA Receipt Settlement – File a Claim by August 5, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Sprouts printed too many digits of customers' card numbers on receipts — a FACTA violation. If you used a credit, debit, or EBT card at any U.S. Sprouts store between August 2020 and April 2023, you may be eligible for a cash payment. You must file a claim. Check your email for a notice with a number starting with &quot;P&quot; — that determines which form to use.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Aug 05, 2026</span>
-  </div>
-  <a href="/articles/sprouts-farmers-market-facta-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 California</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Pro-rata share of $60.5M</div>
-  
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Tinder Age Discrimination Settlement – California Users Over 28 May Get Cash</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Tinder allegedly charged older California users more for Plus and Gold subscriptions — just for being older. If you were over 28 or 29 and bought a Tinder subscription in California between 2015 and 2019, you may be owed money. No claim form needed if you got a notice — just pick your payment method by August 18, 2026.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Aug 18, 2026</span>
-  </div>
-  <a href="/articles/tinder-california-age-discrimination-settlement-2026.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<article style="background:#ffffff;border:1px solid #e5e7eb;border-left:4px solid #0891b2;border-radius:1.5rem;padding:1.25rem;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;" class="animate-fadeInUp hover:-translate-y-1 hover:shadow-lg">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Arizona</span>
-  </div>
-  <div style="font-size:15px;font-weight:900;color:#0891b2;margin-bottom:4px;">Share of $30K restitution fund</div>
-  
-  <h4 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.35;">Hefty &quot;Recycling&quot; Bags Settlement – Arizona Residents File by October 1, 2026</h4>
-  <p style="font-size:12px;color:#374151;line-height:1.6;margin:0 0 10px;flex:1;">Hefty sold bags labeled &quot;RECYCLING&quot; that Arizona recycling programs don't actually accept — classic greenwashing. The Arizona AG sued, Reynolds settled for $212,000, and now eligible Arizona residents can file a complaint to get a proportional cash payment. No receipt needed. Just five minutes and a mild sense of environmental grievance.</p>
-  <div style="border-top:1px solid #f3f4f6;padding-top:10px;margin-bottom:12px;display:flex;justify-content:space-between;font-size:11px;">
-    <span style="color:#9ca3af;font-weight:500;">Deadline</span>
-    <span style="font-weight:700;color:#374151;">Oct 01, 2026</span>
-  </div>
-  <a href="/articles/hefty-recyclable-bags-settlement-2026-arizona.html" style="display:block;width:100%;text-align:center;padding:10px;color:#fff;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;background:#0891b2;">
-    View Details →
-  </a>
-</article>
-<!-- OPPORTUNITIES:END -->
-        </div><!-- /opportunitiesGrid -->
-
-        <div id="noResults" class="text-center py-20 hidden">
-          <div class="text-6xl mb-4">🔍</div>
-          <h3 class="text-2xl font-bold text-gray-700 mb-2" id="noResultsTitle">No opportunities found</h3>
-          <p class="text-gray-500 text-sm" id="noResultsMsg">Try adjusting your search or filters</p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Newsletter Modal -->
-    <div id="newsletterModal"
-         class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-scaleIn">
-        <button onclick="closeNewsletter()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      <!-- Search -->
+      <div class="flex items-center gap-3 mb-2 flex-wrap">
+        <div class="search-pill flex-1 min-w-0" style="max-width:480px;">
+          <svg class="w-3.5 h-3.5 text-gray-400 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-        </button>
-        <div class="text-center mb-6">
-          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-               style="background:linear-gradient(135deg,#06B6D4,#8B5CF6,#EC4899);">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-          </div>
-          <h3 class="text-3xl font-black mb-2">Never Miss Out</h3>
-          <p class="text-gray-600 font-normal">Get weekly alerts about new opportunities in
-            <span id="selectedState" class="font-bold text-purple-600">your area</span></p>
-        </div>
-        <form action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub" method="post" class="space-y-4">
-          <input type="email" name="email" id="emailInput" placeholder="Enter your email" required
-                 class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light"/>
-          <button type="submit"
-                  class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all"
-                  style="background:linear-gradient(135deg,#06B6D4,#7C3AED);">
-            Subscribe Free
+          <label for="guideSearch" class="sr-only">Search guides</label>
+          <input id="guideSearch" type="search" placeholder="Search guides (DoorDash, data breach, RAM...)"
+                 class="flex-1 px-3 py-2.5 text-sm focus:outline-none bg-transparent min-w-0">
+          <button id="clearSearch" type="button"
+                  class="m-1 px-3 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:bg-gray-100 transition flex-shrink-0">
+            Clear
           </button>
-        </form>
-        <p class="text-xs text-gray-400 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
-      </div>
-    </div>
-
-    <!-- About / How it works / FAQ / Legal -->
-    <section id="about" class="relative z-10 px-4 py-10 sm:px-6 lg:px-8">
-      <div class="max-w-4xl mx-auto">
-        <div class="rounded-[2rem] border border-white/60 bg-white/70 backdrop-blur-sm shadow-[0_10px_40px_rgba(124,58,237,0.08)] overflow-hidden">
-          <details class="main-accordion group" open>
-            <summary><span>About eosguide</span></summary>
-            <div class="main-accordion-content">
-              <p>eosguide is a calm dashboard for noisy money news. We track class actions, refunds, relief programs, and “you might have money waiting” lists, then sort them into one searchable place.</p>
-              <p>You still visit the official sites to read the fine print and apply. We just cut down the time you spend hunting.</p>
-              <p><em>eosguide is an information clearinghouse. We organize and share links to settlements, refunds, and programs but we don’t administer them. Always verify details on the official site.</em></p>
-            </div>
-          </details>
-
-          <details class="main-accordion group">
-            <summary><span>How it works</span></summary>
-            <div class="main-accordion-content">
-              <ol>
-                <li>We collect public information about settlements, refunds, and programs.</li>
-                <li>We tag each opportunity by category, state, and difficulty.</li>
-                <li>You search and skim the cards to find what fits your situation.</li>
-                <li>When you click through, you go straight to the official source.</li>
-              </ol>
-            </div>
-          </details>
-
-          <details class="main-accordion group">
-            <summary><span>FAQ</span></summary>
-            <div class="main-accordion-content">
-              <div class="faq-item">
-                <h3>Do you take a cut of any money I get?</h3>
-                <p>No. We never take a cut. If we use affiliate links in the future, we’ll label them as sponsored so you can see them clearly.</p>
-              </div>
-              <div class="faq-item">
-                <h3>Are you giving legal or financial advice?</h3>
-                <p>No. We organize information so you can see what might apply to you. For legal, financial, or tax decisions, talk with a professional.</p>
-              </div>
-              <div class="faq-item">
-                <h3>Is everything on the site guaranteed or up to date?</h3>
-                <p>Programs change and everyone’s situation is different. We try to stay current, but you should always confirm dates, rules, and details on the official site.</p>
-              </div>
-            </div>
-          </details>
-
-          <details class="main-accordion group">
-            <summary><span>Privacy</span></summary>
-            <div class="main-accordion-content">
-              <p>We collect as little information as we reasonably can. Right now that mainly means your email address if you join our alerts and basic usage stats from analytics tools.</p>
-              <p>We use this information to send updates you asked for and to understand which parts of the site are helpful. We don’t sell your data. If you ever want us to stop contacting you, you can unsubscribe or reach out and we’ll remove you.</p>
-            </div>
-          </details>
-
-          <details class="main-accordion group">
-            <summary><span>Terms</span></summary>
-            <div class="main-accordion-content">
-              <p>eosguide is an information tool. We share links and short summaries so you can research opportunities that might fit you. We do not run these programs and we can’t promise that any listing is current, accurate, or right for you.</p>
-              <p>By using this site, you agree that you’ll double-check details on the official site and that eosguide isn’t responsible for any decisions you make, missed deadlines, or outcomes from applying.</p>
-            </div>
-          </details>
-
-          <details class="main-accordion group">
-            <summary><span>Disclaimer</span></summary>
-            <div class="main-accordion-content">
-              <p>Nothing on this site is legal, financial, or tax advice. We’re doing our best to surface helpful information, but your situation is unique.</p>
-              <p>If you have questions about your rights, options, or money, please talk with a qualified professional who can look at your specific case.</p>
-            </div>
-          </details>
         </div>
+        <p id="searchMeta" class="text-xs text-gray-500 whitespace-nowrap" aria-live="polite"></p>
       </div>
-    </section>
 
+      <p class="text-xs text-gray-400 mb-5 italic">Click any guide title to read the full breakdown and find the official claim link.</p>
+
+      <!-- Guides list -->
+      <div id="guidesList" class="divide-y divide-gray-100">
+        <!-- ARTICLES_LIST_INSERT_HERE -->
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Nationwide and California and North Carolina</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">PHH Mortgage Class Action Settlement 2026: Automatic Payments for Eligible Borrowers!</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible borrowers do not need to file a claim, but they may want to update their address so the check does not start its own side quest.</p>
+          <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Nationwide and California and North Carolina</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">PHH Mortgage Class Action Settlement 2026: Automatic Payments for Eligible Borrowers</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible borrowers do not need to file a claim, but they may want to update their address so the check does not start its own side quest.</p>
+          <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Nationwide and California and North Carolina</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">PHH Mortgage Class Action Settlement 2026: Automatic Payments for Eligible Borrowers!</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible borrowers do not need to file a claim, but they may want to update their address so the check does not start its own side quest.</p>
+          <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Nationwide and California and North Carolina</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">PHH Mortgage Class Action Settlement 2026: Automatic Payments for Eligible Borrowers</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible borrowers do not need to file a claim, but they may want to update their address so the check does not start its own side quest.</p>
+          <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">PHH Mortgage Class Action Settlement 2026: Automatic Payments for Eligible Borrowers</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Borrowers who received a PHH Mortgage Notice of Default may qualify for automatic payments from a $1.5 million class action settlement. Most eligible borrowers do not need to file a claim, but they may want to update their address so the check does not start its own side quest.</p>
+          <a href="/articles/phh-mortgage-class-action-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 Arizona</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/hefty-recyclable-bags-settlement-2026-arizona.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">Hefty "Recycling" Bags Settlement 2026 – Arizona Residents Can File a Claim by October 1</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Deadline: October 1, 2026 · Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Reynolds Consumer Products agreed to a $212,000 settlement after Arizona's Attorney General accused the company of slapping the word "RECYCLING" on Hefty bags that aren't actually recyclable in Arizona — a classic case of paying more to feel good about the planet while the planet quietly disagrees. Arizona residents who bought these bags can file a complaint with the AG's office by October 1, 2026. No proof of purchase required.</p>
+          <a href="/articles/hefty-recyclable-bags-settlement-2026-arizona.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 California</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/tinder-california-age-discrimination-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">Tinder Age Discrimination Settlement – Older California Users May Get a Cash Payment!</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Deadline: August 18, 2026 · Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Tinder agreed to a $60.5 million settlement over allegations it charged older users more for Tinder Plus and Tinder Gold subscriptions than younger users — just for being older. If you were over 28 or 29 and purchased a Tinder subscription in California between 2015 and 2019, you may be eligible for a cash payment. No formal claim form required — but choose your payment method by August 18, 2026 to get paid faster.</p>
+          <a href="/articles/tinder-california-age-discrimination-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 California</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/tinder-california-age-discrimination-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">Tinder Age Discrimination Settlement – Older California Users May Get a Cash Payment</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Deadline: August 18, 2026 · Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Tinder agreed to a $60.5 million settlement over allegations it charged older users more for Tinder Plus and Tinder Gold subscriptions than younger users — just for being older. If you were over 28 or 29 and purchased a Tinder subscription in California between 2015 and 2019, you may be eligible for a cash payment. No formal claim form required — but choose your payment method by August 18, 2026 to get paid faster.</p>
+          <a href="/articles/tinder-california-age-discrimination-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/amazon-prime-ftc-settlement-refund-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">Amazon Prime FTC Settlement – File a Claim for Up to $51</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">The FTC reached a $2.5 billion settlement with Amazon over claims it enrolled customers in Prime without consent and made cancellation deliberately difficult. Eligible customers may receive up to $51. Many got automatic refunds by December 2025 — if you didn't, you may still be eligible to file a claim using the notice Amazon sent by email or postcard.</p>
+          <a href="/articles/amazon-prime-ftc-settlement-refund-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">🌐 Nationwide</span>
+            
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/sprouts-farmers-market-facta-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">Sprouts Farmers Market FACTA Receipt Settlement – File a Claim by August 5, 2026</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Deadline: August 5, 2026 · Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Sprouts Farmers Market agreed to a $5 million settlement over allegations it printed too many digits of customers' credit, debit, or EBT card numbers on receipts — a violation of the Fair and Accurate Credit Transactions Act (FACTA). If you used a personal card at any Sprouts store in the U.S. during the class period, you may be eligible for a cash payment. You must file a claim by August 5, 2026.</p>
+          <a href="/articles/sprouts-farmers-market-facta-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+        <article class="py-5 group">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#4b5563;background:#f3f4f6;">📍 California</span>
+            <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;">⏰ 11d left</span>
+          </div>
+          <h2 style="font-size:16px;font-weight:700;color:#111827;line-height:1.35;margin:0 0 4px;">
+            <a href="/articles/wells-fargo-cares-act-mortgage-settlement-2026.html" style="color:inherit;text-decoration:none;" onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#111827'">Wells Fargo CARES Act Mortgage Settlement – You'll Get a Check Automatically. Just Don't Move Without Telling Them.</a>
+          </h2>
+          <p style="font-size:11px;color:#9ca3af;font-weight:500;margin:0 0 6px;">Deadline: March 25, 2026 · Updated March 14, 2026</p>
+          <p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 8px;">Wells Fargo agreed to a $56.85 million settlement over claims it incorrectly reported California mortgage accounts to credit bureaus during COVID-19 forbearance. No claim form required — eligible class members automatically receive an equal share by mailed check. The only deadline is March 25, 2026, to object or update your mailing address.</p>
+          <a href="/articles/wells-fargo-cares-act-mortgage-settlement-2026.html" style="display:inline-block;font-size:12px;font-weight:700;color:#7c3aed;text-decoration:none;">Read guide →</a>
+        </article>
+    
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">🌐 Nationwide</span>
+            <span class="badge-hot">🔥 2d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/legacy-health-patient-portal-settlement-2026">Legacy Health Patient Portal Data Settlement – File a Claim by March 16, 2026</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: March 16, 2026 · Updated February 21, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">Legacy Health is settling a class action alleging it shared patients' personally identifiable information with Meta and Google without permission — because apparently your medical records weren't private enough. Eligible patients may claim a $15 cash payment and one free year of medical identity monitoring.</p>
+          <a href="/articles/legacy-health-patient-portal-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">📍 Illinois</span>
+            <span class="badge-warm">⏰ 16d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/chicago-doordash-settlement">City of Chicago v DoorDash Settlement – Chicago Restaurants May Claim Up to $2,500</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: March 30, 2026 · Updated February 20, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If your Chicago restaurant showed up on DoorDash or Caviar without your permission — surprise! — you may be entitled to a cash payment of up to $2,500. The deadline to file is March 30, 2026, so don't let this one get cold.</p>
+          <a href="/articles/chicago-doordash-settlement" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">🌐 Nationwide</span>
+            <span class="badge-soon">⏰ 24d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/gskill-dram-class-action-settlement-2026">G.Skill DRAM Class Action Settlement 2026 – File a Claim by April 7</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: April 7, 2026 · Updated February 20, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If you bought G.Skill DDR-4 or DDR-5 desktop memory in the U.S. between January 31, 2018 and January 7, 2026, you may be eligible for a cash payment from a $2,400,000 class action settlement alleging G.Skill misled customers about advertised memory speeds.</p>
+          <a href="/articles/gskill-dram-class-action-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">📍 California</span>
+            <span class="badge-soon">⏰ 27d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/pacific-life-pdx-illustration-settlement-2026">Pacific Life PDX Policy Settlement – Act by April 10, 2026</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: April 10, 2026 · Updated February 21, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If you purchased a Pacific Discovery Xelerator (PDX) indexed universal life insurance policy from Pacific Life in California, a class action settlement over allegedly misleading sales illustrations may entitle you to an automatic credit to your policy's accumulated value or free three-year term life insurance coverage.</p>
+          <a href="/articles/pacific-life-pdx-illustration-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">🌐 Nationwide</span>
+            <span class="badge-soon">⏰ 27d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/panda-restaurant-group-data-breach-settlement-2026">Panda Restaurant Group Data Breach Settlement – File by April 10, 2026</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: April 10, 2026 · Updated February 21, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If your personal information was exposed in the March 2023 Panda Restaurant Group data breach, a class action settlement may entitle you to up to $5,000 in reimbursement, a ~$100 cash payment (plus an extra ~$125 for California residents), and two years of credit monitoring.</p>
+          <a href="/articles/panda-restaurant-group-data-breach-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">🌐 Nationwide</span>
+            <span class="badge-soon">⏰ 33d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/gryphon-healthcare-data-settlement-2026">Gryphon Healthcare Data Settlement – File by April 16, 2026</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: April 16, 2026 · Updated February 21, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If your personal or medical information was exposed in the July 2024 Gryphon Healthcare cyberattack, you may be entitled to up to $5,000 in reimbursement or a $100 cash payment — plus two years of medical identity theft protection.</p>
+          <a href="/articles/gryphon-healthcare-data-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">🌐 Nationwide</span>
+            <span class="badge-soon">⏰ 37d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/northwell-health-pixel-settlement-2026">Northwell Health Pixel Settlement – File by April 20, 2026</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: April 20, 2026 · Updated February 21, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If you were a Northwell Health patient who used their patient portal or booked an appointment online between 2020 and 2024, a class action settlement over the alleged sharing of your personal data via tracking technologies may entitle you to a cash payment and privacy monitoring.</p>
+          <a href="/articles/northwell-health-pixel-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+        <article class="py-5 group">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold text-gray-500 bg-gray-100">🌐 Nationwide</span>
+            <span class="badge-soon">⏰ 44d left</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+            <a href="/articles/pharmerica-data-breach-settlement-2026">PharMerica Data Breach Settlement – File by April 27, 2026</a>
+          </h2>
+          <p class="text-xs text-gray-400 font-medium mb-2">Deadline: April 27, 2026 · Updated February 21, 2026</p>
+          <p class="text-sm text-gray-600 leading-relaxed">If your personal or medical information was swept up in the 2023 PharMerica ransomware attack — courtesy of a cybercriminal gang that apparently named themselves "Money Message" — a $5.275 million settlement may entitle you to up to $10,000 in reimbursement, a pro rata cash payment, and free credit monitoring.</p>
+          <a href="/articles/pharmerica-data-breach-settlement-2026" class="inline-block mt-3 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors">Read guide →</a>
+        </article>
+
+      </div>
+
+      <div id="noGuides" class="hidden text-center py-16">
+        <div class="text-5xl mb-4">🔍</div>
+        <p class="text-lg font-bold text-gray-700 mb-1">No guides matched that search.</p>
+        <p class="text-sm text-gray-500">Try a broader term — or check back, we add new ones regularly.</p>
+      </div>
+
+    </div>
   </main>
 
-<footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-10 px-4 sm:px-6 lg:px-8">
+  <!-- Footer -->
+  <footer class="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 text-white py-10 px-4 sm:px-6 lg:px-8 mt-12">
     <div class="max-w-6xl mx-auto">
       <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 border-t border-white/10 pt-8">
         <div class="max-w-md">
           <h4 class="font-black text-2xl gradient-text-light">eosguide</h4>
-          <p class="text-gray-400 text-sm mt-2">
-            A searchable hub for settlement claims and official filing links.
-          </p>
+          <p class="text-gray-400 text-sm mt-2">A searchable hub for settlement claims and official filing links.</p>
         </div>
-
         <div class="flex flex-col sm:items-end gap-2 text-sm">
-          <a href="/cdn-cgi/l/email-protection#aec6cbc2c2c1eecbc1ddc9dbc7cacbc6dbcc80cdc1c3" class="text-cyan-300 hover:text-cyan-400 underline">
-            Contact
-          </a>
+          <a href="/cdn-cgi/l/email-protection#d3bbb6bfbfbc93b6bca0b4a6bab7b6bba6b1fdb0bcbe" class="text-cyan-300 hover:text-cyan-400 underline">Contact</a>
           <div class="flex flex-wrap gap-x-4 gap-y-1 sm:justify-end">
             <a href="/legal/" class="text-cyan-300 hover:text-cyan-400 underline">Legal</a>
             <a href="/legal/#privacy" class="text-cyan-300 hover:text-cyan-400 underline">Privacy</a>
@@ -889,388 +452,78 @@
           </div>
         </div>
       </div>
-
       <div class="pt-6">
-        <p class="text-gray-500 text-sm">
-          © 2025 eosguide. Information only. Always verify details on the official site.
-        </p>
+        <p class="text-gray-500 text-sm">© 2025 eosguide. Information only. Always verify details on the official site.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Toast -->
-  <div id="toast"></div>
+  <button id="backToTop" class="px-3 py-2 rounded-full bg-purple-600 text-white text-xs font-semibold shadow-lg hover:bg-purple-700 hover:scale-105 transition-all duration-200">↑ Top</button>
 
-  <!-- Back to top -->
-  <button id="backToTop"
-          class="px-3 py-2 rounded-full bg-purple-600 text-white text-xs font-semibold shadow-lg hover:bg-purple-700 hover:scale-105 transition-all duration-200">
-    ↑ Top
-  </button>
-
-  <!-- ════════════════════════════════════════
-       JAVASCRIPT
-  ════════════════════════════════════════ -->
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    const categories = [
-      { key: 'all',    name: 'All',        icon: '✨', description: 'Browse all available opportunities' },
-      { key: 'saved',  name: 'Saved',      icon: '🔖', description: "Opportunities you've bookmarked" },
-      { key: 'ending', name: 'Ending Soon',icon: '⏰', description: 'Deadlines within 30 days' }
-    ];
-
-    let opportunities = [];
-    let currentCategory = 'all';
-    let currentSearch = '';
-    let savedOpportunities = JSON.parse(localStorage.getItem('eosguide-saved') || '[]');
-
-    function calculateDaysLeft(deadlineStr) {
-      if (!deadlineStr) return -1;
-      const raw = String(deadlineStr).trim();
-      if (!raw) return -1;
-      const lower = raw.toLowerCase();
-      if (['ongoing','none','n/a','na'].includes(lower)) return 999;
-      if (lower.includes('rolling') || lower.includes('varies') || lower.includes('tbd')) return 999;
-      const parsedMs = Date.parse(raw);
-      if (!Number.isNaN(parsedMs)) {
-        const d = new Date(parsedMs), t = new Date();
-        d.setHours(0,0,0,0); t.setHours(0,0,0,0);
-        return Math.round((d - t) / 86400000);
-      }
-      const parts = raw.split('/');
-      if (parts.length !== 3) return -1;
-      const [m, dy, y] = parts.map(Number);
-      if (!m || !dy || !y) return -1;
-      const d = new Date(y, m-1, dy), t = new Date();
-      d.setHours(0,0,0,0); t.setHours(0,0,0,0);
-      return Math.round((d - t) / 86400000);
-    }
-
-    async function loadOpportunities() {
-      try {
-        const res = await fetch('/data/opportunities.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to load');
-        const data = await res.json();
-        opportunities = data.map(o => ({
-          id:          o.id || o.title,
-          title:       o.title,
-          url:         o.url,
-          category:    o.category,
-          geography:   o.state === 'Nationwide' ? 'national' : 'state',
-          description: o.description,
-          deadline:    o.deadline,
-          daysLeft:    o.urgencyDays || calculateDaysLeft(o.deadline),
-          amount:      o.amount,
-          state:       o.state,
-          difficulty:  o.difficulty || 'Medium',
-          value:       o.value || 'fair',
-          featured:    o.featured || false,
-          urgencyDays: o.urgencyDays
-        }));
-        renderOpportunities();
-        updateStateDropdownCounts();
-      } catch (e) {
-        console.error('Error loading opportunities:', e);
-      }
-    }
-
-    const stateMapping = {
-      'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California','CO':'Colorado',
-      'CT':'Connecticut','DE':'Delaware','FL':'Florida','GA':'Georgia','HI':'Hawaii','ID':'Idaho',
-      'IL':'Illinois','IN':'Indiana','IA':'Iowa','KS':'Kansas','KY':'Kentucky','LA':'Louisiana',
-      'ME':'Maine','MD':'Maryland','MA':'Massachusetts','MI':'Michigan','MN':'Minnesota','MS':'Mississippi',
-      'MO':'Missouri','MT':'Montana','NE':'Nebraska','NV':'Nevada','NH':'New Hampshire','NJ':'New Jersey',
-      'NM':'New Mexico','NY':'New York','NC':'North Carolina','ND':'North Dakota','OH':'Ohio','OK':'Oklahoma',
-      'OR':'Oregon','PA':'Pennsylvania','RI':'Rhode Island','SC':'South Carolina','SD':'South Dakota',
-      'TN':'Tennessee','TX':'Texas','UT':'Utah','VT':'Vermont','VA':'Virginia','WA':'Washington',
-      'WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming','DC':'District of Columbia'
-    };
-
-    function updateStateDropdownCounts() {
-      const sel = document.getElementById('stateSelector');
-      if (!sel) return;
-      const nw = opportunities.filter(o => o.state === 'Nationwide').length;
-      Array.from(sel.options).forEach(opt => {
-        if (opt.value === '') {
-          opt.textContent = `All States (${opportunities.length})`;
-        } else if (opt.value === 'Nationwide') {
-          opt.textContent = `Nationwide Only (${nw})`;
-        } else {
-          const name = stateMapping[opt.value];
-          const cnt  = opportunities.filter(o => o.state === opt.value || o.state === name).length;
-          opt.textContent = `${name} (${cnt})`;
-        }
-      });
-    }
-
-    function toggleSaved(oppId) {
-      savedOpportunities = savedOpportunities.includes(oppId)
-        ? savedOpportunities.filter(id => id !== oppId)
-        : [...savedOpportunities, oppId];
-      localStorage.setItem('eosguide-saved', JSON.stringify(savedOpportunities));
-      renderOpportunities();
-    }
-
-    function getUrgencyBadge(urgencyDays, daysLeft) {
-      const days = urgencyDays || daysLeft;
-      if (!days || days < 0 || days > 900) return '';
-      if (days <= 7)  return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white animate-pulse">🔥 ${days}d left</span>`;
-      if (days <= 30) return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white">⏰ ${days}d left</span>`;
-      if (days <= 60) return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">📅 ${days}d</span>`;
-      return '';
-    }
-
-    function getValueBadge(value, featured) {
-      if (featured)             return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-2 border-purple-300">⭐ FEATURED</span>';
-      if (value === 'excellent') return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-green-100  text-green-700">⭐ EXCELLENT</span>';
-      if (value === 'good')      return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100   text-blue-700">✓ GOOD</span>';
-      if (value === 'fair')      return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">~ FAIR</span>';
-      return '';
-    }
-
-    function formatDeadline(deadline) {
-      if (!deadline) return 'Not listed';
-      try {
-        const [y,m,d] = deadline.split('-').map(Number);
-        return new Date(y, m-1, d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
-      } catch { return deadline; }
-    }
-
-    function getCardTheme(category) {
-      const c = (category || '').toLowerCase();
-      if (c.includes('class action') || c.includes('legal') || c.includes('settlement'))
-        return { bg:'#f0f9ff', border:'#bae6fd', ctaBg:'#0891b2', ctaText:'#fff' };
-      if (c.includes('refund') || c.includes('unclaimed'))
-        return { bg:'#faf5ff', border:'#ddd6fe', ctaBg:'#7c3aed', ctaText:'#fff' };
-      if (c.includes('relief') || c.includes('benefit') || c.includes('assistance') || c.includes('social'))
-        return { bg:'#fdf2f8', border:'#fbcfe8', ctaBg:'#db2777', ctaText:'#fff' };
-      if (c.includes('utility') || c.includes('energy'))
-        return { bg:'#f0fdfa', border:'#99f6e4', ctaBg:'#0d9488', ctaText:'#fff' };
-      if (c.includes('health') || c.includes('medical') || c.includes('veteran'))
-        return { bg:'#eef2ff', border:'#c7d2fe', ctaBg:'#4f46e5', ctaText:'#fff' };
-      if (c.includes('tax') || c.includes('property'))
-        return { bg:'#fff1f2', border:'#fecdd3', ctaBg:'#e11d48', ctaText:'#fff' };
-      return { bg:'#faf5ff', border:'#ddd6fe', ctaBg:'#7c3aed', ctaText:'#fff' };
-    }
-
-    function renderOpportunities() {
-      const grid     = document.getElementById('opportunitiesGrid');
-      const noRes    = document.getElementById('noResults');
-      const oppCount = document.getElementById('oppCount');
-      const catInfo  = document.getElementById('categoryInfo');
-      const selState = (document.getElementById('stateSelector')?.value || document.getElementById('stateSelectorMobile')?.value || '');
-
-      const q = (currentSearch || '').toLowerCase().trim();
-
-      const filtered = opportunities.filter(opp => {
-        // State filter is bypassed whenever a search query is active
-        let matchesState = true;
-        if (selState && !q) {
-          if (selState === 'Nationwide') {
-            matchesState = opp.state === 'Nationwide';
-          } else {
-            const full = stateMapping[selState];
-            matchesState = opp.state === selState || opp.state === full;
-          }
-        }
-        const matchesCat =
-          currentCategory === 'all' ||
-          (currentCategory === 'saved'  ? savedOpportunities.includes(opp.id) : false) ||
-          (currentCategory === 'ending' ? (opp.daysLeft < 30 && opp.daysLeft > 0) : false) ||
-          opp.category === currentCategory;
-        const hay = [opp.title, opp.description, opp.category, opp.state, opp.amount, opp.value, opp.difficulty]
-          .map(v => (v||'').toLowerCase()).join(' ');
-        return matchesState && matchesCat && (!q || hay.includes(q));
-      });
-
-      filtered.sort((a, b) => {
-        if (a.featured && !b.featured) return -1;
-        if (!a.featured && b.featured) return 1;
-        return (a.daysLeft||999) - (b.daysLeft||999);
-      });
-
-      if (oppCount) oppCount.textContent = `(${filtered.length})`;
-      const oppCountMobile = document.getElementById('oppCountMobile');
-      if (oppCountMobile) oppCountMobile.textContent = `(${filtered.length})`;
-
-      if (currentCategory !== 'all') {
-        const ci = categories.find(c => c.key === currentCategory);
-        if (ci && catInfo) {
-          catInfo.classList.remove('hidden');
-          document.getElementById('catIcon').textContent = ci.icon;
-          document.getElementById('catName').textContent = ci.name;
-          document.getElementById('catDesc').textContent = ci.description;
-        }
-      } else if (catInfo) {
-        catInfo.classList.add('hidden');
-      }
-
-      if (!grid || !noRes) return;
-      if (filtered.length === 0) {
-        if (currentCategory === 'saved') {
-          // Nothing saved — fall back to all and show a toast
-          currentCategory = 'all';
-          renderOpportunities();
-          showToast("Nothing saved yet — showing all listings. Bookmark a card to save it.");
-          return;
-        }
-        grid.innerHTML = '';
-        noRes.classList.remove('hidden');
-        const title = document.getElementById('noResultsTitle');
-        const msg = document.getElementById('noResultsMsg');
-        if (title) title.textContent = 'No opportunities found';
-        if (msg) msg.textContent = 'Try adjusting your search or filters';
-        return;
-      }
-      noRes.classList.add('hidden');
-
-      grid.innerHTML = filtered.map((opp, i) => {
-        const ci = categories.find(c => c.key === opp.category) || { icon:'📋', name: opp.category };
-        const isSaved = savedOpportunities.includes(opp.id);
-        const delay = ['delay-0','delay-50','delay-100','delay-150','delay-200','delay-250'][Math.min(i,5)];
-        const theme = getCardTheme(opp.category);
-        const urgency = getUrgencyBadge(opp.urgencyDays, opp.daysLeft);
-
-        return `
-<article class="animate-fadeInUp ${delay} rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col"
-         style="background:${theme.bg}; border: 1px solid ${theme.border};">
-
-    <!-- Top row: state + save -->
-    <div class="flex items-center justify-between mb-3">
-      <div class="flex flex-wrap gap-1.5">
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-white/70">${opp.geography === 'national' ? '🌐 Nationwide' : '📍 ' + (opp.state || '')}</span>
-      </div>
-      <button onclick="toggleSaved('${opp.id}')"
-              class="p-1.5 rounded-full transition-colors flex-shrink-0 ml-1.5 bg-white/50 hover:bg-white"
-              title="${isSaved ? 'Remove from saved' : 'Save for later'}">
-        ${isSaved
-          ? `<svg class="w-4 h-4" fill="${theme.ctaBg}" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`
-          : `<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`
-        }
+  <!-- Newsletter Modal -->
+  <div id="newsletterModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-scaleIn">
+      <button onclick="closeNewsletter()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
-    </div>
-
-    <!-- Amount -->
-    ${opp.amount ? `<div class="text-base font-black mb-1" style="color:${theme.ctaBg};">${opp.amount}</div>` : ''}
-
-    <!-- Urgency badge -->
-    ${urgency ? `<div class="mb-2">${urgency}</div>` : ''}
-
-    <!-- Title -->
-    <h4 class="text-sm font-bold text-gray-900 mb-2 leading-snug">${opp.title}</h4>
-
-    <!-- Description — grows to fill available space -->
-    <p class="text-xs text-gray-700 leading-relaxed mb-3 flex-1 overflow-hidden">${opp.description || ''}</p>
-
-    <!-- Deadline only -->
-    <dl class="mb-4 text-xs border-t pt-3" style="border-color:${theme.border};">
-      <div class="flex justify-between">
-        <dt class="text-gray-400 font-medium">Deadline</dt>
-        <dd class="font-bold text-gray-700">${formatDeadline(opp.deadline)}</dd>
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:linear-gradient(135deg,#06B6D4,#8B5CF6,#EC4899);">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-3xl font-black mb-2">Never Miss Out</h3>
+        <p class="text-gray-600 font-normal">Weekly digest of new settlements. No spam — we have enough of that ourselves.</p>
       </div>
-    </dl>
+      <form action="https://buttondown.com/api/emails/embed-subscribe/eosguidehub" method="post" class="space-y-4">
+        <input type="hidden" name="embed" value="1">
+        <input type="email" name="email" id="emailInput" placeholder="Enter your email" required
+               class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors font-light">
+        <button type="submit" class="w-full px-6 py-3 text-white rounded-2xl font-bold hover:shadow-lg hover:scale-105 transition-all" style="background:linear-gradient(135deg,#06B6D4,#7C3AED);">
+          Subscribe Free
+        </button>
+      </form>
+      <p class="text-xs text-gray-400 text-center mt-4 font-light">Unsubscribe anytime. No spam, ever.</p>
+    </div>
+  </div>
 
-    <!-- CTA -->
-    <a href="${opp.url}" target="_blank" rel="noopener noreferrer"
-       class="block w-full text-center py-2.5 rounded-2xl text-sm font-bold hover:opacity-90 hover:scale-[1.02] transition-all mt-auto"
-       style="background:${theme.ctaBg}; color:${theme.ctaText};">
-      View Details →
-    </a>
-
-</article>`;
-      }).join('');
-    }
-
-    function filterOpportunities() {
-      currentSearch = document.getElementById('searchInput').value || '';
-      renderOpportunities();
-    }
-
-    function filterOpportunitiesMobile() {
-      currentSearch = document.getElementById('searchInputMobile').value || '';
-      const desktopInput = document.getElementById('searchInput');
-      if (desktopInput) desktopInput.value = currentSearch;
-      renderOpportunities();
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      if (!t) return;
-      t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script>
     function openNewsletter() {
-      const st = document.getElementById('stateSelector').value;
-      document.getElementById('selectedState').textContent = st || 'your area';
       document.getElementById('newsletterModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('emailInput')?.focus(), 50);
     }
-    function closeNewsletter() {
-      document.getElementById('newsletterModal').classList.add('hidden');
-    }
+    function closeNewsletter() { document.getElementById('newsletterModal').classList.add('hidden'); }
+    document.addEventListener('click', e => {
+      const m = document.getElementById('newsletterModal');
+      if (m && !m.classList.contains('hidden') && e.target === m) closeNewsletter();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNewsletter(); });
 
     const btt = document.getElementById('backToTop');
     window.addEventListener('scroll', () => { btt.style.display = window.scrollY > 400 ? 'block' : 'none'; });
-    btt.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    function mobileNavHome()  { currentCategory = 'all'; renderOpportunities(); window.scrollTo({ top:0, behavior:'smooth' }); }
-    function mobileNavSaved() { currentCategory = 'saved'; renderOpportunities(); document.getElementById('opportunitiesGrid')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
-    function mobileNavInfo()  { document.getElementById('about')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadOpportunities();
-
-      const msgs = [
-        "Type a keyword and remember, you're breathtaking!",
-        "Words go here. Magic happens. Allegedly.",
-        "Search bar. Does searching. Film at eleven.",
-        "I used to be a text field. Now I'm your text field.",
-        "I've seen things. Type anyway.",
-        "Hit me. I'm ready.",
-        "Your move.",
-        "Type. Or don't. I'll wait."
-      ];
-      let idx = 0;
-      const input = document.getElementById('searchInput');
-      const hint  = document.getElementById('searchHint');
-
-      function syncHint() {
-        hint.style.display = ((input.value||'').trim() || document.activeElement === input) ? 'none' : 'block';
+    (function () {
+      const input    = document.getElementById('guideSearch');
+      const clearBtn = document.getElementById('clearSearch');
+      const meta     = document.getElementById('searchMeta');
+      const list     = document.getElementById('guidesList');
+      const noRes    = document.getElementById('noGuides');
+      if (!input) return;
+      const cards = Array.from(list.querySelectorAll('article'));
+      meta.textContent = cards.length + ' guides';
+      function normalize(t) { return (t || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+      function update() {
+        const q = normalize(input.value);
+        let shown = 0;
+        cards.forEach(card => {
+          const match = q === '' || normalize(card.innerText).includes(q);
+          card.style.display = match ? '' : 'none';
+          if (match) shown++;
+        });
+        noRes.classList.toggle('hidden', shown > 0);
+        meta.textContent = q === ''
+          ? cards.length + ' guides'
+          : shown + ' result' + (shown === 1 ? '' : 's') + ' for "' + input.value + '"';
       }
-      hint.textContent = msgs[0]; syncHint();
-
-      setInterval(() => {
-        if (document.activeElement === input || (input.value||'').trim()) return;
-        idx = (idx + 1) % msgs.length;
-        hint.style.opacity = 0;
-        setTimeout(() => { hint.textContent = msgs[idx]; hint.style.opacity = 1; }, 350);
-      }, 4000);
-
-      ['focus','blur','input'].forEach(ev => input.addEventListener(ev, syncHint));
-      input.addEventListener('input',   () => filterOpportunities());
-      input.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); filterOpportunities(); } });
-      document.getElementById('stateSelector')?.addEventListener('change', () => renderOpportunities());
-
-      // Mobile inputs
-      const mobileSearch = document.getElementById('searchInputMobile');
-      if (mobileSearch) {
-        mobileSearch.addEventListener('input', filterOpportunitiesMobile);
-        mobileSearch.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); filterOpportunitiesMobile(); } });
-      }
-      document.getElementById('stateSelectorMobile')?.addEventListener('change', () => renderOpportunities());
-    });
-  </script>
-
-  <!-- Mobile bottom nav -->
-  <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-[0_-4px_12px_rgba(15,23,42,0.06)] md:hidden">
-    <div class="max-w-7xl mx-auto flex items-center justify-around py-2 text-xs text-gray-600">
-      <button type="button" onclick="mobileNavHome()"    class="flex flex-col items-center gap-1 px-4 py-1 min-w-0">
-        <span aria-hidden="true">🏠</span><span>Home</span>
-      </button>
-      <button type="button" onclick="mobileNavSaved()"   class="flex flex-col items-center gap-1 px-4 py-1 min-w-0">
-        <span aria-hidden="true">🔖</span><span>Saved</span>
-      </button>
-      <button type="button" onclick="mobileNavInfo()"    class="flex flex-col items-center gap-1 px-4 py-1 min-w-0">
-        <span aria-hidden="true">ℹ️</span><span>Info</span>
-      </button>
-    </div>
-  </nav>
+      input.addEventListener('input', update);
+      input.addEventListener('keydown', e => { if (e.key === 'Escape') { input.value = ''
