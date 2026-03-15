@@ -603,12 +603,12 @@ def build_page(f: dict) -> str:
   <meta name="twitter:description" content="{meta_description}">
 
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F1BDHTGBW5"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-54CN01KNJH"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){{dataLayer.push(arguments);}}
     gtag('js', new Date());
-    gtag('config', 'G-F1BDHTGBW5');
+    gtag('config', 'G-54CN01KNJH');
   </script>
 
   <script src="https://cdn.tailwindcss.com"></script>
