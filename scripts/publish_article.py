@@ -623,6 +623,30 @@ def build_page(f: dict) -> str:
     .section p {{ margin: 0.5rem 0; font-size: 0.95rem; color: #1f2937; line-height: 1.6; }}
     .divider {{ border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }}
 
+    /* Back to top button */
+    #backToTop {{ position:fixed; right:1.25rem; bottom:5rem; z-index:40; display:none;
+      padding: 0.5rem 0.85rem; border-radius:999px; background:#7c3aed; color:#fff;
+      font-size:12px; font-weight:700; border:none; cursor:pointer;
+      box-shadow:0 4px 14px rgba(124,58,237,0.35);
+      transition: opacity 0.2s, transform 0.2s; }}
+    #backToTop:hover {{ background:#6d28d9; transform:translateY(-2px); }}
+
+    /* Mobile bottom nav */
+    .article-mobile-nav {{
+      position:fixed; bottom:0; left:0; right:0; z-index:40;
+      background:rgba(255,255,255,0.97); backdrop-filter:blur(8px);
+      border-top:1px solid #e5e7eb;
+      box-shadow:0 -4px 12px rgba(15,23,42,0.06);
+      display:flex; align-items:center; justify-content:space-around; padding:0.5rem 0;
+    }}
+    @media (min-width: 768px) {{ .article-mobile-nav {{ display:none; }} }}
+    .article-mobile-nav a, .article-mobile-nav button {{
+      display:flex; flex-direction:column; align-items:center; gap:2px;
+      font-size:11px; font-weight:600; color:#6b7280; background:none; border:none;
+      cursor:pointer; padding:0.25rem 1rem; text-decoration:none; line-height:1.3;
+    }}
+    .article-mobile-nav a:hover, .article-mobile-nav button:hover {{ color:#7c3aed; }}
+
     .table-wrap {{ overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 14px; background: #fafaf9; }}
     .deadline-table {{ width: 100%; border-collapse: collapse; min-width: 500px; }}
     .deadline-table th, .deadline-table td {{ padding: 10px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; font-size: 14px; color: #1f2937; }}
@@ -790,6 +814,25 @@ def build_page(f: dict) -> str:
     </div>
   </footer>
 
+  <!-- Back to top button -->
+  <button id="backToTop" aria-label="Back to top">↑ Top</button>
+
+  <!-- Mobile bottom navigation (hidden on desktop) -->
+  <nav class="article-mobile-nav" aria-label="Page navigation">
+    <a href="/">
+      <span aria-hidden="true">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="/articles/">
+      <span aria-hidden="true">📋</span>
+      <span>All Guides</span>
+    </a>
+    <button type="button" onclick="window.scrollTo({{top:0,behavior:'smooth'}})">
+      <span aria-hidden="true">↑</span>
+      <span>Top</span>
+    </button>
+  </nav>
+
   <!-- Newsletter Modal -->
   <div id="newsletterModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl">
@@ -835,6 +878,15 @@ def build_page(f: dict) -> str:
       const modal = document.getElementById('newsletterModal');
       if (!modal) return;
       modal.classList.add('hidden');
+    }}
+
+    // Back to top button
+    const btt = document.getElementById('backToTop');
+    if (btt) {{
+      window.addEventListener('scroll', () => {{
+        btt.style.display = window.scrollY > 400 ? 'block' : 'none';
+      }});
+      btt.addEventListener('click', () => window.scrollTo({{ top: 0, behavior: 'smooth' }}));
     }}
     document.addEventListener('click', (e) => {{
       const modal = document.getElementById('newsletterModal');
